@@ -1,0 +1,41 @@
+export const colors = {
+    primary:"#004A3B",
+    secondary:"#004A3B10",
+    primary1:"#004A3B30",
+    primary2:"#004A3B60",
+    tabColor:"#773800",
+    lightTheme:"#631C6840",
+    cream:"#EDD1B2",
+   
+    black:"#000000",
+    white:"#ffffff",
+    white1:"#ffffff90",
+    gray:"#C2C2C2",
+    gray1:"#8A8A8A",
+    gray2:"#BBBBBB",
+    gray3:"#6A5B5B",
+    gray4:"#D9D9D9",
+    gray5:"#EEEEEE",
+    gray6:"#EDEDED",
+    gray7:"#969696",
+    gray8:"#898990",
+    gray9:"#e9e9e9",
+    gray10:"#BBBBBB",
+    gray11:"#FAF8F8",
+    gray12:"#9B9B9B",
+    gray13:"#E2E2E2",
+    gray14:"#FAFAFA",
+    red:"#F14141",
+    orange:"#FF7700",
+    black1:"#606060",
+    black2:"#101010",
+    black3:"#3D3A3B",
+    black5:"#353535",
+    black4:"#35353530",
+    yellow:"#FFAB07",
+    green:"#9CCC44",
+
+
+
+   
+}

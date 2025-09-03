@@ -1,0 +1,61 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Cairo-Black.ttf",
+      "sha1": "51d87902ff56b2e8987f7f06ef49e8d351fe0022"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-Bold.ttf",
+      "sha1": "5a7b0543c6c62843900f5d5a049ebc32b5434f5d"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-ExtraLight.ttf",
+      "sha1": "b30ddfae52c62b49cb3affd654b097aff5e6e849"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-Light.ttf",
+      "sha1": "59aa049d56f70f770af92fd869ee02f6b408e444"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-Medium.ttf",
+      "sha1": "fd8e2d03679d461b556bb4cc464811310c12ed24"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-Regular.ttf",
+      "sha1": "c40cd69d854d12c818b30c86668a45305b531c5d"
+    },
+    {
+      "path": "src/assets/fonts/Cairo-SemiBold.ttf",
+      "sha1": "62ebd95c7f440e03311188c9eed02aae313045c5"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-Black.ttf",
+      "sha1": "d93992036c4572e118b43753c05b70d958fee01a"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-Bold.ttf",
+      "sha1": "d00fcef1bf7fa3ed01854bca4eff67835f9cf04e"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-ExtraLight.ttf",
+      "sha1": "fd0befce0a82ccde78608de3ad4e9e13f0780cc0"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-Light.ttf",
+      "sha1": "639a9a8954ed867828184e4affc6a45fc25b0334"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-Medium.ttf",
+      "sha1": "98848b759c488bac3d85c864b793c1e29e9c1944"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-Regular.ttf",
+      "sha1": "ea29eece15a0fa96acdd1b19a232a08b696c7bb0"
+    },
+    {
+      "path": "src/assets/fonts/DMSans-SemiBold.ttf",
+      "sha1": "504fc1e1ece12a5c98da275e0789a88184a534dd"
+    }
+  ]
+}

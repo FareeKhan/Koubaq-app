@@ -7,34 +7,52 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00AC890134EC44CAAF08CA9A /* Cairo-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AD480C7530924F16BA30105D /* Cairo-SemiBold.ttf */; };
 		0C80B921A6F3F58F76C31292 /* libPods-koubakApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-koubakApp.a */; };
+		11292A00753B42AE9840A2C9 /* Cairo-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49B4BACB5ACD4BA28F428935 /* Cairo-ExtraLight.ttf */; };
+		11BC8DAF1CFE4D4E93838283 /* DMSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FCF1BFC1AC9D475B8CCDD258 /* DMSans-Light.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1679D597F0E84FB0A1745113 /* DMSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 42710104F7A84AB683FCF767 /* DMSans-SemiBold.ttf */; };
+		35B536DDB416F836D93F875A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		495D8866FE11457AA1D1719E /* DMSans-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F09F7B61FB64516816FBEA5 /* DMSans-ExtraLight.ttf */; };
+		4DDFF3F913FC419D908EB268 /* Cairo-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D09B8DB7DBA48389CA71302 /* Cairo-Black.ttf */; };
+		60A744BEE54F451197EC0657 /* DMSans-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2AD2C45C4C9C49B0A5797748 /* DMSans-Black.ttf */; };
+		6CC2045D37A241F0BEFBEB3E /* DMSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 478ABF4E2D574676A71CC4B7 /* DMSans-Bold.ttf */; };
+		6DD2B56013274A3094610B14 /* Cairo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49CA1660CC85482780B7F237 /* Cairo-Bold.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8A777322BAE14AD1A10B67B8 /* Cairo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B3596686D3344AF98B69F440 /* Cairo-Regular.ttf */; };
+		AAAE2B4B821E45F695BFED22 /* DMSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B531EC3A08AA4A13802C4DC1 /* DMSans-Regular.ttf */; };
+		B1828516529A449CB7646FB6 /* DMSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B77C069391544D2A8015EC2F /* DMSans-Medium.ttf */; };
+		C14101A19C7848598A0DB22C /* Cairo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6E13A220F618423A83CF95DA /* Cairo-Light.ttf */; };
+		F8FB63CDDF3349209C4A4C99 /* Cairo-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A44C2905CA6A4D189EBE797C /* Cairo-Medium.ttf */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		00E356F41AD99517003FC87E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = koubakApp;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0F09F7B61FB64516816FBEA5 /* DMSans-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-ExtraLight.ttf"; path = "../src/assets/fonts/DMSans-ExtraLight.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* koubakApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = koubakApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = koubakApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = koubakApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = koubakApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		2AD2C45C4C9C49B0A5797748 /* DMSans-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Black.ttf"; path = "../src/assets/fonts/DMSans-Black.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-koubakApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-koubakApp.debug.xcconfig"; path = "Target Support Files/Pods-koubakApp/Pods-koubakApp.debug.xcconfig"; sourceTree = "<group>"; };
+		42710104F7A84AB683FCF767 /* DMSans-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-SemiBold.ttf"; path = "../src/assets/fonts/DMSans-SemiBold.ttf"; sourceTree = "<group>"; };
+		478ABF4E2D574676A71CC4B7 /* DMSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Bold.ttf"; path = "../src/assets/fonts/DMSans-Bold.ttf"; sourceTree = "<group>"; };
+		49B4BACB5ACD4BA28F428935 /* Cairo-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-ExtraLight.ttf"; path = "../src/assets/fonts/Cairo-ExtraLight.ttf"; sourceTree = "<group>"; };
+		49CA1660CC85482780B7F237 /* Cairo-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-Bold.ttf"; path = "../src/assets/fonts/Cairo-Bold.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-koubakApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-koubakApp.release.xcconfig"; path = "Target Support Files/Pods-koubakApp/Pods-koubakApp.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-koubakApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-koubakApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E13A220F618423A83CF95DA /* Cairo-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-Light.ttf"; path = "../src/assets/fonts/Cairo-Light.ttf"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = koubakApp/AppDelegate.swift; sourceTree = "<group>"; };
+		7D09B8DB7DBA48389CA71302 /* Cairo-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-Black.ttf"; path = "../src/assets/fonts/Cairo-Black.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = koubakApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A44C2905CA6A4D189EBE797C /* Cairo-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-Medium.ttf"; path = "../src/assets/fonts/Cairo-Medium.ttf"; sourceTree = "<group>"; };
+		AD480C7530924F16BA30105D /* Cairo-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-SemiBold.ttf"; path = "../src/assets/fonts/Cairo-SemiBold.ttf"; sourceTree = "<group>"; };
+		B3596686D3344AF98B69F440 /* Cairo-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Cairo-Regular.ttf"; path = "../src/assets/fonts/Cairo-Regular.ttf"; sourceTree = "<group>"; };
+		B531EC3A08AA4A13802C4DC1 /* DMSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Regular.ttf"; path = "../src/assets/fonts/DMSans-Regular.ttf"; sourceTree = "<group>"; };
+		B77C069391544D2A8015EC2F /* DMSans-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Medium.ttf"; path = "../src/assets/fonts/DMSans-Medium.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		FCF1BFC1AC9D475B8CCDD258 /* DMSans-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DMSans-Light.ttf"; path = "../src/assets/fonts/DMSans-Light.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,14 +67,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356F01AD99517003FC87E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		13B07FAE1A68108700A75B9A /* koubakApp */ = {
 			isa = PBXGroup;
 			children = (
@@ -93,6 +103,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				8D0D2D79C27E4123B5E16D36 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,6 +116,27 @@
 				13B07F961A680F5B00A75B9A /* koubakApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8D0D2D79C27E4123B5E16D36 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7D09B8DB7DBA48389CA71302 /* Cairo-Black.ttf */,
+				49CA1660CC85482780B7F237 /* Cairo-Bold.ttf */,
+				49B4BACB5ACD4BA28F428935 /* Cairo-ExtraLight.ttf */,
+				6E13A220F618423A83CF95DA /* Cairo-Light.ttf */,
+				A44C2905CA6A4D189EBE797C /* Cairo-Medium.ttf */,
+				B3596686D3344AF98B69F440 /* Cairo-Regular.ttf */,
+				AD480C7530924F16BA30105D /* Cairo-SemiBold.ttf */,
+				2AD2C45C4C9C49B0A5797748 /* DMSans-Black.ttf */,
+				478ABF4E2D574676A71CC4B7 /* DMSans-Bold.ttf */,
+				0F09F7B61FB64516816FBEA5 /* DMSans-ExtraLight.ttf */,
+				FCF1BFC1AC9D475B8CCDD258 /* DMSans-Light.ttf */,
+				B77C069391544D2A8015EC2F /* DMSans-Medium.ttf */,
+				B531EC3A08AA4A13802C4DC1 /* DMSans-Regular.ttf */,
+				42710104F7A84AB683FCF767 /* DMSans-SemiBold.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -126,8 +158,8 @@
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
-				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
+				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
 			);
@@ -172,19 +204,27 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		00E356EC1AD99517003FC87E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				35B536DDB416F836D93F875A /* PrivacyInfo.xcprivacy in Resources */,
+				4DDFF3F913FC419D908EB268 /* Cairo-Black.ttf in Resources */,
+				6DD2B56013274A3094610B14 /* Cairo-Bold.ttf in Resources */,
+				11292A00753B42AE9840A2C9 /* Cairo-ExtraLight.ttf in Resources */,
+				C14101A19C7848598A0DB22C /* Cairo-Light.ttf in Resources */,
+				F8FB63CDDF3349209C4A4C99 /* Cairo-Medium.ttf in Resources */,
+				8A777322BAE14AD1A10B67B8 /* Cairo-Regular.ttf in Resources */,
+				00AC890134EC44CAAF08CA9A /* Cairo-SemiBold.ttf in Resources */,
+				60A744BEE54F451197EC0657 /* DMSans-Black.ttf in Resources */,
+				6CC2045D37A241F0BEFBEB3E /* DMSans-Bold.ttf in Resources */,
+				495D8866FE11457AA1D1719E /* DMSans-ExtraLight.ttf in Resources */,
+				11BC8DAF1CFE4D4E93838283 /* DMSans-Light.ttf in Resources */,
+				B1828516529A449CB7646FB6 /* DMSans-Medium.ttf in Resources */,
+				AAAE2B4B821E45F695BFED22 /* DMSans-Regular.ttf in Resources */,
+				1679D597F0E84FB0A1745113 /* DMSans-SemiBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,14 +315,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* koubakApp */;
-			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -408,7 +440,14 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -473,7 +512,13 @@
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
