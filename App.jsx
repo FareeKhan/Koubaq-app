@@ -5,6 +5,9 @@ import AppNavigation from './src/Navigation/AppNavigation';
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
 import SplashScreen from './src/SplashScreen';
+import FlashMessage from 'react-native-flash-message';
+import { colors } from './src/constants/colors';
+import { fonts } from './src/constants/fonts';
 
 const App = () => {
 
@@ -14,6 +17,7 @@ const App = () => {
       <NavigationContainer>
         <AppNavigation />
       </NavigationContainer>
+      <FlashMessage position={'top'} floating={true} textProps={{ style: { color: colors.white, fontFamily: fonts.black } }} />
     </Provider>
   );
 };

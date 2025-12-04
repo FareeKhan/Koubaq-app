@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     gap: Platform.OS == 'ios' ? 10 : 0,
     marginTop: 30,
     marginBottom: 10,
+    marginLeft:5
   },
   btnStyle: {
     marginTop: 20,

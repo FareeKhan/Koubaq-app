@@ -32,6 +32,7 @@ import { carLogoJson } from '../constants/carData';
 import { carImages } from '../constants/ExportCarsLogo';
 import { deleteCar, removeStoreCarData, storeCarData } from '../redux/storeAddedCar';
 import AddedCarData from '../components/AddedCarData';
+import { showMessage } from 'react-native-flash-message';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -99,6 +100,16 @@ const AccountSetting = () => {
         item?.name?.toLowerCase()?.includes(searchCar.toLowerCase()),
       )
     : carLogoJson;
+
+
+
+    const handleDelete = ()=>{
+      showMessage({
+        type:"success",
+        message:t('deleteSuccessAccount')
+      })
+      navigation.navigate('LoginScreen')
+    }
 
   return (
     <ScreenView scrollable={true} mh={true}>
@@ -388,7 +399,7 @@ const AccountSetting = () => {
         onpress={() => navigation.navigate('LoginScreen')}
       />
 
-      <TouchableOpacity style={styles.deleteAccountBtn}>
+      <TouchableOpacity   onPress={() => handleDelete()} style={styles.deleteAccountBtn}>
         <CustomText style={styles.deleteAccountTxt}>
           {t('deleteAccount')}
         </CustomText>
