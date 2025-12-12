@@ -8,15 +8,20 @@ import SplashScreen from './src/SplashScreen';
 import FlashMessage from 'react-native-flash-message';
 import { colors } from './src/constants/colors';
 import { fonts } from './src/constants/fonts';
+import { STRIPE_KEY } from './src/constants/data';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 const App = () => {
 
   return (
     <Provider store={store}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <NavigationContainer>
-        <AppNavigation />
-      </NavigationContainer>
+      <StripeProvider publishableKey={STRIPE_KEY}>
+        <NavigationContainer>
+          <AppNavigation />
+        </NavigationContainer>
+      </StripeProvider>
+
       <FlashMessage position={'top'} floating={true} textProps={{ style: { color: colors.white, fontFamily: fonts.black } }} />
     </Provider>
   );

@@ -1,5 +1,6 @@
 import {
   Dimensions,
+  FlatList,
   I18nManager,
   Image,
   StyleSheet,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import CustomText from '../components/CustomText';
@@ -22,120 +23,218 @@ import DividerLine from '../components/DividerLine';
 import GiftImage from '../components/GiftImage';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { fetchSendGifts, giftRcvd, removeGiftData } from '../userServices/UserService';
+import { useSelector } from 'react-redux';
+import ScreenLoader from '../components/ScreenLoader';
 
 const { height } = Dimensions.get('screen');
 
 const GiftScreen = () => {
   const navigation = useNavigation()
   const { t } = useTranslation();
+
+  const token = useSelector((state) => state.auth.loginData?.token)
+
   const [selectedFilter, setSelectedFilter] = useState('sendGift');
-  const [isShowDetails, setIsShowDetails] = useState(false);
+  const [isShowDetails, setIsShowDetails] = useState(null);
+
   const [isReceiverSender, setIsReceiverSender] = useState();
   const [isShowSenderDetail, setIsShowSenderDetail] = useState(false);
+  const [sendGiftData, setSendGiftData] = useState([]);
+  const [deleteLoader, setDeleteLoader] = useState(false);
 
-  const RenderSendGiftsData = () => {
-    return SentGiftsData?.map((item, index) => {
-      return (
-        <View style={styles.cardWrapper} key={index}>
-          <View style={styles.cardHeader}>
-            <View>
-              <CustomText style={styles.productName}>
-                {item?.ProductName}
-              </CustomText>
-              <CustomText style={styles.productPrice}>
-                {currency} {item?.price}
-              </CustomText>
-            </View>
-            <Image
-              source={item?.productImage}
-              style={styles.productImage}
-              borderRadius={5}
-            />
-          </View>
 
+  useFocusEffect(useCallback(() => {
+    getSentGifts()
+    rcvdGift()
+  }, []))
+
+
+
+  const getSentGifts = async () => {
+    try {
+      const result = await fetchSendGifts(token);
+      console.log('dasdas', result?.data?.data)
+      if (result?.success) {
+        setSendGiftData(result?.data?.data)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+
+  const deleteGift = async (id) => {
+    setDeleteLoader(true)
+    try {
+      const result = await removeGiftData(id, token);
+      if (result?.success) {
+        getSentGifts()
+        showMessage({
+          type: "success",
+          message: t('GiftDeleted')
+        })
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setDeleteLoader(false)
+    }
+  };
+
+
+  const rcvdGift = async () => {
+    // setDeleteLoader(true)
+    try {
+      const result = await giftRcvd(token);
+      console.log('resultresult', result)
+      // if (result?.success) {
+      //   getSentGifts()
+      //   showMessage({
+      //     type: "success",
+      //     message: t('GiftDeleted')
+      //   })
+      // }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setDeleteLoader(false)
+    }
+  };
+
+
+  const renderGiftSection = ({ item, index }) => {
+    console.log('itemitemitemitem', item)
+    return (
+      <View style={styles.cardWrapper} key={index}>
+        <View style={styles.cardHeader}>
           <View>
-            {isShowDetails ? (
-              <GiftImage
-                handleHidePress={()=>setIsShowDetails(false)}
-                setIsShowDetails={setIsShowDetails}
-                imagePath={require('../assets/giftMSg.png')}
-                label={'Have a good day'}
-                style={styles.giftImageMargin}
-                senderName={'Muhammad'}
-              />
-            ) : (
-              <>
-                <GiftImage 
-                setIsShowDetails={setIsShowDetails}
-                />
-                <CustomButton
-                  onPress={() => setIsShowDetails(!isShowDetails)}
-                  title={t('showDetails')}
-                  style={[styles.detailsButton]}
-                  btnTxtStyle={styles.detailsButtonText}
-                />
-              </>
-            )}
+            <CustomText style={styles.productName}>
+              {item?.gift_item}
+            </CustomText>
+            {/* <CustomText style={styles.productPrice}>
+              {currency} {item?.price}
+            </CustomText> */}
           </View>
+          <Image
+            source={item?.productImage}
+            style={styles.productImage}
+            borderRadius={5}
+          />
+        </View>
 
-          {!isShowDetails && (
+        <View>
+          {isShowDetails == index ? (
+            <GiftImage
+              handleHidePress={() => setIsShowDetails(null)}
+              setIsShowDetails={setIsShowDetails}
+              imagePath={require('../assets/giftMSg.png')}
+              label={item?.gift_message}
+              style={styles.giftImageMargin}
+              senderName={item?.recipient_name}
+            />
+          ) : (
             <>
-              <TouchableOpacity>
-                <CustomText style={styles.deleteText}>
-                  {t('deleteFromHistory')}
-                </CustomText>
-              </TouchableOpacity>
-
-              <DividerLine />
+              <GiftImage
+                setIsShowDetails={setIsShowDetails}
+              />
+              <CustomButton
+                onPress={() => setIsShowDetails(index)}
+                title={t('showDetails')}
+                style={[styles.detailsButton]}
+                btnTxtStyle={styles.detailsButtonText}
+              />
             </>
           )}
         </View>
-      );
-    });
+
+        {isShowDetails !== index && (
+          <>
+            {
+              deleteLoader ?
+                <ScreenLoader type={1} />
+                :
+                <TouchableOpacity onPress={() => deleteGift(item?.id)}>
+                  <CustomText style={styles.deleteText}>
+                    {t('deleteFromHistory')}
+                  </CustomText>
+                </TouchableOpacity>
+
+
+            }
+
+            <DividerLine />
+          </>
+        )}
+      </View>
+    );
+  }
+
+  const RenderSendGiftsData = () => {
+    return (
+      <FlatList
+        data={sendGiftData}
+        keyExtractor={(item, index) => index?.toString()}
+        renderItem={renderGiftSection}
+        ListEmptyComponent={<EmptyData />}
+      />
+
+    )
   };
 
-  const RenderReceivedGiftsData = () => {
-    return [1, 2, 3]?.map((item, index) => {
-      return (
-        <View key={item}>
-          {isReceiverSender == index ? (
-            <GiftImage
-               handleHidePress={() => setIsReceiverSender(null)}
-              onPress={() => setIsReceiverSender(null)}
-              imagePath={require('../assets/giftMSg.png')}
-              label={'Have a good day'}
-              style={styles.receivedGiftImage}
-              senderName={'Muhammad'}
-            />
-          ) : (
-            <GiftImage />
-          )}
 
-          <View style={styles.receivedButtonsRow}>
-            {isReceiverSender !== index && (
-              <CustomButton
-                onPress={() => setIsReceiverSender(index)}
-                title={t('showSender')}
-                style={styles.receiverSenderButton}
-                btnTxtStyle={styles.receiverSenderBtnText}
-              />
-            )}
+  const renderRecivedGifts = ({ item, index }) => {
+    return (
+      <View key={item}>
+        {isReceiverSender == index ? (
+          <GiftImage
+            handleHidePress={() => setIsReceiverSender(null)}
+            onPress={() => setIsReceiverSender(null)}
+            imagePath={require('../assets/giftMSg.png')}
+            label={'Have a good day'}
+            style={styles.receivedGiftImage}
+            senderName={'Muhammad'}
+          />
+        ) : (
+          <GiftImage />
+        )}
 
+        <View style={styles.receivedButtonsRow}>
+          {isReceiverSender !== index && (
             <CustomButton
-              title={t('showAllDetails')}
-              onPress={() => setIsShowSenderDetail(true)}
-              style={[
-                styles.receiverSenderButton,
-                isReceiverSender == index && styles.receiverSenderShift,
-              ]}
+              onPress={() => setIsReceiverSender(index)}
+              title={t('showSender')}
+              style={styles.receiverSenderButton}
               btnTxtStyle={styles.receiverSenderBtnText}
             />
-          </View>
+          )}
+
+          <CustomButton
+            title={t('showAllDetails')}
+            onPress={() => setIsShowSenderDetail(true)}
+            style={[
+              styles.receiverSenderButton,
+              isReceiverSender == index && styles.receiverSenderShift,
+            ]}
+            btnTxtStyle={styles.receiverSenderBtnText}
+          />
         </View>
-      );
-    });
+      </View>
+    );
+  }
+
+  const RenderReceivedGiftsData = () => {
+    return (
+      <FlatList
+        data={[]}
+        keyExtractor={(item, index) => index?.toString()}
+        renderItem={renderRecivedGifts}
+        ListEmptyComponent={<EmptyData />}
+      />
+    )
   };
+
 
   const ShowAllDetails = () => {
     const InfoData = ({ label, value }) => {
@@ -194,7 +293,7 @@ const GiftScreen = () => {
             label={'Have a good day'}
             style={styles.secondGiftImage}
             senderName={'Muhammad'}
-                setIsShowDetails={setIsShowDetails}
+            setIsShowDetails={setIsShowDetails}
 
           />
 
@@ -215,8 +314,8 @@ const GiftScreen = () => {
           <CustomButton
             title={t('back')}
             onPress={() => setIsShowSenderDetail(false)}
-                 style={[styles.addItemCartBtn,{width:"22%"}]}
-              btnTxtStyle={styles.smallBtnText}
+            style={[styles.addItemCartBtn, { width: "22%" }]}
+            btnTxtStyle={styles.smallBtnText}
           />
 
           <TouchableOpacity>
@@ -234,13 +333,13 @@ const GiftScreen = () => {
       <HeaderBox logo={true} />
 
 
-   
+
 
       <CustomText style={styles.giftsTitle}>{t('gifts')}</CustomText>
 
       <CustomButton
-      onPress={()=>navigation.navigate('GiftFilterScreen')}
-      title={t('sendGiftNow')} style={styles.sendGiftButton} />
+        onPress={() => navigation.navigate('GiftFilterScreen')}
+        title={t('sendGiftNow')} style={styles.sendGiftButton} />
 
       <FilterButton
         leftValue='sendGift'
@@ -249,7 +348,7 @@ const GiftScreen = () => {
         selectedFilter={selectedFilter}
       />
 
-      {selectedFilter =='sendGift' ? (
+      {selectedFilter == 'sendGift' ? (
         <RenderSendGiftsData />
       ) : isShowSenderDetail ? (
         <ShowAllDetails />
@@ -259,7 +358,7 @@ const GiftScreen = () => {
 
 
 
-          {/* { (
+      {/* { (
         <EmptyData title={t('noGift')} style={styles.emptyData} />
       )} */}
     </ScreenView>
@@ -292,7 +391,7 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     marginBottom: 12,
   },
-  giftImageMargin: { marginHorizontal: 5 },
+  giftImageMargin: { marginHorizontal: 5, marginBottom: 20 },
   rcvrOuterBox: {
     borderWidth: 1,
     paddingLeft: 15,
@@ -343,7 +442,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  backBtn: { height: I18nManager.isRTL ?  40 : 20, width: '30%' },
+  backBtn: { height: I18nManager.isRTL ? 40 : 20, width: '30%' },
   deleteHistoryText: { fontSize: 12, color: colors.red },
   productName: {
     fontSize: 13,
@@ -365,8 +464,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     position: 'absolute',
     bottom: 50,
-    left: I18nManager.isRTL? null : 20,
-    right: I18nManager.isRTL? 20 : null,
+    left: I18nManager.isRTL ? null : 20,
+    right: I18nManager.isRTL ? 20 : null,
     borderColor: colors.primary,
   },
   detailsButtonText: {

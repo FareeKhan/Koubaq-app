@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import HeaderWithAll from '../components/HeaderWithAll';
@@ -17,7 +17,7 @@ import CustomCarousel from '../components/CustomCarousel';
 import ShopsDataCard from '../components/ShopsDataCard';
 import CustomButton from '../components/CustomButton';
 import MapView from 'react-native-maps';
-import { shopsData } from '../constants/data';
+import { mainUrl, shopsData } from '../constants/data';
 import CustomText from '../components/CustomText';
 import Subtitle from '../components/Subtitle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -25,6 +25,9 @@ import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useNavigation } from '@react-navigation/native';
 import CustomInput from '../components/CustomInput';
+import { fetchRestaurentList } from '../userServices/UserService';
+import FastImage from 'react-native-fast-image';
+import ScreenLoader from '../components/ScreenLoader';
 
 const { width } = Dimensions.get('screen');
 
@@ -33,6 +36,29 @@ const HomeScreen = () => {
   const { t } = useTranslation();
   const [isListingView, setIsListingView] = useState(true);
   const [isShowOnlyList, setIsShowOnlyList] = useState(false);
+  const [allRestaurants, setAllRestaurants] = useState([]);
+  const [isLoader, setIsLoader] = useState(false);
+
+  const restaurentData = async () => {
+    setIsLoader(true)
+    try {
+      const result = await fetchRestaurentList()
+      console.log('dasdasdas',result)
+      if (result?.success) {
+        setAllRestaurants(result?.data?.data)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }finally{
+      setIsLoader(false)
+    }
+  }
+
+  useEffect(() => {
+    restaurentData()
+  }, [])
+
+
 
   const ListView = () => {
     return (
@@ -61,7 +87,8 @@ const HomeScreen = () => {
           </>
         )}
 
-        <ShopsDataCard data={[1, 2, 3, 4, 5]} />
+        <ShopsDataCard data={allRestaurants} />
+
       </View>
     );
   };
@@ -69,27 +96,29 @@ const HomeScreen = () => {
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('ShopDetail')}
+        onPress={() => navigation.navigate('ShopDetail', {
+          resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
+        })}
         style={styles.shopCardWrapper}
       >
-        <Image
-          source={item?.imgPath}
+        <FastImage
+          source={{ uri: `${mainUrl}${item?.image}` }}
           style={styles.shopImage}
-          borderTopLeftRadius={10}
-          borderTopRightRadius={10}
         />
+
 
         <View style={styles.shopInfoContainer}>
           <View style={styles.shopLogoWrapper}>
-            <Image
-              source={item?.imgPath}
+            <FastImage
+              // source={item?.imgPath}
+              source={{ uri: `${mainUrl}${item?.restaurant?.cover_image}` }}
               style={styles.shopLogo}
-              borderRadius={50}
+
             />
           </View>
 
           <CustomText style={styles.shopName}>{item?.name}</CustomText>
-          <Subtitle>{item?.address}</Subtitle>
+          <Subtitle>{item?.restaurant?.location}</Subtitle>
 
           <View style={styles.servicesRow}>
             <View style={styles.serviceItem}>
@@ -135,7 +164,8 @@ const HomeScreen = () => {
 
         <View style={styles.mapListOverlay}>
           <FlatList
-            data={shopsData}
+            // data={shopsData}
+            data={allRestaurants}
             keyExtractor={(_, index) => index?.toString()}
             renderItem={renderItem}
             contentContainerStyle={styles.horizontalList}
@@ -146,25 +176,30 @@ const HomeScreen = () => {
       </View>
     );
   };
+  if(isLoader){
+    return(
+      <ScreenLoader/>
+    )
+  }
 
   return (
     <View style={styles.container}>
 
-        <>
-          {isListingView || isListingView? (
-            <ScreenView scrollable={true}>
-              <ListView />
-            </ScreenView>
-          ) : (
-            <MapViewComp />
-          )}
+      <>
+        {isListingView || isListingView ? (
+          <ScreenView scrollable={true}>
+            <ListView />
+          </ScreenView>
+        ) : (
+          <MapViewComp />
+        )}
 
-          <CustomButton
-            onPress={() => setIsListingView(!isListingView)}
-            title={isListingView ? t('mapView') : t('listView')}
-            style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
-          />
-        </>
+        <CustomButton
+          onPress={() => setIsListingView(!isListingView)}
+          title={isListingView ? t('mapView') : t('listView')}
+          style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
+        />
+      </>
     </View>
   );
 };
@@ -174,18 +209,29 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: { flex: 1 },
 
-  searchInput: { marginTop: 40, borderColor: colors.gray5 },
+  searchInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 40,
+    borderColor: colors.gray5
+  },
+  shopCardWrapper: {
+    // gap: 3,
 
-  shopCardWrapper: { gap: 3 },
 
-  shopImage: { width: width / 2, height: 160 },
+  },
+  shopImage: {
+    width: width / 2,
+    height: 160,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10
 
+  },
   shopInfoContainer: {
     backgroundColor: colors.white,
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderTopWidth: 0,
     borderColor: colors.gray5,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
@@ -203,6 +249,9 @@ const styles = StyleSheet.create({
   shopLogo: {
     width: 35,
     height: 35,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: colors.gray5
   },
   shopName: {
     fontFamily: fonts.bold,

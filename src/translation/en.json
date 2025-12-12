@@ -142,7 +142,34 @@
     "search":"Search",
     "scheduleTime":"Schedule your time",
     "selectLanguage":"Select Language",
-    "deleteSuccessAccount":"Account Deleted successfully"
+    "deleteSuccessAccount":"Account Deleted successfully",
+    "noDataFound" :"No Product Found",
 
+    "phoneNo" :"Phone Number",
+    "EnterPhone" :"Please Enter your Phone Number",
+    "login" :"Login",
+    "noCorrect":"Phone Number is not correct",
+    "enterPhoneNo":"Please Enter Phone Number",
+
+    "pleaseEnterCode":"Please Enter OTP",
+    "otpWrong":"OTP is not correct",
+    "vehicleAdded":"Vehicle added successfully",
+    "vehicleNotAdded":"Vehicle not added. Plate number may already be taken.",
+    "vehicleDeleted":"Vehicle deleted successfully",
+        "ReceiptNo" :"Receipt Number",
+           "receiptNotFound" :"Recipient not found",
+          "balanceSend" :"Balance Send Successfully",
+    "enterReceiptNo" :"Please Enter Receipt Number",
+     "receiptNoIncorrect" :"Please Enter Correct Number",
+  "PleaseSelectBalance" :"Please Select balance or Enter manually",
+    "driverInstruction" :"Driver Instruction",
+    "pleaseSelectCar" :"Please Select the Car",
+
+        "PleaseAddContact" :"Please Add Contact",
+               "enterReceiptName" :"Please Enter Receipt Name",
+                       "invalidCode" :"Invalid Code",
+                       "EnterPromo" :"Enter Promo Code",
+                       "promoNotFound" :"Promo Code not found",
+                       "CartISEmpty" :"Cart Is Empty",
 
 }

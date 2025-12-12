@@ -6,11 +6,15 @@ import {
   Text,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Carousel from 'react-native-reanimated-carousel';
 import { useSharedValue } from 'react-native-reanimated';
 import { colors } from '../constants/colors';
+import { fetchBanners } from '../userServices/UserService';
 const { width } = Dimensions.get('screen');
+import FastImage from 'react-native-fast-image';
+import { imageUrl } from '../constants/data';
+
 
 const CustomCarousel = ({
   data,
@@ -18,16 +22,40 @@ const CustomCarousel = ({
 }) => {
   const scrollOffsetValue = useSharedValue(isRtl ? -0 : 0);
   const isRtl = I18nManager.isRTL;
-const [currentIndex,setCurrentIndex] = useState(0)
+
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [bannerArray, setBannerArray] = useState([]);
+  const [error, setError] = useState(false);
+
+
+  const bannersData = async () => {
+    try {
+      const result = await fetchBanners();
+      if (result?.success) {
+        setBannerArray(result?.data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    bannersData();
+  }, []);
+
+
   const renderSlides = ({ item, index }) => {
+    const remotePath = `${imageUrl}${item?.image}`;
+    const fallbackImage = require('../assets/image1.png');
     return (
       <View style={styles.slideContainer}>
-        <ImageBackground
+        <FastImage
           style={styles.imgBg}
-          source={require('../assets/image1.png')}
           borderRadius={10}
-          resizeMode="cover"
-        ></ImageBackground>
+          source={error ? fallbackImage : { uri: remotePath, priority: FastImage.priority.normal }}
+          resizeMode={FastImage.resizeMode.cover}
+          onError={() => setError(true)}
+        />
       </View>
     );
   };
@@ -42,7 +70,7 @@ const [currentIndex,setCurrentIndex] = useState(0)
         snapEnabled={true}
         pagingEnabled={true}
         autoPlayInterval={2000}
-        data={[1, 2, 3]}
+        data={bannerArray}
         style={{ width: width }}
         defaultScrollOffsetValue={scrollOffsetValue}
         autoPlay={autoPlay}
@@ -57,7 +85,7 @@ const [currentIndex,setCurrentIndex] = useState(0)
         onSnapToItem={index => setCurrentIndex(index)}
       />
       <View style={styles.dotsBox}>
-        {[1, 2, 3]?.map((item, index) => (
+        {bannerArray?.map((item, index) => (
           <View
             key={index}
             style={[

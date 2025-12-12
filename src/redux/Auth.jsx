@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     isLanguage:"en",
-    // isLanguage:"en",
     loginData:{},
 }
 

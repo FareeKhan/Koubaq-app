@@ -6,44 +6,44 @@ import { birthdayWishes } from '../constants/data';
 import { fonts } from '../constants/fonts';
 import CustomText from './CustomText';
 
-const SuggestedMsgsModal = ({setModalVisible,modalVisible,setSelectedMsg}) => {
+const SuggestedMsgsModal = ({ setModalVisible, modalVisible, setSelectedMsg, data }) => {
 
-    const handleButton = (item)=>{
-         setSelectedMsg(item?.message)
-         setModalVisible(false)
-    }
+  const handleButton = (item) => {
+    setSelectedMsg(item?.message)
+    setModalVisible(false)
+  }
 
   return (
     <View>
-   <CustomModal
-          setModalVisible={setModalVisible}
-          modalVisible={modalVisible}
-          textStyle={{
-            textAlign: 'center',
-            fontSize: 17,
-            color: colors.primary,
-            fontFamily: fonts.bold,
-          }}
-          title={'Suggested Message'}
-        >
-          {birthdayWishes?.map((item, index) => {
-            return (
-              <TouchableOpacity
-                onPress={() => handleButton(item)}
-                key={index}
-                style={[
-                  styles.suggestionItem,
-                  birthdayWishes?.length - 1 == index &&
-                    styles.lastSuggestionItem,
-                ]}
-              >
-                <CustomText style={styles.suggestionText}>
-                  {item?.message}
-                </CustomText>
-              </TouchableOpacity>
-            );
-          })}
-        </CustomModal>
+      <CustomModal
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+        textStyle={{
+          textAlign: 'center',
+          fontSize: 17,
+          color: colors.primary,
+          fontFamily: fonts.bold,
+        }}
+        title={'Suggested Message'}
+      >
+        {data?.map((item, index) => {
+          return (
+            <TouchableOpacity
+              onPress={() => handleButton(item)}
+              key={index}
+              style={[
+                styles.suggestionItem,
+                data?.length - 1 == index &&
+                styles.lastSuggestionItem,
+              ]}
+            >
+              <CustomText style={styles.suggestionText}>
+                {item?.message}
+              </CustomText>
+            </TouchableOpacity>
+          );
+        })}
+      </CustomModal>
     </View>
   )
 }
@@ -51,7 +51,7 @@ const SuggestedMsgsModal = ({setModalVisible,modalVisible,setSelectedMsg}) => {
 export default SuggestedMsgsModal
 
 const styles = StyleSheet.create({
-      suggestionItem: {
+  suggestionItem: {
     borderWidth: 1,
     paddingVertical: 10,
     paddingHorizontal: 15,

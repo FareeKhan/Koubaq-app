@@ -10,47 +10,47 @@ import { fonts } from '../constants/fonts';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HeaderWithAll from '../components/HeaderWithAll';
-import { paymentCards } from '../constants/data';
+import { mainUrl, paymentCards } from '../constants/data';
 import KeyValue from '../components/KeyValue';
 import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import CustomModal from '../components/CustomModal';
 import AddedCarData from '../components/AddedCarData';
+import { useDispatch, useSelector } from 'react-redux';
+import RemoteImage from '../components/RemoteImage';
+import AddBrandedCar from '../components/AddBrandedCar';
+import { makeGiftOrder, makeOrder } from '../userServices/UserService';
+import { clearCart } from '../redux/ProductAddToCart';
+import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
+import { showMessage } from 'react-native-flash-message';
 
-const CheckoutScreen = ({ isHeader = true }) => {
+const CheckoutScreen = ({ isHeader = true, route }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const cartData = useSelector((state) => state?.cart?.cartProducts)
+  const token = useSelector((state) => state?.auth?.loginData?.token)
+  const userData = useSelector((state) => state?.auth?.loginData)
+  const giftCartData = useSelector((state) => state?.giftInfo?.giftProduct)
+
+  const restaurentData = cartData[0]?.restData
+  console.log('tokentokencartData', cartData)
+
+  const resID = useSelector((state) => state?.cart?.restaurentID)
+  const { driverNote, subTotal } = route?.params || ''
+
   const navigation = useNavigation();
   const [selectedPayment, setSelectedPayment] = useState(3);
   const [isScheduleModal, setIsScheduleModal] = useState(false);
   const [scheduleTimeArray, setScheduleTimeArray] = useState([]);
   const [selectedTime, setSelectedTime] = useState('');
+  const [selectedCarId, setSelectedCarId] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [isOrderLoader, setIsOrderLoader] = useState(false);
 
   const paymentData = paymentCards(t);
 
-  const TopImageAddress = () => {
-    return (
-      <View style={styles.topImageAddressContainer}>
-        <View style={styles.topImageAddressHeader}>
-          <CustomText>
-            {t('from')} <CustomText style={styles.fromText}>Pakero</CustomText>
-          </CustomText>
-          <TouchableOpacity>
-            <Subtitle style={styles.detailsText}>{t('details')}</Subtitle>
-          </TouchableOpacity>
-        </View>
-        <Subtitle style={styles.addressSubtitle}>
-          Al Rigga, Green corner , 703, 7
-        </Subtitle>
-        <View style={styles.mobileRow}>
-          <Subtitle>{t('mobileNumber')}: +971123123123</Subtitle>
-          <View style={styles.ratingRow}>
-            <Entypo name={'star'} size={15} color={colors.black} />
-            <Subtitle>4.6+ {t('rating')}</Subtitle>
-          </View>
-        </View>
-      </View>
-    );
-  };
+  // const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0)
+  const finalPrice = subTotal || giftCartData?.price
 
   const PickUpTimeBox = () => {
     return (
@@ -79,6 +79,78 @@ const CheckoutScreen = ({ isHeader = true }) => {
   useEffect(() => {
     getFutureTimeSlots();
   }, []);
+
+
+  useEffect(() => {
+    if (finalPrice > 0) {
+      initializePaymentSheet(finalPrice || giftCartData?.price, setLoading);
+    }
+  }, [finalPrice]);
+
+
+  const handleCheckOutBtn = () => {
+    if (isHeader) {
+      if (selectedCarId == '') {
+        showMessage({
+          type: "danger",
+          message: t("pleaseSelectCar")
+        })
+        return
+      }
+    }
+
+    if (selectedPayment == 2 || selectedPayment == 1) {
+      openPaymentSheet(processOrder)
+    } else {
+      if (isHeader) {
+        processOrder()
+      } else {
+        processGiftOrder()
+      }
+    }
+  }
+
+  const processOrder = async () => {
+    setIsOrderLoader(true)
+    const payMethod = selectedPayment == 1 ? "apple_pay" : selectedPayment == 2 ? 'card' : 'wallet'
+    try {
+      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod)
+      if (response?.success) {
+        navigation.navigate('SuccessfulScreen')
+        dispatch(clearCart())
+      }
+      console.log('response', response)
+    } catch (error) {
+      console.log('error', error)
+      showMessage({
+        type: "danger",
+        message: error?.errors
+      })
+    } finally {
+      setIsOrderLoader(false)
+    }
+  }
+
+  const processGiftOrder = async () => {
+    setIsOrderLoader(true)
+    try {
+      const response = await makeGiftOrder(giftCartData, token)
+      console.log('responsare', response)
+      if (response?.success) {
+        navigation.navigate('SuccessfulScreen')
+        dispatch(clearCart())
+      }
+      console.log('response', response)
+    } catch (error) {
+      console.log('dasdasdeee333', error)
+      showMessage({
+        type: "danger",
+        message: error?.errors
+      })
+    } finally {
+      setIsOrderLoader(false)
+    }
+  }
 
   const getFutureTimeSlots = () => {
     const startHour = 8;
@@ -117,18 +189,41 @@ const CheckoutScreen = ({ isHeader = true }) => {
             search={false}
             title={t('checkout')}
           />
-          <Image
-            source={require('../assets/shop.png')}
+          <RemoteImage
+            uri={`${mainUrl}${restaurentData?.cover_image}`}
             style={styles.shopImage}
           />
-          <TopImageAddress />
+          <View style={styles.topImageAddressContainer}>
+            <View style={styles.topImageAddressHeader}>
+              <CustomText>
+                {t('from')} <CustomText style={styles.fromText}>{restaurentData?.name}</CustomText>
+              </CustomText>
+              <TouchableOpacity>
+                <Subtitle style={styles.detailsText}>{t('details')}</Subtitle>
+              </TouchableOpacity>
+            </View>
+            <Subtitle style={styles.addressSubtitle}>
+              {restaurentData?.location}
+            </Subtitle>
+            <View style={styles.mobileRow}>
+              <Subtitle>{t('mobileNumber')}:   {restaurentData?.phone_number}</Subtitle>
+              <View style={styles.ratingRow}>
+                <Entypo name={'star'} size={15} color={colors.black} />
+                <Subtitle> 4.6+ {t('rating')}</Subtitle>
+              </View>
+            </View>
+          </View>
           <PickUpTimeBox />
         </>
       )}
 
+      {
+        isHeader &&
+        <AddBrandedCar setSelectedCarId={setSelectedCarId} selectedCarId={selectedCarId} />
+      }
 
-      <AddedCarData 
-      isBorder={true}
+      <AddedCarData
+        isBorder={true}
       />
 
       <HeaderWithAll title={t('payWith')} />
@@ -162,19 +257,18 @@ const CheckoutScreen = ({ isHeader = true }) => {
       </View>
 
       <HeaderWithAll title={t('paymentSummary')} />
-      <KeyValue leftValue={t('Subtotal')} rightValue={'66.00'} />
+      <KeyValue leftValue={t('Subtotal')} rightValue={finalPrice} />
       <KeyValue
         leftValue={t('ServiceFee')}
-        rightValue={'66.00'}
+        rightValue={'Free'}
         style={{ marginTop: -5 }}
       />
       <KeyValue
         boldData={true}
         leftValue={t('TotalAmount')}
-        rightValue={'66.00'}
+        rightValue={finalPrice}
         style={{ marginTop: 10 }}
       />
-0
       <TouchableOpacity style={styles.readFeesBtn}>
         <CustomText style={styles.readFeesText}>{t('readFees')}</CustomText>
       </TouchableOpacity>
@@ -184,7 +278,8 @@ const CheckoutScreen = ({ isHeader = true }) => {
         title={isAppleSelected ? t('Pay') : t('payment')}
         btnTxtStyle={[{ fontSize: 16 }, isAppleSelected && { marginLeft: 3 }]}
         style={isAppleSelected && { backgroundColor: colors.black }}
-        onPress={() => navigation.navigate('SuccessfulScreen')}
+        // onPress={() => navigation.navigate('SuccessfulScreen')}
+        onPress={() => handleCheckOutBtn()}
       />
 
       <CustomModal
@@ -231,7 +326,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 10,
-    borderColor: colors.gray,
+    borderColor: colors.gray5,
   },
   topImageAddressHeader: {
     flexDirection: 'row',

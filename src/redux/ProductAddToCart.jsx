@@ -1,39 +1,38 @@
 
 
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 
 export const productAddToCart = createSlice({
     name: 'productInCart',
     initialState: {
         cartProducts: [],
         totalPrice: '',
-        isPromo: false
+        subTotalPrice: null,
+        isPromo: false,
+        restaurentID: null,
+        vehicleID: null
     },
     reducers: {
         addProductToCart: (state, action) => {
+            console.log('000dasdas123', (action.payload));
 
-            const { productName, price, size,odo_id, counter,Variants,Variants_stock, id, image, subText,productWeight } = action.payload;
-            const newProductAddedToCart = { productName, odo_id,price, size, Variants_stock,Variants,counter, id, image, subText ,productWeight}
-
-            const existId = state.cartProducts?.find((item) => item?.id == id)
+            const existId = state.cartProducts?.find((item) => item?.id == action.payload?.id)
             if (!existId) {
-                state.cartProducts.push(newProductAddedToCart)
+                state.cartProducts.push(action.payload)
             } else {
-                existId.counter = counter
-                existId.size = size
-                existId.image = image
-                existId.Variants = Variants
-                existId.Variants_stock = Variants_stock
-                // existId.price = price * counter
-
+                existId.counter = action.payload?.counter
+                existId.image = action.payload?.image
             }
 
-            const finalPrice = state.cartProducts.reduce((total, item) => {
-                return total + item.counter * parseFloat(item.price);
-            }, 0)
-                .toFixed(2);
+            state.restaurentID = action.payload?.restaurantId
 
+            const finalPrice = state.cartProducts?.reduce((sum, item) => sum + (item?.total || 0))
             state.totalPrice = finalPrice
+
+            state.subTotalPrice = finalPrice
+
+
+            console.log('000dasdas', current(state.cartProducts));
         },
         incrementCounter: (state, action) => {
             const product = state.cartProducts.find((item) => item.id === action.payload);
@@ -48,9 +47,12 @@ export const productAddToCart = createSlice({
         },
         decrementCounter: (state, action) => {
             const product = state.cartProducts.find((item) => item.id === action.payload);
-            if (product && product.counter > 1) {
+            if (product.counter == 1) {
+                state.cartProducts = state.cartProducts?.filter((item) => item?.id != product?.id)
+            } else {
                 product.counter -= 1;
             }
+
 
             const finalPrice = state.cartProducts.reduce((total, item) => {
                 return total + item.counter * parseFloat(item.price);

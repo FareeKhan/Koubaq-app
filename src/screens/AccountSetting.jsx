@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import CustomText from '../components/CustomText';
 import Subtitle from '../components/Subtitle';
@@ -24,22 +24,26 @@ import { useTranslation } from 'react-i18next';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
 import CustomModal from '../components/CustomModal';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { language } from '../redux/Auth';
+import { language, logout } from '../redux/Auth';
 import RNRestart from 'react-native-restart';
 import { carLogoJson } from '../constants/carData';
 import { carImages } from '../constants/ExportCarsLogo';
 import { deleteCar, removeStoreCarData, storeCarData } from '../redux/storeAddedCar';
 import AddedCarData from '../components/AddedCarData';
 import { showMessage } from 'react-native-flash-message';
+import { addVehicle, fetchVehicles } from '../userServices/UserService';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import AddBrandedCar from '../components/AddBrandedCar';
 
 const { height, width } = Dimensions.get('screen');
 
 const AccountSetting = () => {
   const isLanguage = useSelector(state => state.auth?.isLanguage);
-    const carData = useSelector(state => state.carArray?.saveCar);
-  
+  const token = useSelector((state) => state?.auth?.loginData?.token)
+  const userData = useSelector((state) => state?.auth?.loginData)
+
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -49,6 +53,62 @@ const AccountSetting = () => {
   const [selectedCar, setSelectedCar] = useState('');
   const [plateNo, setPlateNo] = useState('');
   const [searchCar, setSearchCar] = useState('');
+  const [carData, setCarData] = useState([]);
+  const [selectedCarId, setSelectedCarId] = useState('')
+
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     loadAddedVechicle();
+  //   }, [])
+  // );
+
+
+  const handleAddCar = async () => {
+    const data = {
+      carCategory,
+      carName: selectedCar?.name,
+      plateNo,
+    };
+    try {
+      const response = await addVehicle(data, token)
+      console.log('Show me Veichle Response', response)
+      if (response?.success) {
+        showMessage({
+          type: "success",
+          message: t('vehicleAdded')
+        })
+
+        setCarCategory('')
+        setPlateNo('')
+        setSelectedCar('')
+        setIsAddNewCar(false);
+        loadAddedVechicle()
+      } else {
+        showMessage({
+          type: "danger",
+          message: t('vehicleNotAdded')
+        })
+      }
+      dispatch(storeCarData(data));
+    } catch (error) {
+      console.log('Vehicle Error', error)
+
+    }
+  }
+
+
+  // const loadAddedVechicle = useCallback(async () => {
+  //   try {
+  //     const response = await fetchVehicles(token);
+  //     if (response?.success) {
+  //       setCarData(response.data);
+  //     }
+  //   } catch (error) {
+  //     console.log('Vehicle Error', error);
+  //   }
+  // }, []); // no dependencies because token is constant
+
+
 
   const IconMenu = ({ onpress, icon, label, red }) => {
     return (
@@ -64,7 +124,6 @@ const AccountSetting = () => {
     setIsCarModal(false);
   };
 
-
   const handleTranslation = () => {
     const isSelectedLanguage = isLanguage == 'en' ? 'ar' : 'en';
     dispatch(language({ isSelectedLanguage }));
@@ -77,39 +136,24 @@ const AccountSetting = () => {
     }, 1500);
   };
 
-  const handleAddCar = () => {
-    const data = {
-      id: carData?.length + 1,
-      carCategory,
-      carName: selectedCar?.name,
-      plateNo,
-    };
-
-    
-    dispatch(storeCarData(data));
-    setCarCategory('')
-    setPlateNo('')
-    setSelectedCar('')
-    setIsAddNewCar(false);
-
-  };
-
-
   const filterSearch = searchCar
     ? carLogoJson?.filter(item =>
-        item?.name?.toLowerCase()?.includes(searchCar.toLowerCase()),
-      )
+      item?.name?.toLowerCase()?.includes(searchCar.toLowerCase()),
+    )
     : carLogoJson;
 
 
-
-    const handleDelete = ()=>{
+  const handleLogout = (text) => {
+    if (text == 'delete') {
       showMessage({
-        type:"success",
-        message:t('deleteSuccessAccount')
+        type: "success",
+        message: t('deleteSuccessAccount')
       })
-      navigation.navigate('LoginScreen')
+
     }
+    dispatch(logout())
+    navigation.replace('LoginScreen')
+  }
 
   return (
     <ScreenView scrollable={true} mh={true}>
@@ -117,16 +161,14 @@ const AccountSetting = () => {
       <View style={styles.headerRow}>
         <View style={styles.headerProfile}>
           <View style={styles.profileIcon}>
-            <CustomText style={styles.profileInitial}>H</CustomText>
+            <FontAwesome name={'user-o'} size={20} color={colors.black} />
           </View>
           <View>
-            <CustomText>Hamid</CustomText>
-            <Subtitle style={styles.subtitleSmall}>+966 50224467</Subtitle>
-            <Subtitle style={styles.subtitleSmall2}>Hamid@gmail.com</Subtitle>
+            <Subtitle style={styles.subtitleSmall}>{userData?.phoneNo}</Subtitle>
           </View>
         </View>
 
-        <TouchableOpacity     onPress={() => setIsAddNewCar(!isAddNewCar)}>
+        {/* <TouchableOpacity onPress={() => setIsAddNewCar(!isAddNewCar)}>
           <Ionicons name={'car-sport-outline'} size={25} color={colors.black} />
           <Entypo
             name={'plus'}
@@ -134,211 +176,16 @@ const AccountSetting = () => {
             color={colors.black}
             style={styles.plusIcon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <DividerLine h={true} borderStyle={styles.dividerHeight7} />
 
-      {/* Your Cars */}
-      <View style={styles.carsHeader}>
-        <Ionicons name={'car-sport-outline'} size={25} color={colors.black} />
-        <CustomText>{t('yourCars')}</CustomText>
-      </View>
-
-      {/* {isAddNewCar ? (
-        <View style={styles.addCarContainer}>
-          <View style={styles.addCarRow}>
-            <CustomText style={styles.vehicleBrand}>
-              {t('vehicleBrand')}
-            </CustomText>
-            <TouchableOpacity
-              onPress={() => setIsCarModal(true)}
-              style={styles.selectCarBtn}
-            >
-              <CustomText style={styles.selectCarText}>
-                {selectedCar ? selectedCar?.name : t('selectCar')}
-              </CustomText>
-              <Feather
-                name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
-                size={20}
-                color={colors.gray}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputRow}>
-            <TextInput
-              placeholder={t('category')}
-              placeholderTextColor={colors.gray}
-              style={styles.inputField}
-              numberOfLines={1}
-              maxLength={10}
-              value={carCategory}
-              onChangeText={setCarCategory}
-            />
-            <TextInput
-              placeholder={t('plateNo')}
-              placeholderTextColor={colors.gray}
-              style={styles.inputField}
-              numberOfLines={1}
-              maxLength={10}
-              value={plateNo}
-              onChangeText={setPlateNo}
-            />
-          </View>
-
-          <CustomButton
-            title={t('save')}
-            style={styles.addBtn}
-            btnTxtStyle={styles.addBtnTxt}
-            onPress={handleAddCar}
-          />
-        </View>
-      ) : carCategory && plateNo && selectedCar ? (
-        <FlatList
-          data={carData}
-          keyExtractor={(item, index) => index?.toString()}
-          horizontal
-          style={{ flex: 1 }}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item, index }) => {
-            return (
-              <View style={{width:width}}>
-              <View style={styles.carDetailsRow}>
-                <Image
-                  resizeMode="contain"
-                  source={carImages[item?.carName]}
-                  style={styles.carImage}
-                />
-
-                <View style={styles.carInfoContainer}>
-                  <CustomText style={styles.carCategory}>
-                    {carCategory}
-                  </CustomText>
-                  <CustomText style={styles.plateNo}>{plateNo}</CustomText>
-                </View>
-
-                <View style={styles.deleteIconContainer}>
-                  <TouchableOpacity onPress={handleDelete}>
-                    <Ionicons
-                      name={'trash-outline'}
-                      size={15}
-                      color={colors.gray}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              </View>
-            );
-          }}
-        />
-      ) : (
-        <View style={styles.noCarsContainer}>
-          <CustomText style={styles.noCarsText}>{t('noCars')}</CustomText>
-
-          <CustomButton
-            title={t('addNewCar')}
-            style={styles.addNewCarBtn}
-            btnTxtStyle={styles.addNewCarTxt}
-            onPress={() => setIsAddNewCar(true)}
-          />
-        </View>
-      )} */}
-
-      {isAddNewCar && (
-        <View style={styles.addCarContainer}>
-          <View style={styles.addCarRow}>
-            <CustomText style={styles.vehicleBrand}>
-              {t('vehicleBrand')}
-            </CustomText>
-            <TouchableOpacity
-              onPress={() => setIsCarModal(true)}
-              style={styles.selectCarBtn}
-            >
-              <CustomText style={styles.selectCarText}>
-                {selectedCar ? selectedCar?.name : t('selectCar')}
-              </CustomText>
-              <Feather
-                name={I18nManager.isRTL ? 'chevron-left' : 'chevron-right'}
-                size={20}
-                color={colors.gray}
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.inputRow}>
-            <TextInput
-              placeholder={t('category')}
-              placeholderTextColor={colors.gray}
-              style={styles.inputField}
-              numberOfLines={1}
-              maxLength={10}
-              value={carCategory}
-              onChangeText={setCarCategory}
-            />
-            <TextInput
-              placeholder={t('plateNo')}
-              placeholderTextColor={colors.gray}
-              style={styles.inputField}
-              numberOfLines={1}
-              maxLength={10}
-              value={plateNo}
-              onChangeText={setPlateNo}
-            />
-          </View>
-
-          <CustomButton
-            title={t('save')}
-            style={styles.addBtn}
-            btnTxtStyle={styles.addBtnTxt}
-            onPress={handleAddCar}
-          />
-        </View>
-      )
-     }
-
-      {/* :
-        <View style={styles.noCarsContainer}>
-          <CustomText style={styles.noCarsText}>{t('noCars')}</CustomText>
-
-          <CustomButton
-            title={t('addNewCar')}
-            style={styles.addNewCarBtn}
-            btnTxtStyle={styles.addNewCarTxt}
-            onPress={() => setIsAddNewCar(true)}
-          />
-        </View> */}
-
-
-
-{/* Lets do Testing */}
-{
-  carData?.length > 0 ?
-   <View style={{paddingHorizontal:20}}>
-        <AddedCarData />
-   </View>
-
-  :
-
-       !isAddNewCar &&
-         <View style={styles.noCarsContainer}>
-          <CustomText style={styles.noCarsText}>{t('noCars')}</CustomText>
-
-          <CustomButton
-            title={t('addNewCar')}
-            style={styles.addNewCarBtn}
-            btnTxtStyle={styles.addNewCarTxt}
-            onPress={() => setIsAddNewCar(true)}
-          />
-        </View>
-}
-
-
-
-
-
-
+      <AddBrandedCar
+        style={{ paddingHorizontal: 20, paddingTop: 10 }}
+        setSelectedCarId={setSelectedCarId}
+        selectedCarId={selectedCarId}
+      />
 
       <DividerLine
         h={true}
@@ -396,17 +243,17 @@ const AccountSetting = () => {
         label={'logout'}
         icon={<AntDesign name={'logout'} size={22} color={colors.red} />}
         red={true}
-        onpress={() => navigation.navigate('LoginScreen')}
+        onpress={() => handleLogout()}
       />
 
-      <TouchableOpacity   onPress={() => handleDelete()} style={styles.deleteAccountBtn}>
+      <TouchableOpacity onPress={() => handleLogout('delete')} style={styles.deleteAccountBtn}>
         <CustomText style={styles.deleteAccountTxt}>
           {t('deleteAccount')}
         </CustomText>
       </TouchableOpacity>
 
       {/* Car Selection Modal */}
-      <CustomModal
+      {/* <CustomModal
         modalVisible={isCarModal}
         setModalVisible={setIsCarModal}
         title={'Select vehicle brand'}
@@ -445,7 +292,7 @@ const AccountSetting = () => {
             );
           }}
         />
-      </CustomModal>
+      </CustomModal> */}
 
 
 

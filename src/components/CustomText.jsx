@@ -5,7 +5,7 @@ import { colors } from '../constants/colors'
 
 const CustomText = ({style,children,...props}) => {
   return (
-      <Text style={[styles.txtStyle,style]}  {...props}>{children}</Text>
+      <Text style={[styles.txtStyle,style]}   {...props}>{children}</Text>
   )
 }
 

@@ -33,7 +33,7 @@ const KeyValue = ({ leftValue, rightValue, changeColor, boldData,style }) => {
           changeColor && styles.greenValue,
         ]}
       >
-        {currency} {rightValue}
+        {rightValue > 0 &&currency} {rightValue}
       </Text>
     </View>
   );

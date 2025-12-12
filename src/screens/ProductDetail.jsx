@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,7 +18,7 @@ import CustomText from '../components/CustomText';
 import { fonts } from '../constants/fonts';
 import Feather from 'react-native-vector-icons/Feather';
 import Subtitle from '../components/Subtitle';
-import { birthdayWishes, currency, extraData } from '../constants/data';
+import { birthdayWishes, currency, extraData, mainUrl } from '../constants/data';
 import DividerLine from '../components/DividerLine';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
@@ -26,26 +26,121 @@ import IncrementDecrement from '../components/IncrementDecrement';
 import ProductDataCard from '../components/ProductDataCard';
 import SuggestedMsgsModal from '../components/SuggestedMsgsModal';
 import { useNavigation } from '@react-navigation/native';
+import { fetchProductDetails, fetchSuggestedMsgs } from '../userServices/UserService';
+import { addProductToCart } from '../redux/ProductAddToCart';
+import { useDispatch } from 'react-redux';
+import { addGiftProductToCart } from '../redux/GiftData';
 
 const ProductDetail = ({ route }) => {
   const { t } = useTranslation();
-  const { isGifterPage } = route?.params || '';
+  const dispatch = useDispatch()
+  const { isGifterPage, id, restaurant_id } = route?.params || '';
+  console.log('isGifterPageisGifterPage123',isGifterPage)
 
   const navigation = useNavigation();
 
   const [counter, setCounter] = useState(1);
-  const [data, setData] = useState([]);
+  const [selectedExtras, setSelectedExtras] = useState([]);
+
   const [selectedFilter, setSelectedFilter] = useState('customizeItem');
   const [modalVisible, setModalVisible] = useState(false);
   const [rcvrNameOnSticker, setRcvrNameOnSticker] = useState('');
   const [msgForReceiver, setMsgForReceiver] = useState('');
 
-  const onPressCheckBox = item => {
-    if (data?.includes(item?.id)) {
-      setData(innerData => innerData.filter(inner => inner !== item?.id));
-    } else {
-      setData(innerData => [...innerData, item?.id]);
+  const [suggestedMessages, setSuggestedMessages] = useState([]);
+  const [productData, setProductData] = useState([]);
+  const [isLoader, setIsLoader] = useState(true);
+  const [addNote, setAddNote] = useState('');
+
+
+  useEffect(() => {
+    loadProductData()
+    loadSuggestedMsgs()
+  }, [])
+
+  const loadProductData = async () => {
+    setIsLoader(true)
+    try {
+      const result = await fetchProductDetails(id)
+      if (result?.success) {
+        setProductData(result?.data)
+      }
+    } catch (ee) {
+      console.log('ee', ee)
+    } finally {
+      setIsLoader(false)
     }
+  }
+
+
+  const loadSuggestedMsgs = async () => {
+    try {
+      const result = await fetchSuggestedMsgs(restaurant_id)
+      if (result?.success) {
+        setSuggestedMessages(result?.data)
+      }
+    } catch (ee) {
+      console.log('ee', ee)
+    }
+  }
+
+
+
+
+
+
+  const addToCart = () => {
+    const quantity = Number(counter)
+    const price = Number(productData?.price)
+    const data = {
+      id: productData?.id,
+      title: productData?.name,
+      description: productData?.description,
+      counter: quantity,
+      price: price,
+      image: `${mainUrl}${productData?.image}`,
+      extraItem: selectedExtras,
+      productNotes: addNote,
+      nameOnSticker: rcvrNameOnSticker,
+      msgForReceiver: msgForReceiver,
+      restaurantId: productData?.restaurant_id,
+      categoryId: productData?.category_id,
+      restData: productData?.restaurant,
+    }
+    dispatch(addProductToCart(data))
+    navigation.navigate('BasketScreen')
+  }
+
+
+
+    const giftFun = () => {
+    const quantity = Number(counter)
+    const price = Number(productData?.price)
+    const data = {
+      id: productData?.id,
+      title: productData?.name,
+      description: productData?.description,
+      counter: quantity,
+      price: price,
+      image: `${mainUrl}${productData?.image}`,
+      extraItem: selectedExtras,
+      productNotes: addNote,
+      nameOnSticker: rcvrNameOnSticker,
+      msgForReceiver: msgForReceiver,
+      restaurantId: productData?.restaurant_id,
+      categoryId: productData?.category_id,
+    }
+    dispatch(addGiftProductToCart(data))
+
+    navigation.navigate('GiftFilterScreen', {
+      thirdStepContinue: [1, 2],
+    })
+  }
+
+
+
+  const onPressCheckBox = item => {
+    setSelectedExtras((prev) => prev?.includes(item) ? prev?.filter((i) => i != item) : [...prev, item])
   };
 
   const incrementCounter = () => setCounter(counter + 1);
@@ -54,13 +149,13 @@ const ProductDetail = ({ route }) => {
   };
 
   const ExtraDataItems = () => {
-    return extraData?.map((item, index) => (
+    return productData?.product_extras?.map((item, index) => (
       <TouchableOpacity
         key={index}
         style={styles.extraItem}
         onPress={() => onPressCheckBox(item)}
       >
-        <CustomText>{item?.name}</CustomText>
+        <CustomText>{item}</CustomText>
         <View
           style={[
             {
@@ -69,20 +164,21 @@ const ProductDetail = ({ route }) => {
               borderWidth: 1,
               borderColor: colors.black,
             },
-            data?.includes(item?.id) && { backgroundColor: colors.primary },
+            selectedExtras?.includes(item) && { backgroundColor: colors.primary },
           ]}
         >
-          {data?.includes(item?.id) && (
+          {selectedExtras?.includes(item) && (
             <Feather name={'check'} color={colors.white} size={13} />
           )}
         </View>
       </TouchableOpacity>
     ));
   };
-  const handleRandomlySelectMsg = ()=>{
-    const selectIndex = Math.floor(Math.random() * birthdayWishes?.length)
-    setMsgForReceiver(birthdayWishes[selectIndex]?.message)
-  }
+  const handleRandomlySelectMsg = () => {
+    const selectIndex = Math.floor(Math.random() * suggestedMessages?.messages?.length);
+    setMsgForReceiver(suggestedMessages?.messages[selectIndex]?.message);
+  };
+
 
   return (
     <View style={styles.container}>
@@ -90,13 +186,16 @@ const ProductDetail = ({ route }) => {
         {/* Image Section */}
         <ImageBackground
           style={styles.productImage}
-          source={require('../assets/productImage.png')}
+          // source={require('../assets/productImage.png')}
+          source={{ uri: `${mainUrl}${productData?.image}` }}
         >
           <HeaderBox
             style={styles.headerBox}
             search={false}
             notification={false}
             heart={true}
+            productData={productData}
+
           />
 
           <TouchableOpacity style={styles.shareButton}>
@@ -120,21 +219,29 @@ const ProductDetail = ({ route }) => {
           {selectedFilter === 'customizeItem' ? (
             <View>
               <HeaderWithAll
-                title={t('Espresso single shot Ethiopian beans - Hot')}
+                title={productData?.name}
                 style={styles.headerTitle}
               />
 
               <View style={styles.priceRow}>
                 <CustomText style={styles.aedText}>
                   {currency}{' '}
-                  <CustomText style={styles.priceText}>31</CustomText>
+                  <CustomText style={styles.priceText}>{productData?.price}</CustomText>
                 </CustomText>
+                {/* 
+                <IncrementDecrement
+                  pCounter={counter}
+                  setCounter={setCounter}
+                  onpressPlus={incrementCounter}
+                  onpressMinu={decrementCounter}
+                /> */}
 
                 <IncrementDecrement
                   pCounter={counter}
                   setCounter={setCounter}
                   onpressPlus={incrementCounter}
                   onpressMinu={decrementCounter}
+                  firstBox={true}
                 />
               </View>
 
@@ -142,7 +249,7 @@ const ProductDetail = ({ route }) => {
                 {t('Descitpion')}
               </CustomText>
               <CustomText style={styles.descriptionText}>
-                Espresso single shot ethiopian beans Espresso single shot
+                {productData?.description}
               </CustomText>
 
               <View style={styles.extrasHeader}>
@@ -177,9 +284,10 @@ const ProductDetail = ({ route }) => {
                     multiline
                     placeholderTextColor={colors.gray1}
                     style={styles.noteInput}
-                    value={rcvrNameOnSticker}
-                    onChangeText={setRcvrNameOnSticker}
+                    value={addNote}
+                    onChangeText={setAddNote}
                   />
+
                 </View>
               )}
             </View>
@@ -203,7 +311,7 @@ const ProductDetail = ({ route }) => {
                     }}
                   >
                     <CustomText numberOfLines={1} style={{ fontSize: 10 }}>
-                      Parkero Shop
+                      {productData?.restaurant?.name} Shop
                     </CustomText>
                     <CustomText
                       numberOfLines={2}
@@ -226,7 +334,7 @@ const ProductDetail = ({ route }) => {
                       numberOfLines={1}
                       style={{ marginVertical: 10, fontSize: 10 }}
                     >
-                      Espresso single shot
+                      {productData?.name}
                     </CustomText>
 
                     <CustomText style={{ fontSize: 8 }}>
@@ -293,33 +401,41 @@ const ProductDetail = ({ route }) => {
                 setModalVisible={setModalVisible}
                 modalVisible={modalVisible}
                 setSelectedMsg={setMsgForReceiver}
+                data={suggestedMessages?.messages}
               />
             </View>
           )}
 
           {/* */}
 
-          {isGifterPage && (
+          {/* {isGifterPage && (
             <View style={{ marginTop: 15 }}>
               <HeaderWithAll title={t('relatedProduct')} />
 
               <ProductDataCard data={[1, 2, 3, 4, 5, 6]} />
             </View>
-          )}
+          )} */}
         </View>
       </ScreenView>
 
       <View style={styles.buttonContainer}>
         <CustomButton
-          totalPrice={'31.00'}
+          totalPrice={(productData?.price * counter)?.toFixed(2)}
           title={isGifterPage ? 'continueRcvr' : 'AddToCart'}
           counter={counter}
+          // onPress={() => {
+          //   isGifterPage
+          //     ? navigation.navigate('GiftFilterScreen', {
+          //       thirdStepContinue: [1, 2],
+          //     })
+          //     : navigation.navigate('BasketScreen');
+          // }}
+
+
           onPress={() => {
             isGifterPage
-              ? navigation.navigate('GiftFilterScreen', {
-                  thirdStepContinue: [1, 2],
-                })
-              : navigation.navigate('BasketScreen');
+              ? giftFun()
+              : addToCart();
           }}
         />
       </View>

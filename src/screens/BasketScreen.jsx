@@ -1,19 +1,15 @@
 import {
-  FlatList,
   I18nManager,
-  Image,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import { useTranslation } from 'react-i18next';
 import CustomText from '../components/CustomText';
-import { currency } from '../constants/data';
-import IncrementDecrement from '../components/IncrementDecrement';
 import DividerLine from '../components/DividerLine';
 import MessageBox from '../components/MessageBox';
 import HeaderWithAll from '../components/HeaderWithAll';
@@ -25,10 +21,69 @@ import KeyValue from '../components/KeyValue';
 import CustomButton from '../components/CustomButton';
 import CartProducts from '../components/CartProducts';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { postPromo } from '../userServices/UserService';
+import { showMessage } from 'react-native-flash-message';
+import EmptyData from '../components/EmptyData';
 
 const BasketScreen = () => {
   const { t } = useTranslation();
-const navigation = useNavigation()
+  const navigation = useNavigation()
+  const cartData = useSelector((state) => state?.cart?.cartProducts)
+  const restId = useSelector((state) => state?.cart?.restaurentID)
+  const userId = useSelector((state) => state?.auth?.loginData?.id)
+
+  const [driverNote, setDriverNote] = useState('')
+  const [promoCode, setPromoCode] = useState('')
+  const [discountAmount, setDiscountAmount] = useState(0)
+  const subTotal = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) -(discountAmount?.discount_amount || 0)
+
+  const [isLoader, setIsLoader] = useState(false)
+
+  const handlePromoCode = async () => {
+    if (promoCode == '') {
+      showMessage({
+        type: "danger",
+        message: t("EnterPromo")
+      })
+      return
+    }
+
+    setIsLoader(true)
+    try {
+      const result = await postPromo(promoCode, restId, subTotal, userId)
+      console.log('dasdassdas', result)
+      if (result?.success) {
+        showMessage({
+          type: "Success",
+          message: t("Promo code Applied")
+        })
+        setDiscountAmount(result?.data)
+      }else{
+              showMessage({
+          type: "danger",
+          message: t("promoNotFound")
+        })
+      }
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setIsLoader(false)
+    }
+  }
+
+  const handleCheckout = () => {
+    navigation.navigate('CheckoutScreen', {
+      driverNote: driverNote,
+      subTotal:subTotal
+    })
+  }
+
+  if(cartData?.length == 0){
+    return(
+      <EmptyData title={t('CartISEmpty')} />
+    )
+  }
 
   return (
     <ScreenView scrollable={true} mh={true}>
@@ -39,11 +94,13 @@ const navigation = useNavigation()
         search={false}
       />
 
-      <CartProducts />
-
+      <CartProducts data={cartData} />
       <DividerLine style={styles.dividerTop} h={true} />
 
-      <MessageBox borderRemove={true} />
+      <MessageBox borderRemove={true}
+        onChangeText={setDriverNote}
+        value={driverNote}
+      />
       <DividerLine style={styles.dividerBottom} h={true} />
 
       <View style={{ marginHorizontal: 20 }}>
@@ -55,21 +112,25 @@ const navigation = useNavigation()
             placeholder={t('voucherCode')}
             placeholderTextColor={colors.gray1}
             style={styles.voucherInput}
+            value={promoCode}
+            onChangeText={setPromoCode}
           />
-          <Subtitle style={styles.submitText}>{t('submit')}</Subtitle>
+          <TouchableOpacity style={styles.submitText} onPress={() => handlePromoCode()}>
+            <Subtitle >{t('submit')}</Subtitle>
+          </TouchableOpacity>
         </View>
 
         <DividerLine style={styles.dividerBottom} h={true} />
 
         <HeaderWithAll title={t('paymentSummary')} />
 
-        <KeyValue leftValue={t('Subtotal')} rightValue={'66.00'} />
-        <KeyValue leftValue={t('DeliveryFee')} rightValue={'66.00'} />
-        <KeyValue leftValue={t('ServiceFee')} rightValue={'66.00'} />
+        <KeyValue leftValue={t('Subtotal')} rightValue={subTotal} />
+        <KeyValue leftValue={t('DeliveryFee')} rightValue={'Free'} />
+        <KeyValue leftValue={t('ServiceFee')} rightValue={'Free'} />
         <KeyValue
           boldData={true}
           leftValue={t('TotalAmount')}
-          rightValue={'66.00'}
+          rightValue={subTotal}
         />
 
         <TouchableOpacity>
@@ -87,9 +148,8 @@ const navigation = useNavigation()
             style={styles.bottomBtn}
           />
 
-          <CustomButton title={t('checkout')}  style={{ width: '48%' }}
-          onPress={()=>navigation.navigate('CheckoutScreen')}
-          
+          <CustomButton title={t('checkout')} style={{ width: '48%' }}
+            onPress={() => handleCheckout()}
           />
         </View>
       </View>
@@ -100,7 +160,7 @@ const navigation = useNavigation()
 export default BasketScreen;
 
 const styles = StyleSheet.create({
- 
+
   header: {
     width: '85%',
     marginHorizontal: 20,
@@ -128,7 +188,7 @@ const styles = StyleSheet.create({
     width: '70%',
     fontFamily: fonts.semiBold,
     fontSize: 13,
-    textAlign: I18nManager.isRTL ?   "right" :"left"
+    textAlign: I18nManager.isRTL ? "right" : "left"
   },
   submitText: {
     marginLeft: 'auto',

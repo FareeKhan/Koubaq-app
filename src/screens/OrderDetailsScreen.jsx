@@ -8,7 +8,7 @@ import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import { colors } from '../constants/colors';
-import { currency, OrderData } from '../constants/data';
+import { currency, mainUrl, OrderData } from '../constants/data';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { fonts } from '../constants/fonts';
 import { useTranslation } from 'react-i18next';
@@ -17,11 +17,46 @@ import CustomText from '../components/CustomText';
 import Subtitle from '../components/Subtitle';
 import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import RemoteImage from '../components/RemoteImage';
+import { useDispatch } from 'react-redux';
+import { addProductToCart } from '../redux/ProductAddToCart';
 
-const OrderDetailsScreen = () => {
+const OrderDetailsScreen = ({ route }) => {
   const { t } = useTranslation();
   const data = OrderData(t);
+  const dispatch = useDispatch()
   const navigation = useNavigation()
+  const { item } = route?.params
+
+
+  const isoData = item?.created_at
+  const dateObj = new Date(isoData)
+  const date = dateObj.toLocaleDateString()
+  const time = dateObj.toLocaleTimeString()
+
+  const addToCart = () => {
+    item?.items?.forEach((productData, index) => {
+      const data = {
+        id: productData?.id,
+        title: productData?.name,
+        description: productData?.description,
+        counter: Number(productData?.quantity),
+        price: Number(productData?.price),
+        image: `${productData?.image}`,
+        extraItem: productData?.selectedExtras || [],
+        productNotes: productData?.productNotes,
+        nameOnSticker: productData?.nameOnSticker,
+        msgForReceiver: productData?.msgForReceiver,
+        restaurantId: item?.restaurant_id,
+        categoryId: productData?.categoryId,
+              restData: productData?.restData,
+      }
+      dispatch(addProductToCart(data))
+    })
+    navigation.navigate('BasketScreen')
+  }
+  console.log('item?.payment_typeitem?.payment_type', item?.payment_type)
+
 
   return (
     <ScreenView>
@@ -32,9 +67,9 @@ const OrderDetailsScreen = () => {
           <View style={styles.orderInfoRow}>
             <View>
               <CustomText style={styles.orderIdText}>
-                CNDFH4215635ZDA
+                {item?.order_number}
               </CustomText>
-              <Subtitle>4th Feb 2025 at 05:15 PM</Subtitle>
+              <Subtitle>{date} {time}</Subtitle>
             </View>
           </View>
         </View>
@@ -43,7 +78,7 @@ const OrderDetailsScreen = () => {
           title={'reOrder'}
           style={styles.reorderButton}
           btnTxtStyle={styles.reorderButtonText}
-          onPress={()=>navigation.navigate('BasketScreen')}
+          onPress={() => addToCart(item)}
 
         />
       </View>
@@ -53,44 +88,64 @@ const OrderDetailsScreen = () => {
       </CustomText>
 
       <View style={styles.paymentRow}>
-        <Ionicons name={'cash-outline'} size={25} color={colors.gray} />
+        {
+          item?.payment_type == 'card' || item?.payment_type == 'apple_pay' ?
+            <Ionicons name={'card'} size={25} color={colors.gray} />
+
+            :
+            <Ionicons name={'cash-outline'} size={25} color={colors.gray} />
+
+        }
         <CustomText style={styles.paymentText}>
-          {t('creditCard')}
+          {item?.payment_type == 'card' ?
+            t('creditCard') :
+            item?.payment_type == 'apple_pay' ? t('applePay') : t('wallet')
+          }
         </CustomText>
       </View>
 
       <View style={styles.totalAmountContainer}>
-        <CustomText>{t('TotalAmount')}</CustomText>
+        <CustomText>{t('driverInstruction')}</CustomText>
         <CustomText style={styles.amountText}>
-          {currency} 70.00
+          {item?.special_instructions}
         </CustomText>
       </View>
 
-      <View style={styles.itemRow}>
-        <Image
-          source={require('../assets/cup.png')}
-          style={styles.itemImage}
-          borderRadius={10}
-        />
-        <View style={styles.itemDetails}>
-          <CustomText>Espresso single shot ethiopian beans</CustomText>
-          <CustomText>{currency} 66.00</CustomText>
-        </View>
-      </View>
 
+
+
+      <View style={styles.totalAmountContainer}>
+        <CustomText>{t('TotalAmount')}</CustomText>
+        <CustomText style={styles.amountText}>
+          {currency} {item?.total}
+        </CustomText>
+      </View>
       <DividerLine verticalGap={true} />
 
-      <View style={[styles.itemRow,{marginTop:0}]}>
-        <Image
-          source={require('../assets/cup.png')}
-          style={styles.itemImage}
-          borderRadius={10}
-        />
-        <View style={[styles.itemDetails,]}>
-          <CustomText>Espresso single shot ethiopian beans</CustomText>
-          <CustomText>{currency} 66.00</CustomText>
-        </View>
-      </View>
+
+      {
+        item?.items?.map((item, index) => {
+          return (
+            <View key={index} style={[styles.itemRow, { marginBottom: 20, marginTop: 0 }]}>
+              {/* <Image
+                source={require('../assets/cup.png')}
+                borderRadius={10}
+              /> */}
+              <RemoteImage
+                uri={`${item?.image}`}
+                style={styles.itemImage}
+              />
+              <View style={[styles.itemDetails,]}>
+                <CustomText numberOfLines={2}>{item?.name}</CustomText>
+                <CustomText>{currency} {item?.price}</CustomText>
+              </View>
+            </View>
+          )
+        })
+
+      }
+
+
     </ScreenView>
   );
 };
@@ -146,7 +201,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   itemImage: {
-    width: 65,
+    width: 75,
     height: 65,
   },
   itemDetails: {
@@ -154,3 +209,4 @@ const styles = StyleSheet.create({
     gap: 5,
   },
 });
+

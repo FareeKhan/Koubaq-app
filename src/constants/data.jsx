@@ -1,10 +1,13 @@
-export const baseUrl = 'https://backend.alkwaityalawl.com/api';
-export const SP_KEY =
-  'pk_test_51PV9zKFt9d3eerZLogRwve2G5YO4ZUNIUnLCEFpiljRIfKVN7hI7dle16OjcnN2ly7T2vwmB9FWJG0JGzSMCQnNe00k69iWIhI';
+export const mainUrl = 'https://backend.onway.ae/';
+export const ImageBaseUrl = 'https://backend.onway.ae';
+export const baseUrl = `${mainUrl}api/`;
+export const imageUrl = `${mainUrl}uploads/`;
+export const STRIPE_KEY = "pk_test_51SOZA0COzbE7fBAMwRoi2wspVojLIK9SiqI9I7DJUrYNpwCcdUQs3bUPWRPu11R8CmPGBpDullGI5e7liLrOtXzh00R4HTUs0u"
+
+
 export const GOOGLE_API = 'AIzaSyAo2MfsEOJJqEyVA2iQ1xWVWcMQm_NnVV8';
 import ApplePayMethod from '../assets/svg/ApplePayMethod.svg';
 import CreditCard from '../assets/svg/creditCart.svg';
-import CashOn from '../assets/svg/cash.svg';
 import Wallet from '../assets/svg/wallet.svg';
 import { colors } from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -359,5 +362,6 @@ export const shopsData = [
     imgPath: require('../assets/shop.png'),
   },
 ];
+
 
 

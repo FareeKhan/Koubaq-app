@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderWithAll from '../components/HeaderWithAll';
 import { fonts } from '../constants/fonts';
@@ -12,16 +12,74 @@ import CustomText from '../components/CustomText';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import PaymentOptions from '../components/PaymentOptions';
+import { useSelector } from 'react-redux';
+import { topUpBalanceApi } from '../userServices/UserService';
+import { showMessage } from 'react-native-flash-message';
+import { useNavigation } from '@react-navigation/native';
+import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
 
 const TopUpWalletScreen = () => {
   const { t } = useTranslation();
-  const [selectedPayment, setSelectedPayment] = useState(3);
+  const navigation = useNavigation()
+  const [selectedPayment, setSelectedPayment] = useState(2);
   const [selectedBalace, setSelectedBalance] = useState('');
+  const [otherAmount, setOtherAmount] = useState('');
+  const [isLoader, setIsLoader] = useState(false);
   const isAppleSelected = selectedPayment == 1;
+  const token = useSelector((state) => state?.auth?.loginData?.token)
+
+
+  const amount =
+    otherAmount?.length > 0
+      ? Number(otherAmount)
+      : Number(selectedBalace?.price || 0);
+  useEffect(() => {
+    if (amount > 0) {
+      initializePaymentSheet(amount, setIsLoader);
+    }
+  }, [amount]);
+
+  const AddBalance = async () => {
+    if (selectedBalace == '') {
+      showMessage({
+        type: "danger",
+        message: t("PleaseSelectBalance")
+      })
+      return
+    }
+    try {
+      setIsLoader(true)
+      const paymentMethod = selectedPayment == 1 ? 'apple_pay' : "card"
+      const data = {
+        'amount': selectedBalace?.price || otherAmount,
+        'payment_method': paymentMethod
+      }
+      const result = await topUpBalanceApi(data, token)
+      console.log('heyThisIsNewSection', result)
+      if (result?.success) {
+        showMessage({
+          type: "success",
+          message: `${result?.data?.transaction?.amount} added to your account`
+        })
+      }
+      navigation.goBack()
+    } catch (error) {
+      console.log('error', error)
+    } finally {
+      setIsLoader(false)
+    }
+  }
+
+  const handleSelection = (item) => {
+    if (item?.id) {
+      setOtherAmount('')
+      setSelectedBalance(item)
+    }
+  }
 
   return (
     <ScreenView scrollable={true}>
-      <HeaderBox logo={true} notification={false} search={false} />
+      <HeaderBox smallLogo={false} notification={false} search={false} />
       <IconLabel label={'topUp'} />
 
       <HeaderWithAll
@@ -31,7 +89,7 @@ const TopUpWalletScreen = () => {
 
       {topUpBalance?.map((item, index) => {
         return (
-          <TouchableOpacity onPress={()=>setSelectedBalance(item?.id)} key={index} style={[styles.amountBox,selectedBalace == item?.id && {borderColor:colors.primary}]}>
+          <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
             <CustomText style={styles.amountText}>
               {item?.price} {currency}
             </CustomText>
@@ -48,9 +106,20 @@ const TopUpWalletScreen = () => {
       />
 
       <CustomInput
-        placeholder={t('50 SAR')}
+        placeholder={t('50 AED')}
         rs={true}
         style={styles.customInput}
+        // filter={false}
+        value={otherAmount}
+        onChangeText={(text) => {
+          const numericValue = text.replace(/[^0-9.]/g, '');
+
+          if (numericValue.length > 0) {
+            setOtherAmount(numericValue);
+            setSelectedBalance(null);
+          }
+
+        }}
       />
 
       <HeaderWithAll title={t('payWith')} />
@@ -64,6 +133,10 @@ const TopUpWalletScreen = () => {
         title={isAppleSelected ? t('Pay') : t('payment')}
         btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
         style={isAppleSelected && styles.appleButton}
+        // onPress={() => AddBalance()}
+        onPress={() => openPaymentSheet(AddBalance)}
+
+        loader={isLoader}
       />
     </ScreenView>
   );
@@ -85,7 +158,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,
-    borderColor: colors.gray1,
+    borderColor: colors.primary,
   },
   amountText: {
     fontSize: 16,
@@ -101,6 +174,10 @@ const styles = StyleSheet.create({
   },
   customInput: {
     marginTop: -10,
+    backgroundColor: colors.white,
+    borderColor: '#000',
+    width: "100%",
+    borderWidth: 1
   },
   buttonText: {
     fontSize: 16,

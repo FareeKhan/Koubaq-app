@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { memo, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 import CustomText from './CustomText';
@@ -22,6 +22,7 @@ import CustomModal from './CustomModal';
 import DividerLine from './DividerLine';
 import RNRestart from 'react-native-restart';
 import { language } from '../redux/Auth';
+import { productFavorite, removeFavorite } from '../redux/AddFavorite';
 
 const HeaderBox = ({
   logo,
@@ -34,19 +35,22 @@ const HeaderBox = ({
   notification = true,
   heart,
   onPressBack,
+  productData
 
 }) => {
   const { t } = useTranslation();
     const isLanguage = useSelector(state => state.auth?.isLanguage);
+  const favoriteData = useSelector((state) => state?.favorite?.AddInFavorite)
+
     const dispatch = useDispatch()
   
   const productInCart = [];
 const navigation = useNavigation()
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCountry, setSelectCountry] = useState(Countries?.find((item)=>item?.code == isLanguage));
-  const [isHeart, setIsHeart] = useState(false);
 
 
+  const isCheckData = favoriteData?.some((state) => state?.id == productData?.id)
     const handleTranslation = () => {
     const isSelectedLanguage = isLanguage == 'en' ? 'ar' : 'en';
     dispatch(language({ isSelectedLanguage }));
@@ -58,6 +62,24 @@ const navigation = useNavigation()
       RNRestart.Restart();
     }, 1500);
   };
+
+
+
+    const handleFavorite = useCallback(() => {
+    if (isCheckData) {
+      dispatch(removeFavorite({ id: productData?.id }))
+    } else {
+      dispatch(productFavorite({
+        id: productData?.id,
+        image: productData?.image,
+        price: productData?.price,
+        title: productData?.name,
+        description: productData?.description,
+        restID: productData?.restaurant_id
+      }))
+    }
+
+  },[isCheckData, productData])
 
   return (
     <View
@@ -132,9 +154,11 @@ const navigation = useNavigation()
           heart &&
           <TouchableOpacity
             hitSlop={{ top: 7, bottom: 7, left: 7, right: 7 }}
-            onPress={() => setIsHeart(!isHeart)}
+            // onPress={() => setIsHeart(!isHeart)}
+            onPress={() => handleFavorite()} 
           >
-            <FontAwesome name={isHeart?'heart' : 'heart-o'} size={25} color={isHeart ? colors.red : colors.black} />
+              <FontAwesome name={isCheckData ? 'heart' : 'heart-o'} size={18} color={isCheckData ? colors.red : colors.black} />
+
           </TouchableOpacity>
         }
       </View>

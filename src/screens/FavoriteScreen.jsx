@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
@@ -9,9 +9,56 @@ import CustomButton from '../components/CustomButton';
 import CustomText from '../components/CustomText';
 import { useTranslation } from 'react-i18next';
 import DividerLine from '../components/DividerLine';
+import { useDispatch, useSelector } from 'react-redux';
+import { mainUrl } from '../constants/data';
+import EmptyData from '../components/EmptyData';
+import { removeFavorite } from '../redux/AddFavorite';
+import { useNavigation } from '@react-navigation/native';
 
 const FavoriteScreen = () => {
   const { t } = useTranslation();
+  const favoriteData = useSelector((state) => state?.favorite?.AddInFavorite)
+
+  const dispatch = useDispatch()
+  const navigation = useNavigation();
+
+  const handleRemove = (id) => {
+    dispatch(removeFavorite({ id }))
+  }
+
+  const renderItem = ({ item, index }) => {
+    return (
+      <TouchableOpacity onPress={() => navigation?.navigate('ProductDetail', {
+        id: item?.id,
+        restaurant_id: item?.restID
+      })} style={styles.productRow}>
+        <View style={styles.productInfoContainer}>
+          <View style={styles.productTextContainer}>
+            <CustomText style={styles.productTitle}>{item?.title}</CustomText>
+            <CustomText>{item?.price}</CustomText>
+          </View>
+
+          <CustomButton
+            title={'moveToCart'}
+            style={styles.reorderButton}
+            btnTxtStyle={styles.reorderButtonText}
+          />
+        </View>
+
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: `${mainUrl}${item?.image}` }}
+            style={styles.productImage}
+            borderRadius={8}
+          />
+          <TouchableOpacity onPress={() => handleRemove(item?.id)}>
+            <CustomText style={styles.removeText}>{t('remove')}</CustomText>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <ScreenView>
       <HeaderBox logo={true} notification={false} search={false} />
@@ -22,61 +69,13 @@ const FavoriteScreen = () => {
         style={styles.iconLabel}
       />
 
-      {/* First Product */}
-      <View style={styles.productRow}>
-        <View style={styles.productInfoContainer}>
-          <View style={styles.productTextContainer}>
-            <CustomText style={styles.productTitle}>Cappuccino Cup</CustomText>
-            <CustomText>21.00</CustomText>
-          </View>
-
-          <CustomButton
-            title={'moveToCart'}
-            style={styles.reorderButton}
-            btnTxtStyle={styles.reorderButtonText}
-          />
-        </View>
-
-        <View style={styles.imageContainer}>
-          <Image
-            source={require('../assets/cup.png')}
-            style={styles.productImage}
-            borderRadius={8}
-          />
-          <TouchableOpacity>
-            <CustomText style={styles.removeText}>{t('remove')}</CustomText>
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <DividerLine verticalGap={true} />
-
-      {/* Second Product */}
-      <View style={styles.productRow}>
-        <View style={styles.productInfoContainer}>
-          <View style={styles.productTextContainer}>
-            <CustomText style={styles.productTitle}>Cappuccino Cup</CustomText>
-            <CustomText>21.00</CustomText>
-          </View>
-
-          <CustomButton
-            title={'moveToCart'}
-            style={styles.reorderButton}
-            btnTxtStyle={styles.reorderButtonText}
-          />
-        </View>
-
-        <View style={styles.imageContainer}>
-          <Image
-            source={require('../assets/cup.png')}
-            style={styles.productImage}
-            borderRadius={8}
-          />
-          <TouchableOpacity>
-            <CustomText style={styles.removeText}>{t('remove')}</CustomText>
-          </TouchableOpacity>
-        </View>
-      </View>
+      <FlatList
+        data={favoriteData}
+        keyExtractor={(item, index) => index?.toString()}
+        renderItem={renderItem}
+        ListEmptyComponent={<EmptyData />}
+        ItemSeparatorComponent={<DividerLine verticalGap={true} />}
+      />
     </ScreenView>
   );
 };
@@ -117,6 +116,8 @@ const styles = StyleSheet.create({
   productImage: {
     width: 94,
     height: 88,
+    borderWidth: 1,
+    borderColor: colors.gray5
   },
   removeText: {
     fontSize: 13,

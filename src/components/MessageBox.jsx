@@ -6,7 +6,7 @@ import CustomText from './CustomText';
 import { useTranslation } from 'react-i18next';
 import { fonts } from '../constants/fonts';
 
-const MessageBox = ({borderRemove}) => {
+const MessageBox = ({borderRemove,value,onChangeText}) => {
     const {t} = useTranslation()
   return (
     <View style={[styles.noteBox,borderRemove && {borderWidth:0,padding:0,height:65,paddingHorizontal:20}]}>
@@ -19,6 +19,8 @@ const MessageBox = ({borderRemove}) => {
         multiline
         placeholderTextColor={colors.gray1}
         style={[styles.noteInput,borderRemove && {height:60,paddingLeft:20,paddingTop:10}]}
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );

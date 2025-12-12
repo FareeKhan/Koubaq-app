@@ -52,7 +52,7 @@ const GiftImage = ({
 
       {senderName && (
         <TouchableOpacity
-          onPress={onPress ? onPress : () => setIsShowDetails(false)}
+           onPress={onPress ? onPress : () => setIsShowDetails(null)}
           activeOpacity={1}
           style={{
             shadowColor: '#00000090',

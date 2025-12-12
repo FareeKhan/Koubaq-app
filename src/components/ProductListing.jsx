@@ -7,27 +7,31 @@ import EmptyData from './EmptyData';
 import CustomText from './CustomText';
 import Subtitle from './Subtitle';
 import { useNavigation } from '@react-navigation/native';
+import RemoteImage from './RemoteImage';
+import { mainUrl } from '../constants/data';
 
-const ProductListing = ({ layoutType, isPlus,isGifterPage }) => {
+const ProductListing = ({ layoutType, isPlus, isGifterPage, data }) => {
   const { t } = useTranslation();
   const navigation = useNavigation()
 
-  const renderItem = () => {
+  const renderItem = ({ item, index }) => {
     return (
-      <TouchableOpacity onPress={()=>navigation.navigate('ProductDetail',{
-        isGifterPage:isGifterPage
-      })} style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
-        <View style={{width:"55%"}}>
-          <CustomText>Cappuccino Cup</CustomText>
-          <CustomText style={{marginVertical:2}}>21.0</CustomText>
-          <Subtitle style={{ fontSize: 13 }}>
-            Garlic, olive oil base, mozarella, cremini mushrooms, ricotta,
-            thyme, white truffle oil. Add arugula for an extra charge
+      <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', {
+        isGifterPage: isGifterPage,
+        id: item?.id,
+        restaurant_id: item?.restaurant_id
+      })} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View style={{ width: "55%" }}>
+          <CustomText>{item?.name}</CustomText>
+          <CustomText style={{ marginVertical: 2 }}>{item?.price}</CustomText>
+          <Subtitle numberOfLines={3} style={{ fontSize: 13 }}>
+            {item?.description}
           </Subtitle>
         </View>
-
-
-        <Image source={require('../assets/cup.png')} style={{width:115,height:100}} borderRadius={8}/>
+        <RemoteImage
+          uri={`${mainUrl}${item?.image}`}
+          style={{ width: 115, height: 100, }}
+        />
       </TouchableOpacity>
     );
   };
@@ -35,12 +39,12 @@ const ProductListing = ({ layoutType, isPlus,isGifterPage }) => {
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        data={[1, 2, 3]}
+        data={data}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index?.toString()}
-        contentContainerStyle={{ gap: 15,}}
-        ListEmptyComponent={<EmptyData title={t('noDataFound')} />}
+        contentContainerStyle={{ gap: 15, }}
+        ListEmptyComponent={<EmptyData style={{ height: 350 }} title={t('noDataFound')} />}
         renderItem={renderItem}
         scrollEnabled={false}
       />
