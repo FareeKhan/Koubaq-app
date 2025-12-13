@@ -31,6 +31,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   const token = useSelector((state) => state?.auth?.loginData?.token)
   const userData = useSelector((state) => state?.auth?.loginData)
   const giftCartData = useSelector((state) => state?.giftInfo?.giftProduct)
+    const userId = useSelector((state) => state?.auth?.loginData?.id)
 
   const restaurentData = cartData[0]?.restData
   console.log('tokentokencartData', cartData)
@@ -89,6 +90,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
 
   const handleCheckOutBtn = () => {
+    
     if (isHeader) {
       if (selectedCarId == '') {
         showMessage({
@@ -132,6 +134,13 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   }
 
   const processGiftOrder = async () => {
+       if (!userId) {
+          showMessage({
+            type: "danger",
+            message: t('PleaseLoginFirst')
+          })
+          return
+        }
     setIsOrderLoader(true)
     try {
       const response = await makeGiftOrder(giftCartData, token)

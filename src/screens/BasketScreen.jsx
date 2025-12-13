@@ -36,7 +36,7 @@ const BasketScreen = () => {
   const [driverNote, setDriverNote] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [discountAmount, setDiscountAmount] = useState(0)
-  const subTotal = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) -(discountAmount?.discount_amount || 0)
+  const subTotal = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) - (discountAmount?.discount_amount || 0)
 
   const [isLoader, setIsLoader] = useState(false)
 
@@ -59,8 +59,8 @@ const BasketScreen = () => {
           message: t("Promo code Applied")
         })
         setDiscountAmount(result?.data)
-      }else{
-              showMessage({
+      } else {
+        showMessage({
           type: "danger",
           message: t("promoNotFound")
         })
@@ -71,16 +71,25 @@ const BasketScreen = () => {
       setIsLoader(false)
     }
   }
-
+  console.log('userIduserId', userId)
   const handleCheckout = () => {
+    if (!userId) {
+      showMessage({
+        type: "danger",
+        message: t('PleaseLoginFirst')
+      })
+      return
+    }
+
+
     navigation.navigate('CheckoutScreen', {
       driverNote: driverNote,
-      subTotal:subTotal
+      subTotal: subTotal
     })
   }
 
-  if(cartData?.length == 0){
-    return(
+  if (cartData?.length == 0) {
+    return (
       <EmptyData title={t('CartISEmpty')} />
     )
   }

@@ -1,4 +1,7 @@
 export const mainUrl = 'https://backend.onway.ae/';
+
+
+// export const mainUrl = 'https://0b62d5945c7d.ngrok-free.app/';
 export const ImageBaseUrl = 'https://backend.onway.ae';
 export const baseUrl = `${mainUrl}api/`;
 export const imageUrl = `${mainUrl}uploads/`;

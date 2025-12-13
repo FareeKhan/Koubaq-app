@@ -43,6 +43,7 @@ const AccountSetting = () => {
   const isLanguage = useSelector(state => state.auth?.isLanguage);
   const token = useSelector((state) => state?.auth?.loginData?.token)
   const userData = useSelector((state) => state?.auth?.loginData)
+  const userId = useSelector((state) => state?.auth?.loginData?.id)
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -144,15 +145,23 @@ const AccountSetting = () => {
 
 
   const handleLogout = (text) => {
-    if (text == 'delete') {
-      showMessage({
-        type: "success",
-        message: t('deleteSuccessAccount')
-      })
 
+    if (!userId) {
+      navigation.replace('LoginScreen')
+      return
+    } else {
+      if (text == 'delete') {
+        showMessage({
+          type: "success",
+          message: t('deleteSuccessAccount')
+        })
+
+      }
+      dispatch(logout())
+      navigation.replace('LoginScreen')
     }
-    dispatch(logout())
-    navigation.replace('LoginScreen')
+
+
   }
 
   return (
@@ -164,7 +173,7 @@ const AccountSetting = () => {
             <FontAwesome name={'user-o'} size={20} color={colors.black} />
           </View>
           <View>
-            <Subtitle style={styles.subtitleSmall}>{userData?.phoneNo}</Subtitle>
+            <Subtitle style={styles.subtitleSmall}>{userData?.phoneNo || t('PleaseLogin')}</Subtitle>
           </View>
         </View>
 
@@ -179,31 +188,39 @@ const AccountSetting = () => {
         </TouchableOpacity> */}
       </View>
 
+
       <DividerLine h={true} borderStyle={styles.dividerHeight7} />
+      {userId &&
+        <>
+          <AddBrandedCar
+            style={{ paddingHorizontal: 20, paddingTop: 10 }}
+            setSelectedCarId={setSelectedCarId}
+            selectedCarId={selectedCarId}
+          />
 
-      <AddBrandedCar
-        style={{ paddingHorizontal: 20, paddingTop: 10 }}
-        setSelectedCarId={setSelectedCarId}
-        selectedCarId={selectedCarId}
-      />
+          <DividerLine
+            h={true}
+            borderStyle={styles.dividerHeight7}
+            style={styles.mb20}
+          />
 
-      <DividerLine
-        h={true}
-        borderStyle={styles.dividerHeight7}
-        style={styles.mb20}
-      />
+          {/* Menu Items */}
+          <IconMenu
+            onpress={() => navigation.navigate('OrderScreens')}
+            label={'yourOrders'}
+            icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
+          />
+          <IconMenu
+            onpress={() => navigation.navigate('FavoriteScreen')}
+            label={'favorite'}
+            icon={<EvilIcons name={'heart'} size={25} color={colors.black} />}
+          />
 
-      {/* Menu Items */}
-      <IconMenu
-        onpress={() => navigation.navigate('OrderScreens')}
-        label={'yourOrders'}
-        icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
-      />
-      <IconMenu
-        onpress={() => navigation.navigate('FavoriteScreen')}
-        label={'favorite'}
-        icon={<EvilIcons name={'heart'} size={25} color={colors.black} />}
-      />
+        </>
+
+      }
+
+
       <IconMenu
         label={'termsCondition'}
         icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
@@ -240,61 +257,22 @@ const AccountSetting = () => {
         }
       />
       <IconMenu
-        label={'logout'}
-        icon={<AntDesign name={'logout'} size={22} color={colors.red} />}
+        label={userId ? 'logout' :"login"}
+        icon={<AntDesign name={userId ? 'logout' :"login"} size={22} color={colors.red} />}
         red={true}
         onpress={() => handleLogout()}
       />
 
-      <TouchableOpacity onPress={() => handleLogout('delete')} style={styles.deleteAccountBtn}>
+
+{
+  userId && 
+   <TouchableOpacity onPress={() => handleLogout('delete')} style={styles.deleteAccountBtn}>
         <CustomText style={styles.deleteAccountTxt}>
           {t('deleteAccount')}
         </CustomText>
       </TouchableOpacity>
 
-      {/* Car Selection Modal */}
-      {/* <CustomModal
-        modalVisible={isCarModal}
-        setModalVisible={setIsCarModal}
-        title={'Select vehicle brand'}
-        textStyle={styles.modalTitle}
-      >
-        <CustomInput
-          placeholder={t('search')}
-          icon={true}
-          rs={true}
-          value={searchCar}
-          onChangeText={setSearchCar}
-        />
-
-        <FlatList
-          data={filterSearch}
-          keyExtractor={(item, index) => index?.toString()}
-          style={styles.modalListHeight}
-          contentContainerStyle={styles.modalList}
-          showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={<View style={styles.modalSeparator} />}
-          renderItem={({ item }) => {
-            return (
-              <TouchableOpacity
-                onPress={() => handleCarSelection(item)}
-                style={styles.modalItemContainer}
-              >
-                <Image
-                  resizeMode="contain"
-                  source={item?.image}
-                  style={styles.modalItemImage}
-                />
-                <CustomText style={styles.modalItemText}>
-                  {item?.name}
-                </CustomText>
-              </TouchableOpacity>
-            );
-          }}
-        />
-      </CustomModal> */}
-
-
+}
 
     </ScreenView>
   );
