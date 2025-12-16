@@ -221,7 +221,7 @@ const AccountSetting = () => {
       }
 
 
-      <IconMenu
+      {/* <IconMenu
         label={'termsCondition'}
         icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
       />
@@ -255,7 +255,7 @@ const AccountSetting = () => {
         icon={
           <Ionicons name={'logo-instagram'} size={22} color={colors.black} />
         }
-      />
+      /> */}
       <IconMenu
         label={userId ? 'logout' :"login"}
         icon={<AntDesign name={userId ? 'logout' :"login"} size={22} color={colors.red} />}

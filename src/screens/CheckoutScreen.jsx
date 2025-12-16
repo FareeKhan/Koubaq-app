@@ -37,7 +37,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   console.log('tokentokencartData', cartData)
 
   const resID = useSelector((state) => state?.cart?.restaurentID)
-  const { driverNote, subTotal } = route?.params || ''
+  const { driverNote, discount } = route?.params || ''
 
   const navigation = useNavigation();
   const [selectedPayment, setSelectedPayment] = useState(3);
@@ -50,8 +50,8 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   const paymentData = paymentCards(t);
 
-  // const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0)
-  const finalPrice = subTotal || giftCartData?.price
+  const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0)-discount
+  const finalPrice = subTotalPrice || giftCartData?.price * giftCartData?.counter
 
   const PickUpTimeBox = () => {
     return (
@@ -84,7 +84,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   useEffect(() => {
     if (finalPrice > 0) {
-      initializePaymentSheet(finalPrice || giftCartData?.price, setLoading);
+      initializePaymentSheet(finalPrice , setLoading);
     }
   }, [finalPrice]);
 
