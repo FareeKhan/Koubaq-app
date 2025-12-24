@@ -30,14 +30,15 @@ import { fetchProductDetails, fetchSuggestedMsgs } from '../userServices/UserSer
 import { addProductToCart } from '../redux/ProductAddToCart';
 import { useDispatch } from 'react-redux';
 import { addGiftProductToCart } from '../redux/GiftData';
+import { showMessage } from 'react-native-flash-message';
 
 const ProductDetail = ({ route }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
-  const { isGifterPage, id, restaurant_id } = route?.params || '';
-  console.log('isGifterPageisGifterPage123',isGifterPage)
-
+  const { isGifterPage, id, restaurant_id, data } = route?.params || '';
+  const relatedData = data?.filter((item) => item?.id !== id)
   const navigation = useNavigation();
+  console.log('dasdasd',id)
 
   const [counter, setCounter] = useState(1);
   const [selectedExtras, setSelectedExtras] = useState([]);
@@ -51,7 +52,6 @@ const ProductDetail = ({ route }) => {
   const [productData, setProductData] = useState([]);
   const [isLoader, setIsLoader] = useState(true);
   const [addNote, setAddNote] = useState('');
-
 
   useEffect(() => {
     loadProductData()
@@ -90,6 +90,14 @@ const ProductDetail = ({ route }) => {
 
 
   const addToCart = () => {
+    if (rcvrNameOnSticker == '') {
+      setSelectedFilter('customizeSticker')
+      showMessage({
+        type: "warning",
+        message: t('pleaseEnterStickerName')
+      })
+      return
+    }
     const quantity = Number(counter)
     const price = Number(productData?.price)
     const data = {
@@ -113,7 +121,8 @@ const ProductDetail = ({ route }) => {
 
 
 
-    const giftFun = () => {
+  const giftFun = () => {
+  
     const quantity = Number(counter)
     const price = Number(productData?.price)
     const data = {
@@ -149,7 +158,8 @@ const ProductDetail = ({ route }) => {
   };
 
   const ExtraDataItems = () => {
-    return productData?.product_extras?.map((item, index) => (
+    const fomrmatedExtra = productData?.product_extras ? Array.isArray(productData?.product_extras) ? productData?.product_extras : [productData?.product_extras] : []
+    return fomrmatedExtra?.map((item, index) => (
       <TouchableOpacity
         key={index}
         style={styles.extraItem}
@@ -209,12 +219,17 @@ const ProductDetail = ({ route }) => {
 
         {/* Filter Button */}
         <View style={styles.contentWrapper}>
-          <FilterButton
-            setSelectedFilter={setSelectedFilter}
-            selectedFilter={selectedFilter}
-            leftValue={'customizeItem'}
-            rightValue={'customizeSticker'}
-          />
+          {
+            !isGifterPage &&
+            <FilterButton
+              setSelectedFilter={setSelectedFilter}
+              selectedFilter={selectedFilter}
+              leftValue={'customizeItem'}
+              rightValue={'customizeSticker'}
+            />
+
+          }
+
           {/* Code after Filer this is customizeItem */}
           {selectedFilter === 'customizeItem' ? (
             <View>
@@ -408,13 +423,13 @@ const ProductDetail = ({ route }) => {
 
           {/* */}
 
-          {/* {isGifterPage && (
+          {isGifterPage && data?.length > 0 && (
             <View style={{ marginTop: 15 }}>
               <HeaderWithAll title={t('relatedProduct')} />
 
-              <ProductDataCard data={[1, 2, 3, 4, 5, 6]} />
+              <ProductDataCard data={relatedData} relatedData={data} />
             </View>
-          )} */}
+          )}
         </View>
       </ScreenView>
 

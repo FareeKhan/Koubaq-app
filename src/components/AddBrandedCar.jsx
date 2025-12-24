@@ -25,7 +25,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 const { height } = Dimensions.get('screen')
 
-const AddBrandedCar = ({ setSelectedCarId, selectedCarId, style }) => {
+const AddBrandedCar = ({ setSelectedCarId, selectedCarId, style,setSelectedCarInfo }) => {
     const { t } = useTranslation()
     const token = useSelector((state) => state?.auth?.loginData?.token)
 
@@ -133,7 +133,7 @@ const AddBrandedCar = ({ setSelectedCarId, selectedCarId, style }) => {
             {
                 carData?.length > 0 ?
                     <View style={{ paddingHorizontal: 20 }}>
-                        <AddedCarData loadAddedVechicle={loadAddedVechicle} carData={carData} setSelectedCarId={setSelectedCarId} selectedCarId={selectedCarId} />
+                        <AddedCarData loadAddedVechicle={loadAddedVechicle} carData={carData} setSelectedCarInfo={setSelectedCarInfo} setSelectedCarId={setSelectedCarId} selectedCarId={selectedCarId} />
                     </View>
                     :
                     !isAddNewCar &&

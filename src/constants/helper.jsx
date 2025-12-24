@@ -1,6 +1,7 @@
 import { initPaymentSheet, presentPaymentSheet } from "@stripe/stripe-react-native";
 import { getPaymentIntentApi } from "../userServices/UserService";
 import { showMessage } from "react-native-flash-message";
+import { GOOGLE_API } from "./data";
 
 export const initializePaymentSheet = async (price,setLoading) => {
     const paymentIntent = await getPaymentIntentApi(price);
@@ -42,3 +43,42 @@ export const initializePaymentSheet = async (price,setLoading) => {
         processOrder()
       }
     };
+
+
+
+
+export const getAddressFromCoordinates = async (latitude,longitude ) => {
+  try {
+    const apiKey = GOOGLE_API;
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+    );
+
+    const data = await response.json();
+    const result = data.results?.[0];
+
+    if (!result) return null;
+
+    const components = result.address_components;
+
+    const get = (type) =>
+      components.find(c => c.types.includes(type))?.long_name || '';
+
+    return {
+      formattedAddress: result.formatted_address,
+      emirate: get('administrative_area_level_1'),
+      city: get('locality'),
+      area: get('sublocality') || get('neighborhood'),
+      street: get('route'),
+      buildingNumber: get('street_number'),
+      country: get('country'),
+      postalCode: get('postal_code'),
+      latitude,
+      longitude,
+    };
+
+  } catch (error) {
+    console.log('error', error);
+    return null;
+  }
+};

@@ -164,9 +164,10 @@ import Animated, {
 import { showMessage } from 'react-native-flash-message';
 import { loginPhoneNo } from '../userServices/UserService';
 
-const LoginScreen = ({ }) => {
+const LoginScreen = ({route }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const {isBasket} = route?.params || ''
 
   const [phoneNo, setphoneNo] = useState('');
   const [isLaoder, setIsLoader] = useState(false);
@@ -192,6 +193,8 @@ const LoginScreen = ({ }) => {
         navigation.navigate('VerificationScreen', {
           phoneNo: PhoneWithCountryCode,
           otpCode: result?.data?.otp,
+          isBasket:isBasket
+
         });
       }
     } catch (e) {

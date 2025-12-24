@@ -5,8 +5,8 @@ import { showMessage } from "react-native-flash-message";
 
 export const loginPhoneNo = async (phoneNo) => {
     let num = phoneNo;
-let result = num.replace(/^0/, "");
-    const data = JSON.stringify({ phone_number: "+971" +result })
+    let result = num.replace(/^0/, "");
+    const data = JSON.stringify({ phone_number: "+971" + result })
     try {
         const response = await axios.post(
             `${baseUrl}customer/generate-otp`,
@@ -26,9 +26,9 @@ let result = num.replace(/^0/, "");
 
 export const verifyOtp = async (phoneNo, otp) => {
     let num = phoneNo;
-let result = num.replace(/^0/, "");
+    let result = num.replace(/^0/, "");
     const data = JSON.stringify({
-        "phone_number": "+971" +result ,
+        "phone_number": "+971" + result,
         "otp": otp
     })
     try {
@@ -248,13 +248,14 @@ export const fetchTheme = async (id) => {
 
 // ***************** ORDER APIS
 
-export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod) => {
-
+export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod,selectedCarInfo) => {
+console.log('selectedCarInfoselectedCarInfoselectedCarInfo',selectedCarInfo)
     const array = data?.map((item, index) => ({
         ...item,
         item_id: item?.id,
         name: item?.title,
         quantity: item?.counter,
+        selectedCarInfo
     }))
 
     const postData = {
@@ -429,7 +430,7 @@ export const addVehicle = async (data, token) => {
         return response.data;
     } catch (e) {
         console.log(e?.response?.data || e.message);
-  
+
     }
 };
 
@@ -470,29 +471,52 @@ export const deleteVehicles = async (id, token) => {
 };
 
 // ++++++
-export const makeGiftOrder = async (data, token) => {
+export const makeGiftOrder = async (data, token, selectedCarId, finalPrice, selectedPayment) => {
+
     const themeImage = ImageBaseUrl + data?.selectedTheme?.image
-    console.log('themeImagethemeImagethemeImage',themeImage)
     // Create FormData
- 
-    const formData = new FormData();
-    formData.append('gift_item', data?.title);
-    formData.append('gift_message', data?.selectedMsg);
-    formData.append('gift_theme', themeImage);
-    formData.append('recipient_name', data?.cardName || 'no Name');
-    formData.append('recipient_phone',data?.selectedContacts?.[0]?.phoneNumbers? data?.selectedContacts?.[0]?.phoneNumbers?.[0]?.number 
-    : String(data?.selectedContacts?.[0]?.givenName)
-    || '0556090234');
-    formData.append('recipient_address', 'kjhdasd');
+    const value =
+        data?.selectedContacts?.[0]?.phoneNumbers?.[0]?.number
+        ?? data?.selectedContacts?.[0]?.givenName
+        ?? '';
+    const productArray = [
+        {
+            "item_id": data?.id,
+            "name": data?.title,
+            "price": data?.price,
+            "quantity": data?.counter,
+            "image": data?.image,
+            "recipient_name": data?.cardName || 'no Name',
+        }
+    ]
 
 
-    // Example for adding an image/file (if needed)
-    // formData.append('gift_image', data?.imageFile);
+    const payload = {
+        gift_item: data?.title,
+        gift_message: data?.selectedMsg,
+        gift_theme: themeImage,
+        recipient_name: data?.cardName || 'no Name',
+        recipient_phone: data?.selectedContacts?.[0]?.phoneNumbers ? data?.selectedContacts?.[0]?.phoneNumbers?.[0]?.number
+            : String(data?.selectedContacts?.[0]?.givenName)
+            || '0556090234',
+        products: productArray, // raw array
+        payment_type: selectedPayment == 1 ? 'apple_pay' : selectedPayment == 2 ? "card" : 'wallet',
+        restaurant_id: data?.restaurantId,
+        subtotal: finalPrice,
+        total: finalPrice,
+        recipient_address: data?.address,
+        vehicle_id: selectedCarId
+    };
+
+    console.log('payloadpayload===>>', payload)
+
+
+
 
     try {
         const response = await axios.post(
             `${baseUrl}gifts`,
-            formData,
+            payload,
             {
                 headers: {
                     Accept: 'application/json',
@@ -505,6 +529,51 @@ export const makeGiftOrder = async (data, token) => {
         console.log(e?.response?.data || e.message);
     }
 };
+
+export const giftWalletUpdate = async (data, userId) => {
+    const dataFormate = {
+        "customer_id": userId,
+        "amount": data?.products[0]?.price * data?.products[0]?.quantity
+    }
+    try {
+        const response = await axios.post(
+            `${baseUrl}wallet/update-balance`,
+            dataFormate,
+            {
+                headers: {
+                    Accept: 'application/json',
+                },
+            }
+        );
+        console.log('dasds')
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+};
+
+export const NearByRest = async (data) => {
+
+    try {
+        const response = await axios.get(
+            `${baseUrl}restaurants/nearby`,
+            {
+                params: {
+                    lat: Number(data.lat),
+                    lng: Number(data.lng),
+                    radius: 30,
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
 
 
 
@@ -650,14 +719,14 @@ export const walletTransaction = async (token) => {
 
 
 
-export const postPromo = async (promoCode,restId,subTotal,userId) => {
-    promoCode,restId,subTotal,userId
+export const postPromo = async (promoCode, restId, subTotal, userId) => {
+    promoCode, restId, subTotal, userId
     const body = {
-  "restaurant_id": restId,
-  "code": promoCode,
-  "order_total": subTotal,
-  "user_id":userId
-}
+        "restaurant_id": restId,
+        "code": promoCode,
+        "order_total": subTotal,
+        "user_id": userId
+    }
     try {
         const response = await axios.post(
             `${baseUrl}promo-codes/validate`,

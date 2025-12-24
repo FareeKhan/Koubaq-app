@@ -28,7 +28,8 @@ const CELL_COUNT = 6;
 const VerificationScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
-  const { phoneNo, otpCode } = route?.params || ''
+  const { phoneNo, otpCode, isBasket } = route?.params || ''
+
   const [value, setValue] = useState('');
   const [isLaoder, setIsLoader] = useState(false);
 
@@ -52,7 +53,7 @@ const VerificationScreen = ({ navigation, route }) => {
   // };
 
 
-    const confirmOTP = async () => {
+  const confirmOTP = async () => {
     if (!value || otpCode != value) {
       showMessage({
         type: 'danger',
@@ -65,14 +66,25 @@ const VerificationScreen = ({ navigation, route }) => {
     try {
       setIsLoader(true)
       const result = await verifyOtp(phoneNo, value)
-      console.log('dasdasd',result)
+      console.log('dasdasd', result)
       if (result?.success) {
         dispatch(login({
           id: result?.data?.customer?.id,
           phoneNo: result?.data?.customer?.phone_number,
           token: result?.data?.token,
         }))
-        navigation.navigate('BottomNavigation')
+        {
+
+          isBasket ?
+            navigation.navigate('BottomNavigation', {
+              screen: 'HomeStack',
+              params: {
+                screen: 'BasketScreen'
+              }
+            })
+            :
+            navigation.navigate('BottomNavigation')
+        }
       }
     } catch (e) {
       console.log(e)
@@ -142,7 +154,7 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.primary,
     paddingBottom: 5,
-    borderRadius:5
+    borderRadius: 5
   },
   cellTxt: {
     fontSize: 29,

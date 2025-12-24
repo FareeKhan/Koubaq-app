@@ -14,15 +14,16 @@ import { fonts } from '../constants/fonts';
 import { useNavigation } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
 import { mainUrl } from '../constants/data';
+import EmptyData from './EmptyData';
 
 const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
   const navigation = useNavigation()
   const renderItem = ({ item, index }) => {
-    const cleanUrl = `${mainUrl}${item?.restaurant?.logo}`
-    console.log('shomwResultID',item?.restaurant_id)
+    const cleanUrl = `${mainUrl}${item?.logo}`
+
     return (
-      <TouchableOpacity onPress={() => onPress ? onPress(item) :  navigation.navigate('ShopDetail',{
-          resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
+      <TouchableOpacity onPress={() => onPress ? onPress(item) : navigation.navigate('ShopDetail', {
+        resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
 
       })} style={styles.cardBox}>
 
@@ -32,9 +33,9 @@ const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
         />
 
         <View style={{ gap: 2 }}>
-          <CustomText style={styles.title}>{item?.restaurant?.name}</CustomText>
+          <CustomText style={styles.title}>{item?.name}</CustomText>
           <CustomText style={styles.subTitle}>
-            {item?.restaurant?.description}
+            {item?.description}
           </CustomText>
 
           <CustomText style={{ fontSize: 12, color: colors.gray1 }}>
@@ -55,6 +56,7 @@ const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
         showsVerticalScrollIndicator={false}
         style={{}}
         contentContainerStyle={{ paddingBottom: 30 }}
+        ListEmptyComponent={<EmptyData />}
         scrollEnabled={scrollEnabled ? scrollEnabled : false}
       />
     </View>

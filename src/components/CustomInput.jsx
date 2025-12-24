@@ -17,7 +17,6 @@ import Octicons from 'react-native-vector-icons/Octicons';
 const CustomInput = ({
   label,
   placeholder,
-
   style,
   icon,
   isApply,
@@ -79,6 +78,7 @@ const CustomInput = ({
             )}
           </TouchableOpacity>
         )}
+        
       </View>
     </View>
   );

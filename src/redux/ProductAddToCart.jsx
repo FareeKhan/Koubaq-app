@@ -76,11 +76,15 @@ export const productAddToCart = createSlice({
             state.totalPrice = action.payload
             console.log('aminaaBegin', state.totalPrice)
         },
-        clearCart: (state) => {
-            state.cartProducts = [];
-            state.totalPrice = '';
-            state.isPromo = false
-        }
+     clearCart: (state) => {
+        console.log('ssssss')
+  state.cartProducts = [];
+  state.totalPrice = '';
+  state.subTotalPrice = null;
+  state.isPromo = false;
+  state.restaurentID = null;
+  state.vehicleID = null;
+}
 
     }
 });

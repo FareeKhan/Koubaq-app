@@ -3,13 +3,14 @@ import {
   FlatList,
   I18nManager,
   Image,
+  ImageBackground,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
-import { differentTheme, giftFilters, mainUrl, namesData } from '../constants/data';
+import { differentTheme, giftFilters, ImageBaseUrl, mainUrl, namesData } from '../constants/data';
 import HeaderBox from '../components/HeaderBox';
 import { useTranslation } from 'react-i18next';
 import CustomText from '../components/CustomText';
@@ -29,7 +30,7 @@ import CustomInput from '../components/CustomInput';
 import SuggestedMsgsModal from '../components/SuggestedMsgsModal';
 import CheckoutScreen from './CheckoutScreen';
 import CartProducts from '../components/CartProducts';
-import { fetchRestaurentList, fetchTheme } from '../userServices/UserService';
+import { fetchRestaurentList, fetchSuggestedMsgs, fetchTheme } from '../userServices/UserService';
 import { addGiftProductToCart } from '../redux/GiftData';
 import { useDispatch, useSelector } from 'react-redux';
 import ContactPickerModal from '../components/ContactPickerModal';
@@ -43,7 +44,9 @@ const GiftFilterScreen = ({ route }) => {
   const dispatch = useDispatch()
   const giftData = giftFilters(t);
   const { thirdStepContinue } = route?.params || ''
-  const resID = useSelector((state) => state?.giftInfo?.giftProduct?.item?.restaurant_id)
+  const resID = useSelector((state) => state?.giftInfo?.giftProduct?.item?.id)
+  const giftDataCart = useSelector((state) => state?.giftInfo?.giftProduct)
+
 
   const [selectedFilter, setSelectedFilter] = useState(thirdStepContinue ? thirdStepContinue : [1]);
   const [selectedTheme, setSelectedTheme] = useState('');
@@ -59,11 +62,15 @@ const GiftFilterScreen = ({ route }) => {
   const [selectedShop, setSelectedShop] = useState('');
   const [manualNumber, setManualNumber] = useState('');
   const [cardName, setCardName] = useState('');
+  const [address, setAddress] = useState('');
+
   const [isContactPickerModal, setIsContactPickerModal] = useState(false);
   const [isLoader, setIsLoader] = useState(false);
+  const [suggestedMessages, setSuggestedMessages] = useState([]);
 
   useEffect(() => {
     restaurentData()
+    loadSuggestedMsgs()
   }, [])
 
 
@@ -72,7 +79,12 @@ const GiftFilterScreen = ({ route }) => {
     try {
       const result = await fetchRestaurentList()
       if (result?.success) {
-        setAllRestaurants(result?.data?.data)
+        if (result?.success) {
+          const uniqueRestaurants = Array.from(
+            new Set(result?.data?.data.map(p => JSON.stringify(p.restaurant)))
+          ).map(str => JSON.parse(str));
+          setAllRestaurants(uniqueRestaurants)
+        }
       }
     } catch (error) {
       console.log('error', error)
@@ -89,6 +101,18 @@ const GiftFilterScreen = ({ route }) => {
       }
     } catch (error) {
       console.log('error', error)
+    }
+  }
+
+
+  const loadSuggestedMsgs = async () => {
+    try {
+      const result = await fetchSuggestedMsgs(resID)
+      if (result?.success) {
+        setSuggestedMessages(result?.data)
+      }
+    } catch (ee) {
+      console.log('ee', ee)
     }
   }
 
@@ -312,12 +336,10 @@ const GiftFilterScreen = ({ route }) => {
     );
   };
 
-
   const handleRestaurent = (item) => {
-    setSelectedShop(item?.restaurant_id)
+    setSelectedShop(item?.id)
     setIsSelectedShop(true)
     dispatch(addGiftProductToCart({ item }))
-
   }
   const lastStep =
     selectedFilter.length > 0
@@ -338,7 +360,7 @@ const GiftFilterScreen = ({ route }) => {
         <>
           {
             isSelectedShop ?
-              <View style={{ flex: 1, marginHorizontal: -20, marginTop: 15 }}>
+              <View style={{ marginTop: 15, marginHorizontal: -20 }}>
                 <ShopDetail
                   isHeader={false}
                   isGifterPage={true}
@@ -350,8 +372,8 @@ const GiftFilterScreen = ({ route }) => {
               <>
                 {
                   isLoader ?
-                  <ScreenLoader/>
-                :
+                    <ScreenLoader />
+                    :
                     <>
                       <HeaderWithAll title={t('selectShop')} style={{ marginTop: 30 }} />
                       <ShopsDataCard
@@ -404,7 +426,7 @@ const GiftFilterScreen = ({ route }) => {
           </View>
         </>
       )}
-
+      {console.log('selectThemeCardselectThemeCard', selectedTheme)}
       {
         lastStep == 3 && (
           <>
@@ -414,10 +436,13 @@ const GiftFilterScreen = ({ route }) => {
                 <View>
                   <HeaderWithAll title={t('cardPreview')} style={{ marginTop: 30 }} />
 
-                  <View
+                  <ImageBackground
+                    source={{ uri: `${ImageBaseUrl}${selectedTheme?.image}` }}
                     style={{
                       backgroundColor: colors.secondary,
-                      height: 170,
+                      height: 220,
+                      width: Dimensions.get('screen').width - 40,
+                      overflow: "hidden",
                       borderRadius: 10,
                       borderBottomLeftRadius: 0,
                       padding: 30,
@@ -436,30 +461,43 @@ const GiftFilterScreen = ({ route }) => {
                           fontSize: 15,
                         }}
                       >
-                        1 item from
+                        {giftDataCart?.counter} {giftDataCart?.counter > 1 ? 'items' : 'item'} from
                       </CustomText>
                       <CustomText
                         style={{ color: colors.primary, fontFamily: fonts.medium }}
                       >
-                        The Coffee Merchant
+                        {giftDataCart?.item?.name}
                       </CustomText>
                     </View>
-                  </View>
+                  </ImageBackground>
 
                   <HeaderWithAll
-                    title={t('yourName')}
+                    title={t('recptName')}
                     style={{ marginTop: 30, marginBottom: 5 }}
                   />
                   <CustomText style={{ marginBottom: 10 }}>{t('shownCard')}</CustomText>
 
                   <CustomInput
-                    placeholder={t('yourName')}
+                    placeholder={t('recptName')}
                     rs={true}
                     style={{
                       backgroundColor: colors.secondary,
                     }}
                     name={cardName}
                     onChangeText={setCardName}
+                  />
+                  <HeaderWithAll
+                    title={t('recptAddress')}
+                    style={{ marginBottom: 5 }}
+                  />
+                  <CustomInput
+                    placeholder={t('recptAddress')}
+                    rs={true}
+                    style={{
+                      backgroundColor: colors.secondary,
+                    }}
+                    name={address}
+                    onChangeText={setAddress}
                   />
 
                   <HeaderWithAll title={t('addAMessage')} style={{ marginBottom: 6 }} />
@@ -477,7 +515,7 @@ const GiftFilterScreen = ({ route }) => {
                     onChangeText={setSelectedMsg}
                   />
 
-                  {/* <TouchableOpacity
+                  <TouchableOpacity
                     onPress={() => setModalVisible(true)}
                     style={{
                       backgroundColor: colors.secondary,
@@ -492,7 +530,7 @@ const GiftFilterScreen = ({ route }) => {
                       {t('suggestedMessages')}
                     </CustomText>
                     <Subtitle style={{ fontSize: 14 }}>{t('selectAmessage')}</Subtitle>
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
 
                   <CustomButton title={t('continuePayment')}
                     // onPress={() => setSelectedFilter([1, 2, 3, 4])}
@@ -505,7 +543,7 @@ const GiftFilterScreen = ({ route }) => {
                         })
                         return
                       }
-                      dispatch(addGiftProductToCart({ cardName, selectedMsg }))
+                      dispatch(addGiftProductToCart({ cardName, address, selectedMsg }))
                       setSelectedFilter([1, 2, 3, 4])
                     }}
 
@@ -532,7 +570,7 @@ const GiftFilterScreen = ({ route }) => {
             <Image source={require('../assets/giftCard.png')} style={{ width: "91%", marginTop: 20, alignSelf: "center" }} borderRadius={10} />
             <CheckoutScreen
               isHeader={false}
-              
+
             />
 
 
@@ -546,10 +584,8 @@ const GiftFilterScreen = ({ route }) => {
         setModalVisible={setModalVisible}
         modalVisible={modalVisible}
         setSelectedMsg={setSelectedMsg}
+        data={suggestedMessages?.messages}
       />
-
-
-
 
       <ContactPickerModal
         setContactModal={setIsContactPickerModal}

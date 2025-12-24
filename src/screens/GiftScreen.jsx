@@ -24,17 +24,20 @@ import GiftImage from '../components/GiftImage';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { fetchSendGifts, giftRcvd, removeGiftData } from '../userServices/UserService';
-import { useSelector } from 'react-redux';
+import { fetchSendGifts, giftRcvd, giftWalletUpdate, removeGiftData } from '../userServices/UserService';
+import { useDispatch, useSelector } from 'react-redux';
 import ScreenLoader from '../components/ScreenLoader';
+import { showMessage } from 'react-native-flash-message';
+import { addProductToCart } from '../redux/ProductAddToCart';
 
 const { height } = Dimensions.get('screen');
 
 const GiftScreen = () => {
   const navigation = useNavigation()
   const { t } = useTranslation();
-
+  const dispatch = useDispatch()
   const token = useSelector((state) => state.auth.loginData?.token)
+  const userId = useSelector((state) => state.auth.loginData?.id)
 
   const [selectedFilter, setSelectedFilter] = useState('sendGift');
   const [isShowDetails, setIsShowDetails] = useState(null);
@@ -43,6 +46,7 @@ const GiftScreen = () => {
   const [isShowSenderDetail, setIsShowSenderDetail] = useState(false);
   const [sendGiftData, setSendGiftData] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const [receivedGiftData, setReceivedGiftData] = useState([]);
 
 
   useFocusEffect(useCallback(() => {
@@ -55,7 +59,7 @@ const GiftScreen = () => {
   const getSentGifts = async () => {
     try {
       const result = await fetchSendGifts(token);
-      console.log('dasdas', result?.data?.data)
+      console.log('testingKoubak', result?.data?.data)
       if (result?.success) {
         setSendGiftData(result?.data?.data)
       }
@@ -69,12 +73,13 @@ const GiftScreen = () => {
     setDeleteLoader(true)
     try {
       const result = await removeGiftData(id, token);
+      showMessage({
+        type: "success",
+        message: t('GiftDeleted')
+      })
       if (result?.success) {
         getSentGifts()
-        showMessage({
-          type: "success",
-          message: t('GiftDeleted')
-        })
+
       }
     } catch (e) {
       console.log(e);
@@ -83,19 +88,12 @@ const GiftScreen = () => {
     }
   };
 
-
   const rcvdGift = async () => {
-    // setDeleteLoader(true)
     try {
       const result = await giftRcvd(token);
-      console.log('resultresult', result)
-      // if (result?.success) {
-      //   getSentGifts()
-      //   showMessage({
-      //     type: "success",
-      //     message: t('GiftDeleted')
-      //   })
-      // }
+      if (result?.success) {
+        setReceivedGiftData(result?.data?.data)
+      }
     } catch (e) {
       console.log(e);
     } finally {
@@ -103,22 +101,83 @@ const GiftScreen = () => {
     }
   };
 
-
   const renderGiftSection = ({ item, index }) => {
     console.log('itemitemitemitem', item)
     return (
+      // <View style={styles.cardWrapper} key={index}>
+      //   <View style={styles.cardHeader}>
+      //     <View>
+      //       <CustomText style={styles.productName}>
+      //         {item?.gift_item}
+      //       </CustomText>
+      //       {/* <CustomText style={styles.productPrice}>
+      //         {currency} {item?.price}
+      //       </CustomText> */}
+      //     </View>
+      //     <Image
+      //       source={item?.productImage}
+      //       style={styles.productImage}
+      //       borderRadius={5}
+      //     />
+      //   </View>
+
+      //   <View>
+      //     {isShowDetails == index ? (
+      //       <GiftImage
+      //         handleHidePress={() => setIsShowDetails(null)}
+      //         setIsShowDetails={setIsShowDetails}
+      //         imagePath={require('../assets/giftMSg.png')}
+      //         label={item?.gift_message}
+      //         style={styles.giftImageMargin}
+      //         senderName={item?.recipient_name}
+      //       />
+      //     ) : (
+      //       <>
+      //         <GiftImage
+      //           setIsShowDetails={setIsShowDetails}
+      //         />
+      //         <CustomButton
+      //           onPress={() => setIsShowDetails(index)}
+      //           title={t('showDetails')}
+      //           style={[styles.detailsButton]}
+      //           btnTxtStyle={styles.detailsButtonText}
+      //         />
+      //       </>
+      //     )}
+      //   </View>
+
+      //   {isShowDetails !== index && (
+      //     <>
+      //       {
+      //         deleteLoader ?
+      //           <ScreenLoader type={1} />
+      //           :
+      //           <TouchableOpacity onPress={() => deleteGift(item?.id)}>
+      //             <CustomText style={styles.deleteText}>
+      //               {t('deleteFromHistory')}
+      //             </CustomText>
+      //           </TouchableOpacity>
+
+
+      //       }
+
+      //       <DividerLine />
+      //     </>
+      //   )}
+      // </View>
+
       <View style={styles.cardWrapper} key={index}>
         <View style={styles.cardHeader}>
           <View>
             <CustomText style={styles.productName}>
-              {item?.gift_item}
+              {item?.gift_item}  {currency} {item?.products[0]?.price}
             </CustomText>
             {/* <CustomText style={styles.productPrice}>
-              {currency} {item?.price}
-            </CustomText> */}
+                {currency} {item?.price}
+              </CustomText> */}
           </View>
           <Image
-            source={item?.productImage}
+            source={{ uri: item?.product_image }}
             style={styles.productImage}
             borderRadius={5}
           />
@@ -129,15 +188,18 @@ const GiftScreen = () => {
             <GiftImage
               handleHidePress={() => setIsShowDetails(null)}
               setIsShowDetails={setIsShowDetails}
-              imagePath={require('../assets/giftMSg.png')}
+              // imagePath={require('../assets/giftMSg.png')}
+              imagePath={item?.gift_theme}
               label={item?.gift_message}
               style={styles.giftImageMargin}
               senderName={item?.recipient_name}
+              receiver={true}
             />
           ) : (
             <>
               <GiftImage
                 setIsShowDetails={setIsShowDetails}
+                imagePath={item?.gift_theme}
               />
               <CustomButton
                 onPress={() => setIsShowDetails(index)}
@@ -167,6 +229,9 @@ const GiftScreen = () => {
             <DividerLine />
           </>
         )}
+
+
+        <View style={{ marginVertical: 20 }} />
       </View>
     );
   }
@@ -186,18 +251,58 @@ const GiftScreen = () => {
 
   const renderRecivedGifts = ({ item, index }) => {
     return (
+      // <View key={item}>
+      //   {isReceiverSender == index ? (
+      //     <GiftImage
+      //       handleHidePress={() => setIsReceiverSender(null)}
+      //       onPress={() => setIsReceiverSender(null)}
+      //       imagePath={require('../assets/giftMSg.png')}
+      //       label={'Have a good day'}
+      //       style={styles.receivedGiftImage}
+      //       senderName={'Muhammad'}
+      //     />
+      //   ) : (
+      //     <GiftImage />
+      //   )}
+
+      //   <View style={styles.receivedButtonsRow}>
+      //     {isReceiverSender !== index && (
+      //       <CustomButton
+      //         onPress={() => setIsReceiverSender(index)}
+      //         title={t('showSender')}
+      //         style={styles.receiverSenderButton}
+      //         btnTxtStyle={styles.receiverSenderBtnText}
+      //       />
+      //     )}
+
+      //     <CustomButton
+      //       title={t('showAllDetails')}
+      //       onPress={() => setIsShowSenderDetail(true)}
+      //       style={[
+      //         styles.receiverSenderButton,
+      //         isReceiverSender == index && styles.receiverSenderShift,
+      //       ]}
+      //       btnTxtStyle={styles.receiverSenderBtnText}
+      //     />
+      //   </View>
+      // </View>
+
+
       <View key={item}>
         {isReceiverSender == index ? (
           <GiftImage
             handleHidePress={() => setIsReceiverSender(null)}
             onPress={() => setIsReceiverSender(null)}
-            imagePath={require('../assets/giftMSg.png')}
-            label={'Have a good day'}
+           imagePath={item?.gift_theme}
+            label={item?.gift_message}
             style={styles.receivedGiftImage}
-            senderName={'Muhammad'}
+            senderName={item?.sender?.phone_number}
           />
         ) : (
-          <GiftImage />
+          <GiftImage
+            style={{width:"100%"}}
+            imagePath={item?.gift_theme}
+          />
         )}
 
         <View style={styles.receivedButtonsRow}>
@@ -212,7 +317,7 @@ const GiftScreen = () => {
 
           <CustomButton
             title={t('showAllDetails')}
-            onPress={() => setIsShowSenderDetail(true)}
+            onPress={() => setIsShowSenderDetail(item)}
             style={[
               styles.receiverSenderButton,
               isReceiverSender == index && styles.receiverSenderShift,
@@ -223,11 +328,12 @@ const GiftScreen = () => {
       </View>
     );
   }
+  console.log('receivedGiftDatareceivedGiftDatareceivedGiftData', receivedGiftData)
 
   const RenderReceivedGiftsData = () => {
     return (
       <FlatList
-        data={[]}
+        data={receivedGiftData}
         keyExtractor={(item, index) => index?.toString()}
         renderItem={renderRecivedGifts}
         ListEmptyComponent={<EmptyData />}
@@ -235,6 +341,135 @@ const GiftScreen = () => {
     )
   };
 
+  // const ShowAllDetails = () => {
+  //   const InfoData = ({ label, value }) => {
+  //     return (
+  //       <View style={styles.infoRow}>
+  //         <Entypo name={'dot-single'} size={20} color={colors.primary} />
+  //         <CustomText style={styles.infoLabel}>
+  //           {label}:
+  //         </CustomText>
+  //         <CustomText style={styles.infoValue}>
+  //           {value}
+  //         </CustomText>
+  //       </View>
+  //     );
+  //   };
+
+  //   return (
+  //     <View>
+  //       <View style={styles.rcvrOuterBox}>
+  //         <View style={styles.rcvrDetail}>
+  //           <View style={styles.productInfo}>
+  //             <CustomText style={styles.productName}>
+  //               Espresso single shot ethiopian beans
+  //             </CustomText>
+  //             <CustomText style={styles.productPrice}>
+  //               {currency} 66.00
+  //             </CustomText>
+  //           </View>
+  //           <Image
+  //             source={require('../assets/cup.png')}
+  //             style={styles.productImage}
+  //             borderRadius={5}
+  //           />
+  //         </View>
+
+  //         <View style={styles.actionRow}>
+  //           <CustomButton
+  //             title={t('addItemCart')}
+  //             style={styles.addItemCartBtn}
+  //             btnTxtStyle={styles.smallBtnText}
+  //           />
+
+  //           <CustomButton
+  //             title={t('addAmountWallet')}
+  //             style={styles.addAmountWalletBtn}
+  //             btnTxtStyle={styles.smallBtnText}
+  //           />
+  //         </View>
+  //       </View>
+
+  //       <GiftImage />
+
+  //       <View style={styles.secondGiftWrapper}>
+  //         <GiftImage
+  //           imagePath={require('../assets/giftMSg.png')}
+  //           label={'Have a good day'}
+  //           style={styles.secondGiftImage}
+  //           senderName={'Muhammad'}
+  //           setIsShowDetails={setIsShowDetails}
+
+  //         />
+
+  //         <TouchableOpacity style={styles.shareGiftBtn}>
+  //           <EvilIcons name={'share-google'} size={25} color={colors.black} />
+  //           <CustomText style={styles.shareGiftText}>
+  //             {t('shareGift')}
+  //           </CustomText>
+  //         </TouchableOpacity>
+  //       </View>
+
+  //       <View style={styles.infoList}>
+  //         <InfoData label={t('sentData')} value={'1-8-2025 | 08:00AM'} />
+  //         <InfoData label={t('expiryDate')} value={'30-12-2025 | 08:00AM'} />
+  //       </View>
+
+  //       <View style={styles.bottomRow}>
+  //         <CustomButton
+  //           title={t('back')}
+  //           onPress={() => setIsShowSenderDetail(false)}
+  //           style={[styles.addItemCartBtn, { width: "22%" }]}
+  //           btnTxtStyle={styles.smallBtnText}
+  //         />
+
+  //         <TouchableOpacity>
+  //           <CustomText style={styles.deleteHistoryText}>
+  //             {t('deleteFromHistory')}
+  //           </CustomText>
+  //         </TouchableOpacity>
+  //       </View>
+  //     </View>
+  //   );
+  // };
+  const updateWallet = async () => {
+    try {
+      const result = await giftWalletUpdate(isShowSenderDetail, userId);
+      console.log('result-->>>', result)
+      if (result?.success) {
+        showMessage({
+          type: "success",
+          message: t('Balance added to Wallet')
+        })
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setDeleteLoader(false)
+    }
+  };
+
+  const addToCart = () => {
+    {
+      const data = {
+        id: isShowSenderDetail?.products[0]?.item_id,
+        title: isShowSenderDetail?.gift_item,
+        description: isShowSenderDetail?.description || 'description',
+        counter: Number(isShowSenderDetail?.products[0]?.quantity),
+        price: Number(isShowSenderDetail?.products[0]?.price),
+        image: `${isShowSenderDetail?.products[0]?.image}`,
+        extraItem: isShowSenderDetail?.selectedExtras || [],
+        productNotes: isShowSenderDetail?.productNotes || 'productNotes',
+        nameOnSticker: receivedGiftData?.recipient_name,
+        msgForReceiver: receivedGiftData?.gift_message,
+        restaurantId: receivedGiftData?.order?.restaurant_id,
+        categoryId: isShowSenderDetail?.categoryId,
+        restData: isShowSenderDetail?.restData,
+      }
+      dispatch(addProductToCart(data))
+    }
+    navigation.navigate('BasketScreen')
+  }
 
   const ShowAllDetails = () => {
     const InfoData = ({ label, value }) => {
@@ -257,14 +492,15 @@ const GiftScreen = () => {
           <View style={styles.rcvrDetail}>
             <View style={styles.productInfo}>
               <CustomText style={styles.productName}>
-                Espresso single shot ethiopian beans
+                {isShowSenderDetail?.gift_item}
               </CustomText>
               <CustomText style={styles.productPrice}>
-                {currency} 66.00
+                {currency}  {isShowSenderDetail?.products[0]?.price} X {isShowSenderDetail?.products[0]?.quantity}
+
               </CustomText>
             </View>
             <Image
-              source={require('../assets/cup.png')}
+              source={{ uri: isShowSenderDetail?.products[0]?.image }}
               style={styles.productImage}
               borderRadius={5}
             />
@@ -275,24 +511,25 @@ const GiftScreen = () => {
               title={t('addItemCart')}
               style={styles.addItemCartBtn}
               btnTxtStyle={styles.smallBtnText}
+              onPress={addToCart}
             />
 
             <CustomButton
               title={t('addAmountWallet')}
               style={styles.addAmountWalletBtn}
               btnTxtStyle={styles.smallBtnText}
+              onPress={() => updateWallet()}
             />
           </View>
         </View>
 
-        <GiftImage />
-
+        {/* <GiftImage /> */}
         <View style={styles.secondGiftWrapper}>
           <GiftImage
-            imagePath={require('../assets/giftMSg.png')}
-            label={'Have a good day'}
+            imagePath={isShowSenderDetail?.gift_theme}
+            label={isShowSenderDetail?.gift_message}
             style={styles.secondGiftImage}
-            senderName={'Muhammad'}
+            senderName={isShowSenderDetail?.sender?.phone_number}
             setIsShowDetails={setIsShowDetails}
 
           />
@@ -305,20 +542,20 @@ const GiftScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.infoList}>
+        {/* <View style={styles.infoList}>
           <InfoData label={t('sentData')} value={'1-8-2025 | 08:00AM'} />
           <InfoData label={t('expiryDate')} value={'30-12-2025 | 08:00AM'} />
-        </View>
+        </View> */}
 
         <View style={styles.bottomRow}>
           <CustomButton
             title={t('back')}
-            onPress={() => setIsShowSenderDetail(false)}
+            onPress={() => setIsShowSenderDetail('')}
             style={[styles.addItemCartBtn, { width: "22%" }]}
             btnTxtStyle={styles.smallBtnText}
           />
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => deleteGift(isShowSenderDetail?.id, true)}>
             <CustomText style={styles.deleteHistoryText}>
               {t('deleteFromHistory')}
             </CustomText>
@@ -331,9 +568,6 @@ const GiftScreen = () => {
   return (
     <ScreenView scrollable={true}>
       <HeaderBox logo={true} />
-
-
-
 
       <CustomText style={styles.giftsTitle}>{t('gifts')}</CustomText>
 
@@ -441,6 +675,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 10
   },
   backBtn: { height: I18nManager.isRTL ? 40 : 20, width: '30%' },
   deleteHistoryText: { fontSize: 12, color: colors.red },

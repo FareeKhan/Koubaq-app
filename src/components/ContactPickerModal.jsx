@@ -46,6 +46,7 @@ const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, s
     };
 
     const toggleContactSelection = (contact) => {
+        setContactModal(false)
         setSelectedContacts(prev => {
             // If already selected, remove it
             if (prev.find(c => c.recordID === contact.recordID)) {
@@ -93,6 +94,7 @@ const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, s
                         data={contacts}
                         keyExtractor={item => item.recordID}
                         renderItem={renderItem}
+                        style={{height:400}}
                         contentContainerStyle={{paddingBottom:20}}
                     />
                          <CustomButton

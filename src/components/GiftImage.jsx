@@ -20,6 +20,7 @@ const GiftImage = ({
   setIsShowDetails,
   onPress,
   handleHidePress,
+  receiver
 }) => {
   const { t } = useTranslation();
   return (
@@ -29,8 +30,10 @@ const GiftImage = ({
       style={style}
     >
       <Image
-        source={imagePath ? imagePath : require('../assets/giftCard.png')}
+        source={imagePath ? { uri: imagePath } : require('../assets/giftCard.png')}
         style={{ width: '100%', height: 180 }}
+        borderRadius={10}
+
       />
 
       {label && (
@@ -52,7 +55,7 @@ const GiftImage = ({
 
       {senderName && (
         <TouchableOpacity
-           onPress={onPress ? onPress : () => setIsShowDetails(null)}
+          onPress={onPress ? onPress : () => setIsShowDetails(null)}
           activeOpacity={1}
           style={{
             shadowColor: '#00000090',
@@ -73,7 +76,7 @@ const GiftImage = ({
           }}
         >
           <CustomText style={{ fontSize: 15, color: colors.primary }}>
-            {t('sender')}: {senderName}{' '}
+            {receiver ? t('receiver') : t('sender')}  : {senderName}{' '}
           </CustomText>
         </TouchableOpacity>
       )}

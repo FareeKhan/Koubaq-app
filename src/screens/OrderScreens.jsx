@@ -27,7 +27,7 @@ import { useNavigation } from '@react-navigation/native';
 import { fetchOrder } from '../userServices/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import RemoteImage from '../components/RemoteImage';
-import { addProductToCart } from '../redux/ProductAddToCart';
+import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
 
 const OrderScreens = () => {
   const { t } = useTranslation();
@@ -56,6 +56,7 @@ const OrderScreens = () => {
 
 
   const addToCart = (reOrderItem) => {
+      dispatch(clearCart());
     reOrderItem?.items?.forEach((productData, index) => {
       const data = {
         id: productData?.id,
@@ -84,7 +85,6 @@ const OrderScreens = () => {
     const dateObj = new Date(isoString);
     const date = dateObj.toLocaleDateString(); // e.g. "10/31/2025"
     const time = dateObj.toLocaleTimeString(); // e.g. "4:33 PM"
-    console.log('itemitem')
 
     return (
       <TouchableOpacity
@@ -179,6 +179,7 @@ const OrderScreens = () => {
         renderItem={renderItem}
         scrollEnable={false}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom:100}}
         ListEmptyComponent={<EmptyData />}
       />
     </ScreenView>

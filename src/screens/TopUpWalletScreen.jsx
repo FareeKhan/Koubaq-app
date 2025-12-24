@@ -112,12 +112,10 @@ const TopUpWalletScreen = () => {
         // filter={false}
         value={otherAmount}
         onChangeText={(text) => {
-          const numericValue = text.replace(/[^0-9.]/g, '');
-
-          if (numericValue.length > 0) {
-            setOtherAmount(numericValue);
-            setSelectedBalance(null);
-          }
+    const numericValue = text.replace(/[^0-9.]/g, '');
+    setOtherAmount(numericValue);
+    setSelectedBalance(null);
+  
 
         }}
       />

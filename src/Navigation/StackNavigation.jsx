@@ -30,7 +30,9 @@ export const HomeStack = () => {
         name="ProductDetail"
         component={ProductDetail}
       />
-      <Stack.Screen name="BasketScreen" component={BasketScreen} />
+      <Stack.Screen name="BasketScreen" component={BasketScreen}
+              options={{ gestureEnabled: false }}
+      />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />
       <Stack.Screen name="GiftFilterScreen" component={GiftFilterScreen} />
@@ -61,7 +63,10 @@ export const giftStack = () => {
         name="ProductDetail"
         component={ProductDetail}
       />
-      <Stack.Screen name="BasketScreen" component={BasketScreen} />
+      <Stack.Screen name="BasketScreen" component={BasketScreen}
+              options={{ gestureEnabled: false }}
+      
+      />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />
       <Stack.Screen name="GiftFilterScreen" component={GiftFilterScreen} />
@@ -93,7 +98,10 @@ export const WalletStack = () => {
         name="ProductDetail"
         component={ProductDetail}
       />
-      <Stack.Screen name="BasketScreen" component={BasketScreen} />
+      <Stack.Screen name="BasketScreen" component={BasketScreen} 
+              options={{ gestureEnabled: false }}
+      
+      />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />
       <Stack.Screen name="GiftFilterScreen" component={GiftFilterScreen} />

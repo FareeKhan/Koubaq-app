@@ -19,7 +19,8 @@ const ProductListing = ({ layoutType, isPlus, isGifterPage, data }) => {
       <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', {
         isGifterPage: isGifterPage,
         id: item?.id,
-        restaurant_id: item?.restaurant_id
+        restaurant_id: item?.restaurant_id,
+        data:isGifterPage?data:[]
       })} style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <View style={{ width: "55%" }}>
           <CustomText>{item?.name}</CustomText>

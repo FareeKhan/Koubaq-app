@@ -19,7 +19,7 @@ import CustomButton from '../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import RemoteImage from '../components/RemoteImage';
 import { useDispatch } from 'react-redux';
-import { addProductToCart } from '../redux/ProductAddToCart';
+import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
 
 const OrderDetailsScreen = ({ route }) => {
   const { t } = useTranslation();
@@ -34,28 +34,55 @@ const OrderDetailsScreen = ({ route }) => {
   const date = dateObj.toLocaleDateString()
   const time = dateObj.toLocaleTimeString()
 
+  // const addToCart = () => {
+  //        dispatch(clearCart())
+  //   item?.items?.forEach((productData, index) => {
+  //     const data = {
+  //       id: productData?.id,
+  //       title: productData?.name,
+  //       description: productData?.description,
+  //       counter: Number(productData?.quantity),
+  //       price: Number(productData?.price),
+  //       image: `${productData?.image}`,
+  //       extraItem: productData?.selectedExtras || [],
+  //       productNotes: productData?.productNotes,
+  //       nameOnSticker: productData?.nameOnSticker,
+  //       msgForReceiver: productData?.msgForReceiver,
+  //       restaurantId: item?.restaurant_id,
+  //       categoryId: productData?.categoryId,
+  //       restData: productData?.restData,
+  //     }
+  //     dispatch(addProductToCart(data))
+  //   })
+  //   navigation.navigate('BasketScreen')
+  // }
+
   const addToCart = () => {
-    item?.items?.forEach((productData, index) => {
-      const data = {
-        id: productData?.id,
-        title: productData?.name,
-        description: productData?.description,
-        counter: Number(productData?.quantity),
-        price: Number(productData?.price),
-        image: `${productData?.image}`,
-        extraItem: productData?.selectedExtras || [],
-        productNotes: productData?.productNotes,
-        nameOnSticker: productData?.nameOnSticker,
-        msgForReceiver: productData?.msgForReceiver,
-        restaurantId: item?.restaurant_id,
-        categoryId: productData?.categoryId,
-              restData: productData?.restData,
-      }
-      dispatch(addProductToCart(data))
-    })
-    navigation.navigate('BasketScreen')
-  }
-  console.log('item?.payment_typeitem?.payment_type', item?.payment_type)
+  dispatch(clearCart());
+
+  setTimeout(() => {
+    item?.items?.forEach(productData => {
+      dispatch(addProductToCart({
+        id: productData.id,
+        title: productData.name,
+        description: productData.description,
+        counter: Number(productData.quantity),
+        price: Number(productData.price),
+        image: String(productData.image),
+        extraItem: productData.selectedExtras || [],
+        productNotes: productData.productNotes,
+        nameOnSticker: productData.nameOnSticker,
+        msgForReceiver: productData.msgForReceiver,
+        restaurantId: item.restaurant_id,
+        categoryId: productData.categoryId,
+        restData: productData.restData,
+      }));
+    });
+
+    navigation.navigate('BasketScreen');
+  }, 0);
+};
+
 
 
   return (

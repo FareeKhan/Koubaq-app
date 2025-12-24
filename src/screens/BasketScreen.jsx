@@ -29,13 +29,19 @@ import EmptyData from '../components/EmptyData';
 const BasketScreen = () => {
   const { t } = useTranslation();
   const navigation = useNavigation()
-  const cartData = useSelector((state) => state?.cart?.cartProducts)
+  // const cartData = useSelector((state) => state?.cart?.cartProducts)
+  const baseketData = useSelector((state) => state?.cart?.cartProducts)
+
   const restId = useSelector((state) => state?.cart?.restaurentID)
   const userId = useSelector((state) => state?.auth?.loginData?.id)
+  const cartData = baseketData?.filter((item) => (item?.restaurantId) === (restId))
+
 
   const [driverNote, setDriverNote] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [discountAmount, setDiscountAmount] = useState(0)
+  const [isPromoCodeBtn, setIsPromoCodeBtn] = useState(true);
+
   const subTotal = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) - (discountAmount?.discount_amount || 0)
 
   const [isLoader, setIsLoader] = useState(false)
@@ -55,7 +61,7 @@ const BasketScreen = () => {
       console.log('dasdassdas', result)
       if (result?.success) {
         showMessage({
-          type: "Success",
+          type: "success",
           message: t("Promo code Applied")
         })
         setDiscountAmount(result?.data)
@@ -71,15 +77,18 @@ const BasketScreen = () => {
       setIsLoader(false)
     }
   }
-  console.log('userIduserId', userId)
   const handleCheckout = () => {
     if (!userId) {
+      navigation.navigate('LoginScreen', {
+        isBasket: true
+      })
       showMessage({
         type: "danger",
         message: t('PleaseLoginFirst')
       })
       return
     }
+
 
 
     navigation.navigate('CheckoutScreen', {
@@ -125,10 +134,15 @@ const BasketScreen = () => {
             value={promoCode}
             onChangeText={setPromoCode}
           />
-          <TouchableOpacity style={styles.submitText} onPress={() => handlePromoCode()}>
-            <Subtitle >{t('submit')}</Subtitle>
-          </TouchableOpacity>
+          {
+            discountAmount == 0 &&
+            <TouchableOpacity style={styles.submitText} onPress={() => handlePromoCode()}>
+              <Subtitle >{t('submit')}</Subtitle>
+            </TouchableOpacity>
+          }
+
         </View>
+
 
         <DividerLine style={styles.dividerBottom} h={true} />
 
@@ -137,6 +151,11 @@ const BasketScreen = () => {
         <KeyValue leftValue={t('Subtotal')} rightValue={subTotal} />
         <KeyValue leftValue={t('DeliveryFee')} rightValue={'Free'} />
         <KeyValue leftValue={t('ServiceFee')} rightValue={'Free'} />
+        {
+          discountAmount?.discount_amount &&
+        <KeyValue leftValue={t('discount')} rightValue={ '-SAR ' +discountAmount?.discount_amount || 0} />
+        }
+
         <KeyValue
           boldData={true}
           leftValue={t('TotalAmount')}
@@ -156,6 +175,10 @@ const BasketScreen = () => {
             title={t('addItem')}
             btnTxtStyle={{ color: colors.black }}
             style={styles.bottomBtn}
+            onPress={() => navigation.reset({
+              index: 0,
+              routes: [{ name: "HomeScreen" }]
+            })}
           />
 
           <CustomButton title={t('checkout')} style={{ width: '48%' }}

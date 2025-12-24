@@ -8,7 +8,7 @@ export const imageUrl = `${mainUrl}uploads/`;
 export const STRIPE_KEY = "pk_test_51SOZA0COzbE7fBAMwRoi2wspVojLIK9SiqI9I7DJUrYNpwCcdUQs3bUPWRPu11R8CmPGBpDullGI5e7liLrOtXzh00R4HTUs0u"
 
 
-export const GOOGLE_API = 'AIzaSyAo2MfsEOJJqEyVA2iQ1xWVWcMQm_NnVV8';
+export const GOOGLE_API = 'AIzaSyBJVhlenAMsRkF2yHARSey2mtIFEW2_rfo';
 import ApplePayMethod from '../assets/svg/ApplePayMethod.svg';
 import CreditCard from '../assets/svg/creditCart.svg';
 import Wallet from '../assets/svg/wallet.svg';

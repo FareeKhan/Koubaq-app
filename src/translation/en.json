@@ -10,7 +10,7 @@
   "PaswordShouldBe":"Passwords should be between 6 and 16 characters",
   "CheckBoxText":"Yes, I want to receive offers and discounts",
   "SelectCountry":"Select Country",
-  "shopsNear":"Shops Near to you",
+  "shopsNear":"Shops",
   "seeAll":"See All",
   "customizeItem":"Customize Item",
   "customizeSticker":"Customize Sticker",
@@ -165,5 +165,23 @@
                        "CartISEmpty" :"Cart Is Empty",
 
                        "PleaseLogin" :"Please sign in",
-                      "PleaseLoginFirst": "Please log in to continue with checkout"
+                      "PleaseLoginFirst": "Please log in to continue with checkout",
+                       "pleaseEnterStickerName": "Please enter the name to be printed on the coffee cup",
+                  "edit": "Edit",
+                  "PleaseLoginToEdit": "Please Login your account to Edit address",
+  "GiftDeleted" :"Gift Deleted successfully",
+
+  "recptName" :"Receipt Name",
+  "recptAddress" :"Receipt Address",
+
+  "reveiver" :"Receiver",
+
+  
+
+
 }
+
+
+
+
+                      

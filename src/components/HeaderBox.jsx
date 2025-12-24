@@ -35,23 +35,24 @@ const HeaderBox = ({
   notification = true,
   heart,
   onPressBack,
-  productData
+  productData,
+  onPressSearch
 
 }) => {
   const { t } = useTranslation();
-    const isLanguage = useSelector(state => state.auth?.isLanguage);
+  const isLanguage = useSelector(state => state.auth?.isLanguage);
   const favoriteData = useSelector((state) => state?.favorite?.AddInFavorite)
 
-    const dispatch = useDispatch()
-  
+  const dispatch = useDispatch()
+
   const productInCart = [];
-const navigation = useNavigation()
+  const navigation = useNavigation()
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCountry, setSelectCountry] = useState(Countries?.find((item)=>item?.code == isLanguage));
+  const [selectedCountry, setSelectCountry] = useState(Countries?.find((item) => item?.code == isLanguage));
 
 
   const isCheckData = favoriteData?.some((state) => state?.id == productData?.id)
-    const handleTranslation = () => {
+  const handleTranslation = () => {
     const isSelectedLanguage = isLanguage == 'en' ? 'ar' : 'en';
     dispatch(language({ isSelectedLanguage }));
 
@@ -64,8 +65,7 @@ const navigation = useNavigation()
   };
 
 
-
-    const handleFavorite = useCallback(() => {
+  const handleFavorite = useCallback(() => {
     if (isCheckData) {
       dispatch(removeFavorite({ id: productData?.id }))
     } else {
@@ -79,7 +79,7 @@ const navigation = useNavigation()
       }))
     }
 
-  },[isCheckData, productData])
+  }, [isCheckData, productData])
 
   return (
     <View
@@ -97,7 +97,7 @@ const navigation = useNavigation()
           <Ionicons name={'chevron-down'} color={colors.black} size={20} />
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity onPress={onPressBack ? onPressBack :() => navigation.goBack()}>
+        <TouchableOpacity onPress={onPressBack ? onPressBack : () => navigation.goBack()}>
           <Ionicons
             name={I18nManager.isRTL ? 'arrow-forward-sharp' : 'arrow-back-sharp'}
             color={colors.black}
@@ -129,7 +129,7 @@ const navigation = useNavigation()
         {search && (
           <TouchableOpacity
             hitSlop={{ top: 7, bottom: 7, left: 7, right: 7 }}
-            onPress={() => console.log('SearchHere')}
+            onPress={() => onPressSearch()}
           >
             <EvilIcons name={'search'} size={25} color={colors.black} />
           </TouchableOpacity>
@@ -155,9 +155,9 @@ const navigation = useNavigation()
           <TouchableOpacity
             hitSlop={{ top: 7, bottom: 7, left: 7, right: 7 }}
             // onPress={() => setIsHeart(!isHeart)}
-            onPress={() => handleFavorite()} 
+            onPress={() => handleFavorite()}
           >
-              <FontAwesome name={isCheckData ? 'heart' : 'heart-o'} size={18} color={isCheckData ? colors.red : colors.black} />
+            <FontAwesome name={isCheckData ? 'heart' : 'heart-o'} size={18} color={isCheckData ? colors.red : colors.black} />
 
           </TouchableOpacity>
         }
@@ -170,36 +170,36 @@ const navigation = useNavigation()
         title={t('selectLanguage')}
       >
         <View style={{ paddingBottom: 70 }}>
-      
+
           {Countries?.map((item, index) => {
             return (
-              <View 
+              <View
                 key={index}
-                style={{paddingBottom:10}}
+                style={{ paddingBottom: 10 }}
               >
-             <TouchableOpacity
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap:10,
-                  borderBottomWidth:1,
-                  borderColor:colors.gray5,
-                  paddingBottom:10
-                }}
-                onPress={() => {
-                  setSelectCountry(item),
-                  handleTranslation()
-                  ,setModalVisible(false);
-                }}
-              >
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: 10,
+                    borderBottomWidth: 1,
+                    borderColor: colors.gray5,
+                    paddingBottom: 10
+                  }}
+                  onPress={() => {
+                    setSelectCountry(item),
+                      handleTranslation()
+                      , setModalVisible(false);
+                  }}
+                >
                   <Image
-                  source={{ uri: item?.flag }}
-                  style={{ width: 60, height: 30 }}
-                />
-                <CustomText>{item?.name}</CustomText>
-              
-              </TouchableOpacity>
-            
+                    source={{ uri: item?.flag }}
+                    style={{ width: 60, height: 30 }}
+                  />
+                  <CustomText>{item?.name}</CustomText>
+
+                </TouchableOpacity>
+
               </View>
             );
           })}

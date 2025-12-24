@@ -27,14 +27,15 @@ import { showMessage } from 'react-native-flash-message';
 const CheckoutScreen = ({ isHeader = true, route }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch()
-  const cartData = useSelector((state) => state?.cart?.cartProducts)
+  const baseketData = useSelector((state) => state?.cart?.cartProducts)
   const token = useSelector((state) => state?.auth?.loginData?.token)
   const userData = useSelector((state) => state?.auth?.loginData)
   const giftCartData = useSelector((state) => state?.giftInfo?.giftProduct)
-    const userId = useSelector((state) => state?.auth?.loginData?.id)
+  const userId = useSelector((state) => state?.auth?.loginData?.id)
+  const restId = useSelector((state) => state?.cart?.restaurentID)
+  const cartData = baseketData?.filter((item) => (item?.restaurantId) === Number(restId))
 
   const restaurentData = cartData[0]?.restData
-  console.log('tokentokencartData', cartData)
 
   const resID = useSelector((state) => state?.cart?.restaurentID)
   const { driverNote, discount } = route?.params || ''
@@ -45,12 +46,14 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   const [scheduleTimeArray, setScheduleTimeArray] = useState([]);
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedCarId, setSelectedCarId] = useState('')
+  const [selectedCarInfo, setSelectedCarInfo] = useState('')
+
   const [loading, setLoading] = useState(false);
   const [isOrderLoader, setIsOrderLoader] = useState(false);
 
   const paymentData = paymentCards(t);
 
-  const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0)-discount
+  const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) - discount
   const finalPrice = subTotalPrice || giftCartData?.price * giftCartData?.counter
 
   const PickUpTimeBox = () => {
@@ -84,14 +87,21 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   useEffect(() => {
     if (finalPrice > 0) {
-      initializePaymentSheet(finalPrice , setLoading);
+      initializePaymentSheet(finalPrice, setLoading);
     }
   }, [finalPrice]);
 
 
   const handleCheckOutBtn = () => {
-    
-    if (isHeader) {
+
+        if (!userId) {
+      showMessage({
+        type: "danger",
+        message: t('PleaseLoginFirst')
+      })
+      return
+    }
+   
       if (selectedCarId == '') {
         showMessage({
           type: "danger",
@@ -99,7 +109,6 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
         })
         return
       }
-    }
 
     if (selectedPayment == 2 || selectedPayment == 1) {
       openPaymentSheet(processOrder)
@@ -114,12 +123,18 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   const processOrder = async () => {
     setIsOrderLoader(true)
+    
     const payMethod = selectedPayment == 1 ? "apple_pay" : selectedPayment == 2 ? 'card' : 'wallet'
     try {
-      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod)
+      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod,selectedCarInfo)
       if (response?.success) {
         navigation.navigate('SuccessfulScreen')
         dispatch(clearCart())
+      } else {
+        showMessage({
+          type: "danger",
+          message: response?.message || 'Insufficient wallet balance'
+        })
       }
       console.log('response', response)
     } catch (error) {
@@ -134,20 +149,25 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   }
 
   const processGiftOrder = async () => {
-       if (!userId) {
-          showMessage({
-            type: "danger",
-            message: t('PleaseLoginFirst')
-          })
-          return
-        }
+    if (!userId) {
+      showMessage({
+        type: "danger",
+        message: t('PleaseLoginFirst')
+      })
+      return
+    }
     setIsOrderLoader(true)
     try {
-      const response = await makeGiftOrder(giftCartData, token)
+      const response = await makeGiftOrder(giftCartData, token, selectedCarId, finalPrice, selectedPayment)
       console.log('responsare', response)
       if (response?.success) {
         navigation.navigate('SuccessfulScreen')
         dispatch(clearCart())
+      } else {
+        showMessage({
+          type: "danger",
+          message: response?.message || 'Insufficient wallet balance'
+        })
       }
       console.log('response', response)
     } catch (error) {
@@ -226,10 +246,8 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
         </>
       )}
 
-      {
-        isHeader &&
-        <AddBrandedCar setSelectedCarId={setSelectedCarId} selectedCarId={selectedCarId} />
-      }
+
+      <AddBrandedCar setSelectedCarId={setSelectedCarId} setSelectedCarInfo={setSelectedCarInfo} selectedCarId={selectedCarId} />
 
       <AddedCarData
         isBorder={true}
@@ -272,6 +290,10 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
         rightValue={'Free'}
         style={{ marginTop: -5 }}
       />
+      {
+        discount &&
+        <KeyValue leftValue={t('discount')} rightValue={'-SAR ' + discount || 0} />
+      }
       <KeyValue
         boldData={true}
         leftValue={t('TotalAmount')}

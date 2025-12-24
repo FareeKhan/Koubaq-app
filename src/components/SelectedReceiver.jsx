@@ -128,6 +128,7 @@ const SelectedReceiver = ({
                         <TextInput
                             placeholder={t('addNewNumber')}
                             style={{ width: "90%" }}
+                            placeholderTextColor={colors.gray}
                             value={manualNumber}
                             onChangeText={setManualNumber}
                             onBlur={() => {

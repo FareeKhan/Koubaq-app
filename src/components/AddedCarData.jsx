@@ -121,7 +121,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useTranslation } from 'react-i18next';
 import Entypo from 'react-native-vector-icons/Entypo'
 
-const AddedCarData = ({ isBorder, carData, setSelectedCarId, selectedCarId,loadAddedVechicle }) => {
+const AddedCarData = ({ isBorder, carData,setSelectedCarInfo, setSelectedCarId, selectedCarId,loadAddedVechicle }) => {
   const dispatch = useDispatch()
   const token = useSelector((state) => state?.auth?.loginData?.token)
   const { t } = useTranslation()
@@ -153,7 +153,7 @@ const AddedCarData = ({ isBorder, carData, setSelectedCarId, selectedCarId,loadA
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => {
           return (
-            <TouchableOpacity onPress={() => setSelectedCarId(item?.id)} style={{ width: width }}>
+            <TouchableOpacity onPress={() => {setSelectedCarInfo(item),setSelectedCarId(item?.id)}} style={{ width: width }}>
               <View style={[styles.carDetailsRow, isBorder && { marginVertical: 10 }]}>
                 <Image
                   resizeMode="contain"
