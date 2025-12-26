@@ -17,6 +17,7 @@ import { topUpBalanceApi } from '../userServices/UserService';
 import { showMessage } from 'react-native-flash-message';
 import { useNavigation } from '@react-navigation/native';
 import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const TopUpWalletScreen = () => {
   const { t } = useTranslation();
@@ -81,61 +82,65 @@ const TopUpWalletScreen = () => {
     <ScreenView scrollable={true}>
       <HeaderBox smallLogo={false} notification={false} search={false} />
       <IconLabel label={'topUp'} />
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
 
-      <HeaderWithAll
-        title={t('topUpAmount')}
-        titleStyle={styles.topUpAmountTitle}
-      />
 
-      {topUpBalance?.map((item, index) => {
-        return (
-          <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
-            <CustomText style={styles.amountText}>
-              {item?.price} {currency}
-            </CustomText>
-            <CustomText style={styles.pointsText}>
-              {item?.points} {t('points')}
-            </CustomText>
-          </TouchableOpacity>
-        );
-      })}
+        <HeaderWithAll
+          title={t('topUpAmount')}
+          titleStyle={styles.topUpAmountTitle}
+        />
 
-      <HeaderWithAll
-        title={t('orAmount')}
-        titleStyle={styles.orAmountTitle}
-      />
+        {topUpBalance?.map((item, index) => {
+          return (
+            <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
+              <CustomText style={styles.amountText}>
+                {item?.price} {currency}
+              </CustomText>
+              <CustomText style={styles.pointsText}>
+                {item?.points} {t('points')}
+              </CustomText>
+            </TouchableOpacity>
+          );
+        })}
 
-      <CustomInput
-        placeholder={t('50 AED')}
-        rs={true}
-        style={styles.customInput}
-        // filter={false}
-        value={otherAmount}
-        onChangeText={(text) => {
-    const numericValue = text.replace(/[^0-9.]/g, '');
-    setOtherAmount(numericValue);
-    setSelectedBalance(null);
-  
+        <HeaderWithAll
+          title={t('orAmount')}
+          titleStyle={styles.orAmountTitle}
+        />
 
-        }}
-      />
+        <CustomInput
+          placeholder={t('50 AED')}
+          rs={true}
+          style={styles.customInput}
+          // filter={false}
+          value={otherAmount}
+          onChangeText={(text) => {
+            const numericValue = text.replace(/[^0-9.]/g, '');
+            setOtherAmount(numericValue);
+            setSelectedBalance(null);
 
-      <HeaderWithAll title={t('payWith')} />
-      <PaymentOptions
-        selectedPayment={selectedPayment}
-        setSelectedPayment={setSelectedPayment}
-      />
 
-      <CustomButton
-        appleIcon={isAppleSelected}
-        title={isAppleSelected ? t('Pay') : t('payment')}
-        btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
-        style={isAppleSelected && styles.appleButton}
-        // onPress={() => AddBalance()}
-        onPress={() => openPaymentSheet(AddBalance)}
+          }}
+        />
 
-        loader={isLoader}
-      />
+        <HeaderWithAll title={t('payWith')} />
+        <PaymentOptions
+          selectedPayment={selectedPayment}
+          setSelectedPayment={setSelectedPayment}
+        />
+
+        <CustomButton
+          appleIcon={isAppleSelected}
+          title={isAppleSelected ? t('Pay') : t('payment')}
+          btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
+          style={isAppleSelected && styles.appleButton}
+          // onPress={() => AddBalance()}
+          onPress={() => openPaymentSheet(AddBalance)}
+
+          loader={isLoader}
+        />
+      </KeyboardAwareScrollView>
+
     </ScreenView>
   );
 };

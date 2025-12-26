@@ -15,6 +15,7 @@ import OrderScreens from '../screens/OrderScreens';
 import OrderDetailsScreen from '../screens/OrderDetailsScreen';
 import FavoriteScreen from '../screens/FavoriteScreen';
 import SuccessfulScreen from '../screens/SuccessfulScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,7 +32,7 @@ export const HomeStack = () => {
         component={ProductDetail}
       />
       <Stack.Screen name="BasketScreen" component={BasketScreen}
-              options={{ gestureEnabled: false }}
+        options={{ gestureEnabled: false }}
       />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />
@@ -45,6 +46,7 @@ export const HomeStack = () => {
       <Stack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
       <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
       <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
     </Stack.Navigator>
   );
 };
@@ -64,8 +66,8 @@ export const giftStack = () => {
         component={ProductDetail}
       />
       <Stack.Screen name="BasketScreen" component={BasketScreen}
-              options={{ gestureEnabled: false }}
-      
+        options={{ gestureEnabled: false }}
+
       />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />
@@ -98,9 +100,9 @@ export const WalletStack = () => {
         name="ProductDetail"
         component={ProductDetail}
       />
-      <Stack.Screen name="BasketScreen" component={BasketScreen} 
-              options={{ gestureEnabled: false }}
-      
+      <Stack.Screen name="BasketScreen" component={BasketScreen}
+        options={{ gestureEnabled: false }}
+
       />
       <Stack.Screen name="CheckoutScreen" component={CheckoutScreen} />
       <Stack.Screen name="GiftScreen" component={GiftScreen} />

@@ -23,6 +23,7 @@ import { colors } from '../constants/colors';
 import { login } from '../redux/Auth';
 import { verifyOtp } from '../userServices/UserService';
 import { useDispatch } from 'react-redux';
+import { getMessaging } from '@react-native-firebase/messaging';
 
 const CELL_COUNT = 6;
 const VerificationScreen = ({ navigation, route }) => {
@@ -32,6 +33,7 @@ const VerificationScreen = ({ navigation, route }) => {
 
   const [value, setValue] = useState('');
   const [isLaoder, setIsLoader] = useState(false);
+  const [token, setIsToken] = useState('');
 
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -51,7 +53,13 @@ const VerificationScreen = ({ navigation, route }) => {
   //   navigation.navigate('BottomNavigation')
 
   // };
-
+  useEffect(()=>{
+getToken()
+  },[])
+const getToken = async()=>{
+    const token = await getMessaging().getToken();
+    setIsToken(token)
+}
 
   const confirmOTP = async () => {
     if (!value || otpCode != value) {
@@ -65,7 +73,7 @@ const VerificationScreen = ({ navigation, route }) => {
 
     try {
       setIsLoader(true)
-      const result = await verifyOtp(phoneNo, value)
+      const result = await verifyOtp(phoneNo, value,token)
       console.log('dasdasd', result)
       if (result?.success) {
         dispatch(login({
@@ -92,6 +100,8 @@ const VerificationScreen = ({ navigation, route }) => {
       setIsLoader(false)
     }
   };
+
+  
 
 
   return (

@@ -1,6 +1,9 @@
 import {
   I18nManager,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  Share,
   StyleSheet,
   TextInput,
   TouchableOpacity,
@@ -38,7 +41,7 @@ const ProductDetail = ({ route }) => {
   const { isGifterPage, id, restaurant_id, data } = route?.params || '';
   const relatedData = data?.filter((item) => item?.id !== id)
   const navigation = useNavigation();
-  console.log('dasdasd',id)
+
 
   const [counter, setCounter] = useState(1);
   const [selectedExtras, setSelectedExtras] = useState([]);
@@ -122,7 +125,7 @@ const ProductDetail = ({ route }) => {
 
 
   const giftFun = () => {
-  
+
     const quantity = Number(counter)
     const price = Number(productData?.price)
     const data = {
@@ -189,61 +192,77 @@ const ProductDetail = ({ route }) => {
     setMsgForReceiver(suggestedMessages?.messages[selectIndex]?.message);
   };
 
+  const handleShareLink = async () => {
+    try {
+      const iosLink = `https://koubak-deeplinking.vercel.app/productDetail/${id}`
+      await Share.share({
+        message: `Check out this product: ${iosLink}`,
+      });
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
 
   return (
+
     <View style={styles.container}>
+        <KeyboardAvoidingView style={{ flex: 1, }} behavior={Platform.OS == 'ios' ? 'padding' : 'height'}    >
+
       <ScreenView scrollable={true} mh={true} extraBottomSpace={true}>
-        {/* Image Section */}
-        <ImageBackground
-          style={styles.productImage}
-          // source={require('../assets/productImage.png')}
-          source={{ uri: `${mainUrl}${productData?.image}` }}
-        >
-          <HeaderBox
-            style={styles.headerBox}
-            search={false}
-            notification={false}
-            heart={true}
-            productData={productData}
 
-          />
+          <View>
 
-          <TouchableOpacity style={styles.shareButton}>
-            <Ionicons
-              name={'share-social-outline'}
-              color={colors.black}
-              size={25}
-            />
-          </TouchableOpacity>
-        </ImageBackground>
+            {/* Image Section */}
+            <ImageBackground
+              style={styles.productImage}
+              // source={require('../assets/productImage.png')}
+              source={{ uri: `${mainUrl}${productData?.image}` }}
+            >
+              <HeaderBox
+                style={styles.headerBox}
+                search={false}
+                notification={false}
+                heart={true}
+                productData={productData}
 
-        {/* Filter Button */}
-        <View style={styles.contentWrapper}>
-          {
-            !isGifterPage &&
-            <FilterButton
-              setSelectedFilter={setSelectedFilter}
-              selectedFilter={selectedFilter}
-              leftValue={'customizeItem'}
-              rightValue={'customizeSticker'}
-            />
-
-          }
-
-          {/* Code after Filer this is customizeItem */}
-          {selectedFilter === 'customizeItem' ? (
-            <View>
-              <HeaderWithAll
-                title={productData?.name}
-                style={styles.headerTitle}
               />
 
-              <View style={styles.priceRow}>
-                <CustomText style={styles.aedText}>
-                  {currency}{' '}
-                  <CustomText style={styles.priceText}>{productData?.price}</CustomText>
-                </CustomText>
-                {/* 
+              <TouchableOpacity onPress={handleShareLink} style={styles.shareButton}>
+                <Ionicons
+                  name={'share-social-outline'}
+                  color={colors.black}
+                  size={25}
+                />
+              </TouchableOpacity>
+            </ImageBackground>
+
+            {/* Filter Button */}
+            <View style={styles.contentWrapper}>
+              {
+                !isGifterPage &&
+                <FilterButton
+                  setSelectedFilter={setSelectedFilter}
+                  selectedFilter={selectedFilter}
+                  leftValue={'customizeItem'}
+                  rightValue={'customizeSticker'}
+                />
+
+              }
+
+              {/* Code after Filer this is customizeItem */}
+              {selectedFilter === 'customizeItem' ? (
+                <View>
+                  <HeaderWithAll
+                    title={productData?.name}
+                    style={styles.headerTitle}
+                  />
+
+                  <View style={styles.priceRow}>
+                    <CustomText style={styles.aedText}>
+                      {currency}{' '}
+                      <CustomText style={styles.priceText}>{productData?.price}</CustomText>
+                    </CustomText>
+                    {/* 
                 <IncrementDecrement
                   pCounter={counter}
                   setCounter={setCounter}
@@ -251,187 +270,190 @@ const ProductDetail = ({ route }) => {
                   onpressMinu={decrementCounter}
                 /> */}
 
-                <IncrementDecrement
-                  pCounter={counter}
-                  setCounter={setCounter}
-                  onpressPlus={incrementCounter}
-                  onpressMinu={decrementCounter}
-                  firstBox={true}
-                />
-              </View>
-
-              <CustomText style={styles.descriptionLabel}>
-                {t('Descitpion')}
-              </CustomText>
-              <CustomText style={styles.descriptionText}>
-                {productData?.description}
-              </CustomText>
-
-              <View style={styles.extrasHeader}>
-                <CustomText style={styles.extrasTitle}>
-                  {t('extras')}
-                </CustomText>
-                <CustomText style={styles.optionalLabel}>
-                  {t('Optional')}
-                </CustomText>
-              </View>
-
-              <Subtitle style={styles.subtitle}>{t('choseUptoSix')}</Subtitle>
-
-              <ExtraDataItems />
-
-              <DividerLine />
-
-              {!isGifterPage && (
-                <View style={styles.noteBox}>
-                  <View style={styles.noteHeader}>
-                    <Ionicons
-                      name={'chatbox-outline'}
-                      size={15}
-                      color={colors.black}
+                    <IncrementDecrement
+                      pCounter={counter}
+                      setCounter={setCounter}
+                      onpressPlus={incrementCounter}
+                      onpressMinu={decrementCounter}
+                      firstBox={true}
                     />
-                    <CustomText style={styles.noteLabel}>
-                      {t('AddANot')}
+                  </View>
+
+                  <CustomText style={styles.descriptionLabel}>
+                    {t('Descitpion')}
+                  </CustomText>
+                  <CustomText style={styles.descriptionText}>
+                    {productData?.description}
+                  </CustomText>
+
+                  <View style={styles.extrasHeader}>
+                    <CustomText style={styles.extrasTitle}>
+                      {t('extras')}
+                    </CustomText>
+                    <CustomText style={styles.optionalLabel}>
+                      {t('Optional')}
                     </CustomText>
                   </View>
-                  <TextInput
-                    placeholder={t('AnythingElse')}
-                    multiline
-                    placeholderTextColor={colors.gray1}
-                    style={styles.noteInput}
-                    value={addNote}
-                    onChangeText={setAddNote}
+
+                  <Subtitle style={styles.subtitle}>{t('choseUptoSix')}</Subtitle>
+
+                  <ExtraDataItems />
+
+                  <DividerLine />
+
+                  {!isGifterPage && (
+                    <View style={styles.noteBox}>
+                      <View style={styles.noteHeader}>
+                        <Ionicons
+                          name={'chatbox-outline'}
+                          size={15}
+                          color={colors.black}
+                        />
+                        <CustomText style={styles.noteLabel}>
+                          {t('AddANot')}
+                        </CustomText>
+                      </View>
+                      <TextInput
+                        placeholder={t('AnythingElse')}
+                        multiline
+                        placeholderTextColor={colors.gray1}
+                        style={styles.noteInput}
+                        value={addNote}
+                        onChangeText={setAddNote}
+                      />
+
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View>
+                  <View style={{ alignItems: 'center', marginTop: 20 }}>
+                    <ImageBackground
+                      source={require('../assets/bucket.png')}
+                      style={{ width: 250, height: 300 }}
+                    >
+                      <View
+                        style={{
+                          top: 90,
+                          alignSelf: 'center',
+                          borderRadius: 7,
+                          paddingHorizontal: 5,
+                          alignItems: 'center',
+                          backgroundColor: colors.white,
+                          width: '50%',
+                          paddingTop: 10,
+                        }}
+                      >
+                        <CustomText numberOfLines={1} style={{ fontSize: 10 }}>
+                          {productData?.restaurant?.name} Shop
+                        </CustomText>
+                        <CustomText
+                          numberOfLines={2}
+                          style={{
+                            fontSize: 10,
+                            fontFamily: fonts.semiBold,
+                            marginTop: 10,
+                            textAlign: 'center',
+                          }}
+                        >
+                          {msgForReceiver}
+                        </CustomText>
+                        <CustomText
+                          numberOfLines={1}
+                          style={{ fontSize: 10, fontFamily: fonts.medium }}
+                        >
+                          {rcvrNameOnSticker}
+                        </CustomText>
+                        <CustomText
+                          numberOfLines={1}
+                          style={{ marginVertical: 10, fontSize: 10 }}
+                        >
+                          {productData?.name}
+                        </CustomText>
+
+                        <CustomText style={{ fontSize: 8 }}>
+                          Ready at: 00:00 AM
+                        </CustomText>
+                        <CustomText style={{ fontSize: 8 }}>
+                          Order Number: XXX
+                        </CustomText>
+                        <CustomText style={{ fontSize: 8 }}>
+                          Car Number: XXXXX
+                        </CustomText>
+
+                        <CustomText
+                          style={{ marginTop: 20, marginBottom: 5, fontSize: 10 }}
+                        >
+                          Powered by Koubak
+                        </CustomText>
+                      </View>
+                    </ImageBackground>
+                  </View>
+
+                  <DividerLine style={styles.stickerDivider} />
+                  <CustomInput
+                    label={t('nameOnSticker')}
+                    placeholder={'Name'}
+                    rs={true}
+                    value={rcvrNameOnSticker}
+                    onChangeText={setRcvrNameOnSticker}
                   />
 
+                  <CustomInput
+                    label={t('messageOnSticker')}
+                    placeholder={t('messageOnSticker')}
+                    rs={true}
+                    multiline
+                    style={styles.messageInput}
+                    inputExtraStyle={styles.messageInputExtra}
+                    value={msgForReceiver}
+                    onChangeText={setMsgForReceiver}
+                  />
+
+                  <TouchableOpacity onPress={handleRandomlySelectMsg} style={styles.refreshRow}>
+                    <Ionicons name={'refresh'} size={18} color={colors.black} />
+                    <CustomText style={styles.underlineText}>
+                      {t('letusChose')}
+                    </CustomText>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.selectRow}
+                    onPress={() => setModalVisible(true)}
+                  >
+                    <Ionicons
+                      name={'list-outline'}
+                      size={18}
+                      color={colors.black}
+                    />
+                    <CustomText style={styles.underlineText}>
+                      {t('letSelect')}
+                    </CustomText>
+                  </TouchableOpacity>
+
+                  <SuggestedMsgsModal
+                    setModalVisible={setModalVisible}
+                    modalVisible={modalVisible}
+                    setSelectedMsg={setMsgForReceiver}
+                    data={suggestedMessages?.messages}
+                  />
+                </View>
+              )}
+
+              {/* */}
+
+              {isGifterPage && data?.length > 0 && (
+                <View style={{ marginTop: 15 }}>
+                  <HeaderWithAll title={t('relatedProduct')} />
+
+                  <ProductDataCard data={relatedData} relatedData={data} />
                 </View>
               )}
             </View>
-          ) : (
-            <View>
-              <View style={{ alignItems: 'center', marginTop: 20 }}>
-                <ImageBackground
-                  source={require('../assets/bucket.png')}
-                  style={{ width: 250, height: 300 }}
-                >
-                  <View
-                    style={{
-                      top: 90,
-                      alignSelf: 'center',
-                      borderRadius: 7,
-                      paddingHorizontal: 5,
-                      alignItems: 'center',
-                      backgroundColor: colors.white,
-                      width: '50%',
-                      paddingTop: 10,
-                    }}
-                  >
-                    <CustomText numberOfLines={1} style={{ fontSize: 10 }}>
-                      {productData?.restaurant?.name} Shop
-                    </CustomText>
-                    <CustomText
-                      numberOfLines={2}
-                      style={{
-                        fontSize: 10,
-                        fontFamily: fonts.semiBold,
-                        marginTop: 10,
-                        textAlign: 'center',
-                      }}
-                    >
-                      {msgForReceiver}
-                    </CustomText>
-                    <CustomText
-                      numberOfLines={1}
-                      style={{ fontSize: 10, fontFamily: fonts.medium }}
-                    >
-                      {rcvrNameOnSticker}
-                    </CustomText>
-                    <CustomText
-                      numberOfLines={1}
-                      style={{ marginVertical: 10, fontSize: 10 }}
-                    >
-                      {productData?.name}
-                    </CustomText>
+          </View>
 
-                    <CustomText style={{ fontSize: 8 }}>
-                      Ready at: 00:00 AM
-                    </CustomText>
-                    <CustomText style={{ fontSize: 8 }}>
-                      Order Number: XXX
-                    </CustomText>
-                    <CustomText style={{ fontSize: 8 }}>
-                      Car Number: XXXXX
-                    </CustomText>
-
-                    <CustomText
-                      style={{ marginTop: 20, marginBottom: 5, fontSize: 10 }}
-                    >
-                      Powered by Koubak
-                    </CustomText>
-                  </View>
-                </ImageBackground>
-              </View>
-
-              <DividerLine style={styles.stickerDivider} />
-              <CustomInput
-                label={t('nameOnSticker')}
-                placeholder={'Name'}
-                rs={true}
-                value={rcvrNameOnSticker}
-                onChangeText={setRcvrNameOnSticker}
-              />
-
-              <CustomInput
-                label={t('messageOnSticker')}
-                placeholder={t('messageOnSticker')}
-                rs={true}
-                multiline
-                style={styles.messageInput}
-                inputExtraStyle={styles.messageInputExtra}
-                value={msgForReceiver}
-                onChangeText={setMsgForReceiver}
-              />
-
-              <TouchableOpacity onPress={handleRandomlySelectMsg} style={styles.refreshRow}>
-                <Ionicons name={'refresh'} size={18} color={colors.black} />
-                <CustomText style={styles.underlineText}>
-                  {t('letusChose')}
-                </CustomText>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.selectRow}
-                onPress={() => setModalVisible(true)}
-              >
-                <Ionicons
-                  name={'list-outline'}
-                  size={18}
-                  color={colors.black}
-                />
-                <CustomText style={styles.underlineText}>
-                  {t('letSelect')}
-                </CustomText>
-              </TouchableOpacity>
-
-              <SuggestedMsgsModal
-                setModalVisible={setModalVisible}
-                modalVisible={modalVisible}
-                setSelectedMsg={setMsgForReceiver}
-                data={suggestedMessages?.messages}
-              />
-            </View>
-          )}
-
-          {/* */}
-
-          {isGifterPage && data?.length > 0 && (
-            <View style={{ marginTop: 15 }}>
-              <HeaderWithAll title={t('relatedProduct')} />
-
-              <ProductDataCard data={relatedData} relatedData={data} />
-            </View>
-          )}
-        </View>
       </ScreenView>
+        </KeyboardAvoidingView>
 
       <View style={styles.buttonContainer}>
         <CustomButton
@@ -455,6 +477,7 @@ const ProductDetail = ({ route }) => {
         />
       </View>
     </View>
+
   );
 };
 

@@ -7,8 +7,10 @@ import {
   Dimensions,
   TextInput,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import CustomText from '../components/CustomText';
 import Subtitle from '../components/Subtitle';
@@ -33,9 +35,13 @@ import { carImages } from '../constants/ExportCarsLogo';
 import { deleteCar, removeStoreCarData, storeCarData } from '../redux/storeAddedCar';
 import AddedCarData from '../components/AddedCarData';
 import { showMessage } from 'react-native-flash-message';
-import { addVehicle, fetchVehicles } from '../userServices/UserService';
+import { addVehicle, deleteProfile, fetchProfile, fetchVehicles, updateProfile } from '../userServices/UserService';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AddBrandedCar from '../components/AddBrandedCar';
+import ProfileModal from '../components/ProfileModal';
+import RemoteImage from '../components/RemoteImage';
+import { mainUrl } from '../constants/data';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const { height, width } = Dimensions.get('screen');
 
@@ -54,15 +60,18 @@ const AccountSetting = () => {
   const [selectedCar, setSelectedCar] = useState('');
   const [plateNo, setPlateNo] = useState('');
   const [searchCar, setSearchCar] = useState('');
-  const [carData, setCarData] = useState([]);
+  const [userProfileData, setUserProfileData] = useState('');
   const [selectedCarId, setSelectedCarId] = useState('')
+  const [isProfileModal, setIsProfileModal] = useState(false)
 
   // useFocusEffect(
   //   useCallback(() => {
   //     loadAddedVechicle();
   //   }, [])
   // );
-
+  useEffect(() => {
+    getUserProfile()
+  }, [])
 
   const handleAddCar = async () => {
     const data = {
@@ -97,18 +106,17 @@ const AccountSetting = () => {
     }
   }
 
-
-  // const loadAddedVechicle = useCallback(async () => {
-  //   try {
-  //     const response = await fetchVehicles(token);
-  //     if (response?.success) {
-  //       setCarData(response.data);
-  //     }
-  //   } catch (error) {
-  //     console.log('Vehicle Error', error);
-  //   }
-  // }, []); // no dependencies because token is constant
-
+  const getUserProfile = useCallback(async () => {
+    try {
+      const response = await fetchProfile(token);
+      console.log('-->>s>', response)
+      if (response?.success) {
+        setUserProfileData(response.data);
+      }
+    } catch (error) {
+      console.log('Vehicle Error', error);
+    }
+  }, []);
 
 
   const IconMenu = ({ onpress, icon, label, red }) => {
@@ -164,20 +172,53 @@ const AccountSetting = () => {
 
   }
 
-  return (
-    <ScreenView scrollable={true} mh={true}>
-      {/* Header Profile Data */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerProfile}>
-          <View style={styles.profileIcon}>
-            <FontAwesome name={'user-o'} size={20} color={colors.black} />
-          </View>
-          <View>
-            <Subtitle style={styles.subtitleSmall}>{userData?.phoneNo || t('PleaseLogin')}</Subtitle>
-          </View>
-        </View>
+  const handleDeleteProfileImage = async () => {
+    try {
+      const response = await deleteProfile(token)
+      if (response?.success) {
+        getUserProfile()
+        showMessage({
+          type: "success",
+          message: t('deletedSuccessfully')
+        })
+      }
+      console.log('dasdas', response)
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
 
-        {/* <TouchableOpacity onPress={() => setIsAddNewCar(!isAddNewCar)}>
+
+  return (
+    <View style={{ flex: 1 }}>
+
+      <ScreenView scrollable={true} mh={true}>
+        {/* Header Profile Data */}
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => setIsProfileModal(true)} style={styles.headerProfile}>
+            <View style={styles.profileIcon}>
+              {
+                userProfileData?.profile_image ?
+                  <View >
+                    <RemoteImage uri={`${mainUrl}${userProfileData?.profile_image}`} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                    <TouchableOpacity onPress={() => handleDeleteProfileImage()} style={{ position: "absolute", zIndex: 100, borderWidth: 1, bottom: -3, borderColor: "#000", right: 2, backgroundColor: "#fff", borderRadius: 50, padding: 2 }}>
+                      <MaterialIcons name={'delete'} size={15} color={colors.red} />
+                    </TouchableOpacity>
+                  </View>
+                  :
+                  <FontAwesome name={'user-o'} size={20} color={colors.black} />
+              }
+            </View>
+            <View>
+              <Subtitle style={styles.subtitleSmall}>{userData?.phoneNo || t('PleaseLogin')}</Subtitle>
+              {
+                userProfileData?.name &&
+                <Subtitle style={[styles.subtitleSmall, { left: 5 }]}>{userProfileData?.name}</Subtitle>
+              }
+            </View>
+          </TouchableOpacity>
+
+          {/* <TouchableOpacity onPress={() => setIsAddNewCar(!isAddNewCar)}>
           <Ionicons name={'car-sport-outline'} size={25} color={colors.black} />
           <Entypo
             name={'plus'}
@@ -186,42 +227,42 @@ const AccountSetting = () => {
             style={styles.plusIcon}
           />
         </TouchableOpacity> */}
-      </View>
+        </View>
 
 
-      <DividerLine h={true} borderStyle={styles.dividerHeight7} />
-      {userId &&
-        <>
-          <AddBrandedCar
-            style={{ paddingHorizontal: 20, paddingTop: 10 }}
-            setSelectedCarId={setSelectedCarId}
-            selectedCarId={selectedCarId}
-          />
+        <DividerLine h={true} borderStyle={styles.dividerHeight7} />
+        {userId &&
+          <>
+            <AddBrandedCar
+              style={{ paddingHorizontal: 20, paddingTop: 10 }}
+              setSelectedCarId={setSelectedCarId}
+              selectedCarId={selectedCarId}
+            />
 
-          <DividerLine
-            h={true}
-            borderStyle={styles.dividerHeight7}
-            style={styles.mb20}
-          />
+            <DividerLine
+              h={true}
+              borderStyle={styles.dividerHeight7}
+              style={styles.mb20}
+            />
 
-          {/* Menu Items */}
-          <IconMenu
-            onpress={() => navigation.navigate('OrderScreens')}
-            label={'yourOrders'}
-            icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
-          />
-          <IconMenu
-            onpress={() => navigation.navigate('FavoriteScreen')}
-            label={'favorite'}
-            icon={<EvilIcons name={'heart'} size={25} color={colors.black} />}
-          />
+            {/* Menu Items */}
+            <IconMenu
+              onpress={() => navigation.navigate('OrderScreens')}
+              label={'yourOrders'}
+              icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
+            />
+            <IconMenu
+              onpress={() => navigation.navigate('FavoriteScreen')}
+              label={'favorite'}
+              icon={<EvilIcons name={'heart'} size={25} color={colors.black} />}
+            />
 
-        </>
+          </>
 
-      }
+        }
 
 
-      {/* <IconMenu
+        {/* <IconMenu
         label={'termsCondition'}
         icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
       />
@@ -256,25 +297,32 @@ const AccountSetting = () => {
           <Ionicons name={'logo-instagram'} size={22} color={colors.black} />
         }
       /> */}
-      <IconMenu
-        label={userId ? 'logout' :"login"}
-        icon={<AntDesign name={userId ? 'logout' :"login"} size={22} color={colors.red} />}
-        red={true}
-        onpress={() => handleLogout()}
-      />
+        <IconMenu
+          label={userId ? 'logout' : "login"}
+          icon={<AntDesign name={userId ? 'logout' : "login"} size={22} color={colors.red} />}
+          red={true}
+          onpress={() => handleLogout()}
+        />
 
 
-{
-  userId && 
-   <TouchableOpacity onPress={() => handleLogout('delete')} style={styles.deleteAccountBtn}>
-        <CustomText style={styles.deleteAccountTxt}>
-          {t('deleteAccount')}
-        </CustomText>
-      </TouchableOpacity>
+        {
+          userId &&
+          <TouchableOpacity onPress={() => handleLogout('delete')} style={styles.deleteAccountBtn}>
+            <CustomText style={styles.deleteAccountTxt}>
+              {t('deleteAccount')}
+            </CustomText>
+          </TouchableOpacity>
 
-}
+        }
 
-    </ScreenView>
+
+
+
+      </ScreenView>
+      <ProfileModal userProfileData={userProfileData} setIsProfileModal={setIsProfileModal} isProfileModal={isProfileModal} getUserProfile={getUserProfile} />
+
+  
+    </View>
   );
 };
 
@@ -318,7 +366,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
   },
   subtitleSmall: {
-    fontSize: 10,
+    fontSize: 11,
     marginVertical: 2,
     color: colors.gray3,
   },

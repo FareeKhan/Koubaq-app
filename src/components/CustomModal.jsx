@@ -5,6 +5,7 @@ import { fonts } from '../constants/fonts';
 import { colors } from '../constants/colors';
 import { useTranslation } from 'react-i18next';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const CustomModal = ({
   modalVisible,
@@ -18,7 +19,7 @@ const CustomModal = ({
   const { t } = useTranslation();
   return (
     <Modal
-      animationType={animationType ? animationType :"slide" }
+      animationType={animationType ? animationType : "slide"}
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
@@ -26,34 +27,49 @@ const CustomModal = ({
       }}
     >
       <View style={[styles.centeredView, style]}>
+
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
           style={styles.backdrop}
         />
 
+
         <View style={styles.modalView}>
+
           <View style={styles.innerModelView}>
+
             <View style={styles.dragHandle} />
-            <View
-              style={{
-                marginTop: 18,
-                marginBottom: 30,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '70%',
-              }}
+            <KeyboardAwareScrollView
+              enableOnAndroid
+              enableAutomaticScroll
+              keyboardOpeningTime={0}
+              keyboardShouldPersistTaps="handled"
+              extraScrollHeight={10}
+              showsVerticalScrollIndicator={false}
             >
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <EvilIcons name={'close'} size={20} color={colors.black} />
-              </TouchableOpacity>
-              <CustomText style={[styles.sortingTitle, textStyle]}>
-                {title}
-              </CustomText>
-            </View>
-            {children}
+              <View
+                style={{
+                  marginTop: 18,
+                  marginBottom: 30,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '70%',
+                }}
+              >
+                <TouchableOpacity onPress={() => setModalVisible(false)}>
+                  <EvilIcons name={'close'} size={20} color={colors.black} />
+                </TouchableOpacity>
+                <CustomText style={[styles.sortingTitle, textStyle]}>
+                  {title}
+                </CustomText>
+              </View>
+              {children}
+            </KeyboardAwareScrollView>
+
           </View>
+
         </View>
       </View>
     </Modal>

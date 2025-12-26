@@ -26,6 +26,7 @@ const CustomInput = ({
   countryCode,
   shadow,
   inputExtraStyle,
+  onChangeText,
   rs,
   ...props
 }) => {    
@@ -51,6 +52,7 @@ const CustomInput = ({
           placeholder={t(placeholder)}
           placeholderTextColor={colors.gray1}
           style={[styles.inputStyle, icon && { width: '90%' }, inputExtraStyle]}
+          onChangeText={onChangeText}
           {...props}
         />
 

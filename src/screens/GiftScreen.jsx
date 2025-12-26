@@ -48,18 +48,14 @@ const GiftScreen = () => {
   const [deleteLoader, setDeleteLoader] = useState(false);
   const [receivedGiftData, setReceivedGiftData] = useState([]);
 
-
   useFocusEffect(useCallback(() => {
     getSentGifts()
     rcvdGift()
   }, []))
 
-
-
   const getSentGifts = async () => {
     try {
       const result = await fetchSendGifts(token);
-      console.log('testingKoubak', result?.data?.data)
       if (result?.success) {
         setSendGiftData(result?.data?.data)
       }
@@ -68,18 +64,16 @@ const GiftScreen = () => {
     }
   };
 
-
-  const deleteGift = async (id) => {
-    setDeleteLoader(true)
+  const updateWallet = async () => {
     try {
-      const result = await removeGiftData(id, token);
-      showMessage({
-        type: "success",
-        message: t('GiftDeleted')
-      })
+      const result = await giftWalletUpdate(isShowSenderDetail, userId);
+      console.log('result-->>>', result)
       if (result?.success) {
-        getSentGifts()
-
+        deleteGift(isShowSenderDetail?.id, true)
+        showMessage({
+          type: "success",
+          message: t('Balance added to Wallet')
+        })
       }
     } catch (e) {
       console.log(e);
@@ -87,12 +81,14 @@ const GiftScreen = () => {
       setDeleteLoader(false)
     }
   };
-
   const rcvdGift = async () => {
     try {
       const result = await giftRcvd(token);
+      console.log('rcvdasdas',result?.data?.data?.length)
       if (result?.success) {
         setReceivedGiftData(result?.data?.data)
+      }else{
+        setReceivedGiftData([])
       }
     } catch (e) {
       console.log(e);
@@ -101,71 +97,34 @@ const GiftScreen = () => {
     }
   };
 
+  const deleteGift = async (id, value) => {
+    console.log('---',id,value)
+    setDeleteLoader(true)
+    try {
+      const result = await removeGiftData(id, token);
+      console.log('asdasd', result)
+      if (result?.success) {
+        if (value === true) {
+          rcvdGift()
+        } else {
+          getSentGifts()
+        }
+        showMessage({
+          type: "success",
+          message: t('GiftDeleted')
+        })
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setDeleteLoader(false)
+    }
+  };
+
+
+
   const renderGiftSection = ({ item, index }) => {
-    console.log('itemitemitemitem', item)
     return (
-      // <View style={styles.cardWrapper} key={index}>
-      //   <View style={styles.cardHeader}>
-      //     <View>
-      //       <CustomText style={styles.productName}>
-      //         {item?.gift_item}
-      //       </CustomText>
-      //       {/* <CustomText style={styles.productPrice}>
-      //         {currency} {item?.price}
-      //       </CustomText> */}
-      //     </View>
-      //     <Image
-      //       source={item?.productImage}
-      //       style={styles.productImage}
-      //       borderRadius={5}
-      //     />
-      //   </View>
-
-      //   <View>
-      //     {isShowDetails == index ? (
-      //       <GiftImage
-      //         handleHidePress={() => setIsShowDetails(null)}
-      //         setIsShowDetails={setIsShowDetails}
-      //         imagePath={require('../assets/giftMSg.png')}
-      //         label={item?.gift_message}
-      //         style={styles.giftImageMargin}
-      //         senderName={item?.recipient_name}
-      //       />
-      //     ) : (
-      //       <>
-      //         <GiftImage
-      //           setIsShowDetails={setIsShowDetails}
-      //         />
-      //         <CustomButton
-      //           onPress={() => setIsShowDetails(index)}
-      //           title={t('showDetails')}
-      //           style={[styles.detailsButton]}
-      //           btnTxtStyle={styles.detailsButtonText}
-      //         />
-      //       </>
-      //     )}
-      //   </View>
-
-      //   {isShowDetails !== index && (
-      //     <>
-      //       {
-      //         deleteLoader ?
-      //           <ScreenLoader type={1} />
-      //           :
-      //           <TouchableOpacity onPress={() => deleteGift(item?.id)}>
-      //             <CustomText style={styles.deleteText}>
-      //               {t('deleteFromHistory')}
-      //             </CustomText>
-      //           </TouchableOpacity>
-
-
-      //       }
-
-      //       <DividerLine />
-      //     </>
-      //   )}
-      // </View>
-
       <View style={styles.cardWrapper} key={index}>
         <View style={styles.cardHeader}>
           <View>
@@ -248,59 +207,21 @@ const GiftScreen = () => {
     )
   };
 
-
   const renderRecivedGifts = ({ item, index }) => {
     return (
-      // <View key={item}>
-      //   {isReceiverSender == index ? (
-      //     <GiftImage
-      //       handleHidePress={() => setIsReceiverSender(null)}
-      //       onPress={() => setIsReceiverSender(null)}
-      //       imagePath={require('../assets/giftMSg.png')}
-      //       label={'Have a good day'}
-      //       style={styles.receivedGiftImage}
-      //       senderName={'Muhammad'}
-      //     />
-      //   ) : (
-      //     <GiftImage />
-      //   )}
-
-      //   <View style={styles.receivedButtonsRow}>
-      //     {isReceiverSender !== index && (
-      //       <CustomButton
-      //         onPress={() => setIsReceiverSender(index)}
-      //         title={t('showSender')}
-      //         style={styles.receiverSenderButton}
-      //         btnTxtStyle={styles.receiverSenderBtnText}
-      //       />
-      //     )}
-
-      //     <CustomButton
-      //       title={t('showAllDetails')}
-      //       onPress={() => setIsShowSenderDetail(true)}
-      //       style={[
-      //         styles.receiverSenderButton,
-      //         isReceiverSender == index && styles.receiverSenderShift,
-      //       ]}
-      //       btnTxtStyle={styles.receiverSenderBtnText}
-      //     />
-      //   </View>
-      // </View>
-
-
       <View key={item}>
         {isReceiverSender == index ? (
           <GiftImage
             handleHidePress={() => setIsReceiverSender(null)}
             onPress={() => setIsReceiverSender(null)}
-           imagePath={item?.gift_theme}
+            imagePath={item?.gift_theme}
             label={item?.gift_message}
             style={styles.receivedGiftImage}
             senderName={item?.sender?.phone_number}
           />
         ) : (
           <GiftImage
-            style={{width:"100%"}}
+            style={{ width: "100%" }}
             imagePath={item?.gift_theme}
           />
         )}
@@ -328,7 +249,6 @@ const GiftScreen = () => {
       </View>
     );
   }
-  console.log('receivedGiftDatareceivedGiftDatareceivedGiftData', receivedGiftData)
 
   const RenderReceivedGiftsData = () => {
     return (
@@ -341,113 +261,7 @@ const GiftScreen = () => {
     )
   };
 
-  // const ShowAllDetails = () => {
-  //   const InfoData = ({ label, value }) => {
-  //     return (
-  //       <View style={styles.infoRow}>
-  //         <Entypo name={'dot-single'} size={20} color={colors.primary} />
-  //         <CustomText style={styles.infoLabel}>
-  //           {label}:
-  //         </CustomText>
-  //         <CustomText style={styles.infoValue}>
-  //           {value}
-  //         </CustomText>
-  //       </View>
-  //     );
-  //   };
 
-  //   return (
-  //     <View>
-  //       <View style={styles.rcvrOuterBox}>
-  //         <View style={styles.rcvrDetail}>
-  //           <View style={styles.productInfo}>
-  //             <CustomText style={styles.productName}>
-  //               Espresso single shot ethiopian beans
-  //             </CustomText>
-  //             <CustomText style={styles.productPrice}>
-  //               {currency} 66.00
-  //             </CustomText>
-  //           </View>
-  //           <Image
-  //             source={require('../assets/cup.png')}
-  //             style={styles.productImage}
-  //             borderRadius={5}
-  //           />
-  //         </View>
-
-  //         <View style={styles.actionRow}>
-  //           <CustomButton
-  //             title={t('addItemCart')}
-  //             style={styles.addItemCartBtn}
-  //             btnTxtStyle={styles.smallBtnText}
-  //           />
-
-  //           <CustomButton
-  //             title={t('addAmountWallet')}
-  //             style={styles.addAmountWalletBtn}
-  //             btnTxtStyle={styles.smallBtnText}
-  //           />
-  //         </View>
-  //       </View>
-
-  //       <GiftImage />
-
-  //       <View style={styles.secondGiftWrapper}>
-  //         <GiftImage
-  //           imagePath={require('../assets/giftMSg.png')}
-  //           label={'Have a good day'}
-  //           style={styles.secondGiftImage}
-  //           senderName={'Muhammad'}
-  //           setIsShowDetails={setIsShowDetails}
-
-  //         />
-
-  //         <TouchableOpacity style={styles.shareGiftBtn}>
-  //           <EvilIcons name={'share-google'} size={25} color={colors.black} />
-  //           <CustomText style={styles.shareGiftText}>
-  //             {t('shareGift')}
-  //           </CustomText>
-  //         </TouchableOpacity>
-  //       </View>
-
-  //       <View style={styles.infoList}>
-  //         <InfoData label={t('sentData')} value={'1-8-2025 | 08:00AM'} />
-  //         <InfoData label={t('expiryDate')} value={'30-12-2025 | 08:00AM'} />
-  //       </View>
-
-  //       <View style={styles.bottomRow}>
-  //         <CustomButton
-  //           title={t('back')}
-  //           onPress={() => setIsShowSenderDetail(false)}
-  //           style={[styles.addItemCartBtn, { width: "22%" }]}
-  //           btnTxtStyle={styles.smallBtnText}
-  //         />
-
-  //         <TouchableOpacity>
-  //           <CustomText style={styles.deleteHistoryText}>
-  //             {t('deleteFromHistory')}
-  //           </CustomText>
-  //         </TouchableOpacity>
-  //       </View>
-  //     </View>
-  //   );
-  // };
-  const updateWallet = async () => {
-    try {
-      const result = await giftWalletUpdate(isShowSenderDetail, userId);
-      console.log('result-->>>', result)
-      if (result?.success) {
-        showMessage({
-          type: "success",
-          message: t('Balance added to Wallet')
-        })
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setDeleteLoader(false)
-    }
-  };
 
   const addToCart = () => {
     {

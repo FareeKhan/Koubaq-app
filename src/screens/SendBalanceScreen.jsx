@@ -106,7 +106,7 @@
 
 
 
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderWithAll from '../components/HeaderWithAll';
@@ -125,12 +125,13 @@ import { useSelector } from 'react-redux';
 import { showMessage } from 'react-native-flash-message';
 import { useNavigation } from '@react-navigation/native';
 import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const SendBalanceScreen = () => {
   const { t } = useTranslation();
   const navigation = useNavigation()
   const token = useSelector((state) => state?.auth?.loginData?.token)
-  const [selectedPayment, setSelectedPayment] = useState(2);
+  const [selectedPayment, setSelectedPayment] = useState(3);
   const [selectedBalace, setSelectedBalance] = useState('');
   const [receiptNo, setReceiptNo] = useState('');
   const [otherAmount, setOtherAmount] = useState('');
@@ -154,14 +155,16 @@ const SendBalanceScreen = () => {
     }
   }
 
+
   const shareBalance = async () => {
     const data = {
-      balance: selectedBalace?.price,
+      balance: selectedBalace?.price || otherAmount,
       phone: receiptNo,
     }
 
     try {
       const result = await sendBalance(data, token)
+
       if (result?.success) {
         showMessage({
           type: 'success',
@@ -179,7 +182,7 @@ const SendBalanceScreen = () => {
     }
   }
 
-  const handleSendBalance = ()=>{
+  const handleSendBalance = () => {
     if (selectedBalace == '') {
       showMessage({
         type: 'danger',
@@ -199,13 +202,16 @@ const SendBalanceScreen = () => {
       })
       return
     }
-
-     openPaymentSheet(shareBalance)
+    shareBalance()
+    // openPaymentSheet(shareBalance)
   }
 
   return (
     <ScreenView scrollable={true}>
+
       <HeaderBox smallLogo={false} notification={false} search={false} />
+<KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+
       <IconLabel label={'sendBalance'} />
 
       {SendingBalance?.map((item, index) => {
@@ -218,43 +224,45 @@ const SendBalanceScreen = () => {
           </TouchableOpacity>
         );
       })}
+     
+        <HeaderWithAll
+          title={t('orAmount')}
+          titleStyle={styles.orAmountTitle}
+        />
 
-      <HeaderWithAll
-        title={t('orAmount')}
-        titleStyle={styles.orAmountTitle}
-      />
+        <CustomInput
+          placeholder={t('50 AED')}
+          rs={true}
+          style={styles.customInput}
+          value={otherAmount}
+          onChangeText={(text) => {
+            const numericValue = text.replace(/[^0-9.]/g, '');
+            if (numericValue.length > 0) {
+              setOtherAmount(numericValue);
+              setSelectedBalance(null);
+            }
 
-      <CustomInput
-        placeholder={t('50 AED')}
-        rs={true}
-        style={styles.customInput}
-        value={otherAmount}
-        onChangeText={(text) => {
-          const numericValue = text.replace(/[^0-9.]/g, '');
-          if (numericValue.length > 0) {
-            setOtherAmount(numericValue);
-            setSelectedBalance(null);
-          }
-
-        }}
-      />
+          }}
+        />
 
 
 
-      <HeaderWithAll
-        title={t('ReceiptNo')}
-        titleStyle={styles.orAmountTitle}
-      />
-      <CustomInput
-        placeholder={t('ReceiptNo')}
-        rs={true}
-        style={styles.customInput}
-        value={receiptNo}
-        onChangeText={setReceiptNo}
-      />
+        <HeaderWithAll
+          title={t('ReceiptNo')}
+          titleStyle={styles.orAmountTitle}
+        />
+        <CustomInput
+          placeholder={t('ReceiptNo')}
+          rs={true}
+          style={styles.customInput}
+          value={receiptNo}
+          onChangeText={setReceiptNo}
+        />
+        <CustomText style={{ fontSize: 11, marginTop: -12, marginBottom: 20, color: colors.gray2 }}>{t('EnterNoWithCountryCode')}</CustomText>
 
       <HeaderWithAll title={t('payWith')} />
       <PaymentOptions
+        onlywallet={true}
         selectedPayment={selectedPayment}
         setSelectedPayment={setSelectedPayment}
       />
@@ -264,13 +272,15 @@ const SendBalanceScreen = () => {
         title={isAppleSelected ? t('Pay') : t('payment')}
         btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
         style={isAppleSelected && styles.appleButton}
-        onPress={() =>handleSendBalance()}
+        onPress={() => handleSendBalance()}
         // onPress={() =>shareBalance()}
 
 
 
-        shareBalance
+      
       />
+</KeyboardAwareScrollView>
+
     </ScreenView>
   );
 };

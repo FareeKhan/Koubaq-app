@@ -137,7 +137,7 @@ const HeaderBox = ({
         {notification && (
           <TouchableOpacity
             hitSlop={{ top: 7, bottom: 7, left: 7, right: 7 }}
-            onPress={() => console.log('notidicxations')}
+            onPress={() => navigation.navigate('NotificationScreen')}
           >
             <Fontisto name={'bell-alt'} size={18} color={colors.primary} />
             {productInCart?.length > 0 && (

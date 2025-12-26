@@ -31,6 +31,7 @@ const CustomCarousel = ({
   const bannersData = async () => {
     try {
       const result = await fetchBanners();
+      console.log('isLoaderisLoaderisLoaderisLoader',result)
       if (result?.success) {
         setBannerArray(result?.data);
       }

@@ -7,7 +7,7 @@ const RemoteImage = ({ uri, style, resizeMode = 'cover',isBorder =true }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const fallback = require('../assets/cup.png')
-
+console.log('---',uri)
     return (
         <View style={[styles.container, style]}>
             {loading && (

@@ -1,8 +1,9 @@
-export const mainUrl = 'https://backend.onway.ae/';
+// export const mainUrl = 'https://backend.onway.ae/';
+export const mainUrl = 'https://onway.loca.lt/';
 
+// export const ImageBaseUrl = 'https://backend.onway.ae';
+export const ImageBaseUrl = 'https://onway.loca.lt/';
 
-// export const mainUrl = 'https://0b62d5945c7d.ngrok-free.app/';
-export const ImageBaseUrl = 'https://backend.onway.ae';
 export const baseUrl = `${mainUrl}api/`;
 export const imageUrl = `${mainUrl}uploads/`;
 export const STRIPE_KEY = "pk_test_51SOZA0COzbE7fBAMwRoi2wspVojLIK9SiqI9I7DJUrYNpwCcdUQs3bUPWRPu11R8CmPGBpDullGI5e7liLrOtXzh00R4HTUs0u"

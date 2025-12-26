@@ -24,12 +24,13 @@ export const loginPhoneNo = async (phoneNo) => {
     }
 };
 
-export const verifyOtp = async (phoneNo, otp) => {
+export const verifyOtp = async (phoneNo, otp, token) => {
     let num = phoneNo;
     let result = num.replace(/^0/, "");
     const data = JSON.stringify({
         "phone_number": "+971" + result,
-        "otp": otp
+        "otp": otp,
+        fcm_token: token
     })
     try {
         const response = await axios.post(
@@ -248,8 +249,8 @@ export const fetchTheme = async (id) => {
 
 // ***************** ORDER APIS
 
-export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod,selectedCarInfo) => {
-console.log('selectedCarInfoselectedCarInfoselectedCarInfo',selectedCarInfo)
+export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod, selectedCarInfo) => {
+    console.log('selectedCarInfoselectedCarInfoselectedCarInfo', selectedCarInfo)
     const array = data?.map((item, index) => ({
         ...item,
         item_id: item?.id,
@@ -439,6 +440,25 @@ export const fetchVehicles = async (token) => {
     try {
         const response = await axios.get(
             `${baseUrl}vehicles`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+};
+
+
+
+export const fetchProfile = async (token) => {
+    try {
+        const response = await axios.get(
+            `${baseUrl}customer/profile`,
             {
                 headers: {
                     Accept: 'application/json',
@@ -676,8 +696,8 @@ export const topUpBalanceApi = async (data, token) => {
 
 export const sendBalance = async (data, token) => {
     const postData = {
-        "recipient_phone": (data?.phone),
         "amount": data?.balance,
+        "recipient_phone": (data?.phone),
     }
     try {
         const response = await axios.post(
@@ -687,6 +707,52 @@ export const sendBalance = async (data, token) => {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
+export const updateProfile = async (data, token) => {
+    const imageUri = data.image.path
+    const formData = new FormData();
+    formData.append('name', data?.name);
+    formData.append('profile_image', {
+        uri: imageUri,
+        type: data.image.mime,
+        name: 'profile.jpg',
+    });
+
+    try {
+        const response = await axios.post(
+            `${baseUrl}customer/profile`,
+            formData,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
+export const deleteProfile = async (token) => {
+    try {
+        const response = await axios.delete(
+            `${baseUrl}customer/profile/image`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
                 },
             }
@@ -716,6 +782,28 @@ export const walletTransaction = async (token) => {
         console.log(e?.response?.data || e.message);
     }
 }
+
+
+
+export const getNotification = async (token) => {
+    try {
+        const response = await axios.get(
+            `${baseUrl}customer/notifications`,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
+
 
 
 

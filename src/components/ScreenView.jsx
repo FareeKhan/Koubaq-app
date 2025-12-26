@@ -7,6 +7,7 @@ const ScreenView = ({ scrollable, children, style,mh ,growFlex,extraBottomSpace}
     <View style={[styles.container, style]}>
       {scrollable ? (
         <ScrollView
+        
           style={[mh && {marginHorizontal:-20}]}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={[{ paddingBottom: 100 },growFlex && {paddingBottom: 25,flexGrow:1},extraBottomSpace && {paddingBottom:150}]}

@@ -7,14 +7,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import CustomText from './CustomText';
 import { fonts } from '../constants/fonts';
 
-const PaymentOptions = ({selectedPayment,setSelectedPayment}) => {
-    const {t} = useTranslation()
-          const paymentData = paymentCards(t);
-    
+const PaymentOptions = ({ selectedPayment, setSelectedPayment, onlywallet }) => {
+  const { t } = useTranslation()
+  const paymentData = paymentCards(t);
+
   return (
     <View>
-              <View style={{ marginTop: -10, marginBottom: 20 }}>
-        {paymentData?.slice(0,2)?.map((item, index) => {
+      <View style={{ marginTop: -10, marginBottom: 20 }}>
+        {(onlywallet
+          ? paymentData?.slice(2)
+          : paymentData?.slice(0, 2)
+        )?.map((item, index) => {
           return (
             <TouchableOpacity
               onPress={() => setSelectedPayment(item?.id)}
@@ -64,7 +67,7 @@ const PaymentOptions = ({selectedPayment,setSelectedPayment}) => {
             </TouchableOpacity>
           );
         })}
-    </View>
+      </View>
     </View>
   )
 }
