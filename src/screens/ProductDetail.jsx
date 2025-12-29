@@ -141,6 +141,8 @@ const ProductDetail = ({ route }) => {
       msgForReceiver: msgForReceiver,
       restaurantId: productData?.restaurant_id,
       categoryId: productData?.category_id,
+      restData: productData?.restaurant,
+
     }
     dispatch(addGiftProductToCart(data))
 
@@ -206,9 +208,9 @@ const ProductDetail = ({ route }) => {
   return (
 
     <View style={styles.container}>
-        <KeyboardAvoidingView style={{ flex: 1, }} behavior={Platform.OS == 'ios' ? 'padding' : 'height'}    >
+      <KeyboardAvoidingView style={{ flex: 1, }} behavior={Platform.OS == 'ios' ? 'padding' : 'height'}    >
 
-      <ScreenView scrollable={true} mh={true} extraBottomSpace={true}>
+        <ScreenView scrollable={true} mh={true} extraBottomSpace={true}>
 
           <View>
 
@@ -441,8 +443,7 @@ const ProductDetail = ({ route }) => {
               )}
 
               {/* */}
-
-              {isGifterPage && data?.length > 0 && (
+              {isGifterPage && data?.length > 1 && (
                 <View style={{ marginTop: 15 }}>
                   <HeaderWithAll title={t('relatedProduct')} />
 
@@ -452,8 +453,8 @@ const ProductDetail = ({ route }) => {
             </View>
           </View>
 
-      </ScreenView>
-        </KeyboardAvoidingView>
+        </ScreenView>
+      </KeyboardAvoidingView>
 
       <View style={styles.buttonContainer}>
         <CustomButton

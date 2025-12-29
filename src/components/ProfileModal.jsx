@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CustomModal from './CustomModal'
 import EvilIcons from 'react-native-vector-icons/EvilIcons'
@@ -70,30 +70,92 @@ const ProfileModal = ({ setIsProfileModal, isProfileModal, getUserProfile, userP
     }
 
     return (
-  
-        <CustomModal modalVisible={isProfileModal} setModalVisible={setIsProfileModal} >
-                
-            <View style={{ paddingBottom: 100, borderTopLeftRadius: 20 }}>
-                <TouchableOpacity onPress={handleGallery} activeOpacity={0.8} style={{ marginBottom: 20, margin: "auto" }}>
-                    <Image source={{ uri: userImage?.path ? userImage?.path : userImage }} style={{ width: 90, borderWidth:1,borderColor:colors.gray,height: 90, borderRadius: 50 }} resizeMode="cover" />
-                    <View style={{ backgroundColor: "#fff", borderWidth: 1, position: "absolute", height: 20, width: 20, borderRadius: 50, right: 5, bottom: 5 }}>
-                        <EvilIcons name={'pencil'} size={20} color={colors.primary} />
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isProfileModal}
+            onRequestClose={() => {
+                Alert.alert('Modal has been closed.');
+                setIsProfileModal(!isProfileModal);
+            }}>
+            <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+
+                    <TouchableOpacity onPress={()=>{
+                        setIsProfileModal(!isProfileModal);
+                    }} activeOpacity={0.8} style={{ marginBottom: 20, marginLeft: "auto" }}>
+                            <EvilIcons name={'close-o'} size={30} color={colors.primary} />
+                    </TouchableOpacity>
+
+
+                    <View style={{ borderTopLeftRadius: 20 }}>
+                        <TouchableOpacity onPress={handleGallery} activeOpacity={0.8} style={{ marginBottom: 20, margin: "auto" }}>
+                            <Image source={{ uri: userImage?.path ? userImage?.path : userImage }} style={{ width: 90, borderWidth: 1, borderColor: colors.gray, height: 90, borderRadius: 50 }} resizeMode="cover" />
+                            <View style={{ backgroundColor: "#fff", borderWidth: 1, position: "absolute", height: 20, width: 20, borderRadius: 50, right: 5, bottom: 5 }}>
+                                <EvilIcons name={'pencil'} size={20} color={colors.primary} />
+                            </View>
+                        </TouchableOpacity>
+
+                        <CustomInput
+                            placeholder={'userName'}
+                            style={{ marginBottom: 40 }}
+                            value={userName}
+                            onChangeText={setUserName}
+                        />
+                        <CustomButton loader={isLoader} onPress={handleUpdateProfile} title={"Update"} />
                     </View>
-                </TouchableOpacity>
-
-                <CustomInput
-                    placeholder={'userName'}
-                    style={{ marginBottom: 40 }}
-                    value={userName}
-                    onChangeText={setUserName}
-                />
-                <CustomButton loader={isLoader} onPress={handleUpdateProfile} title={"Update"} />
+                </View>
             </View>
+        </Modal>
 
-        </CustomModal>
+
+
+
+
     )
 }
 
 export default ProfileModal
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        backgroundColor: '#00000020',
+
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    buttonOpen: {
+        backgroundColor: '#F194FF',
+    },
+    buttonClose: {
+        backgroundColor: '#2196F3',
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+    },
+});

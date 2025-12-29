@@ -250,7 +250,9 @@ export const fetchTheme = async (id) => {
 // ***************** ORDER APIS
 
 export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod, selectedCarInfo) => {
-    console.log('selectedCarInfoselectedCarInfoselectedCarInfo', selectedCarInfo)
+   
+   
+    console.log('selectedCarInfoselectedCarInfoselectedCarInfo', data)
     const array = data?.map((item, index) => ({
         ...item,
         item_id: item?.id,
@@ -492,7 +494,6 @@ export const deleteVehicles = async (id, token) => {
 
 // ++++++
 export const makeGiftOrder = async (data, token, selectedCarId, finalPrice, selectedPayment) => {
-
     const themeImage = ImageBaseUrl + data?.selectedTheme?.image
     // Create FormData
     const value =
@@ -573,7 +574,6 @@ export const giftWalletUpdate = async (data, userId) => {
 };
 
 export const NearByRest = async (data) => {
-
     try {
         const response = await axios.get(
             `${baseUrl}restaurants/nearby`,

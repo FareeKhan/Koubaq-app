@@ -18,7 +18,7 @@ import CustomCarousel from '../components/CustomCarousel';
 import ShopsDataCard from '../components/ShopsDataCard';
 import CustomButton from '../components/CustomButton';
 import MapView, { Marker } from 'react-native-maps';
-import { mainUrl, shopsData } from '../constants/data';
+import { mainUrl } from '../constants/data';
 import CustomText from '../components/CustomText';
 import Subtitle from '../components/Subtitle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -107,11 +107,9 @@ const HomeScreen = () => {
   const [search, setIsSearch] = useState('');
   const [currentAddress, setCurrentAddress] = useState('');
 
-
   useEffect(() => {
     fetchUserCurrentLocation()
   }, [])
-
 
   const fetchUserCurrentLocation = async () => {
     setIsLoader(true)
@@ -130,7 +128,6 @@ const HomeScreen = () => {
       Geolocation.getCurrentPosition(
         async position => {
           const { latitude, longitude } = position.coords;
-
           const addressData = await getAddressFromCoordinates(latitude, longitude)
           if (addressData) {
             setCurrentAddress(addressData)
@@ -152,7 +149,11 @@ const HomeScreen = () => {
   };
 
   const loadRestaurants = async (address) => {
+    console.log('FirstLatitude', address?.latitude)
+    console.log('second', address?.longitude)
+
     if (address?.latitude && address?.longitude) {
+      console.log('addressaddress', address)
       await fetchNearRestautents(address);
     } else {
       await restaurentData();
@@ -229,7 +230,7 @@ const HomeScreen = () => {
           </View>
 
           <CustomText style={styles.shopName}>{item?.name}</CustomText>
-          <Subtitle>{item?.location}</Subtitle>
+          <Subtitle>{[...new Set(item?.location?.split(/\r?\n/).map(s => s.trim()))].join(", ")}</Subtitle>
 
           <View style={styles.servicesRow}>
             <View style={styles.serviceItem}>

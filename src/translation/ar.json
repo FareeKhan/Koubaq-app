@@ -167,5 +167,20 @@
   "GiftDeleted": "تم حذف الهدية بنجاح",
   "recptName": "اسم المستلم",
   "recptAddress": "عنوان المستلم",
-  "reveiver": "المستلم"
+  "reveiver": "المستلم",
+    "EnterNoWithCountryCode": "أدخل الرقم مع رمز الدولة",
+  "userName": "اسم المستخدم",
+  "updatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
+  "somthingWentWrong": "حدث خطأ ما",
+  "uploadImageField": "يرجى تحميل الصورة وملء حقل الاسم",
+  "deletedSuccessfully": "تم حذف الصورة بنجاح",
+  "notification": "الإشعارات",
+  "noNotification": "لم يتم العثور على إشعارات"
+
+
+
+
+
+
+
 }

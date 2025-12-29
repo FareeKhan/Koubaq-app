@@ -94,21 +94,21 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   const handleCheckOutBtn = () => {
 
-        if (!userId) {
+    if (!userId) {
       showMessage({
         type: "danger",
         message: t('PleaseLoginFirst')
       })
       return
     }
-   
-      if (selectedCarId == '') {
-        showMessage({
-          type: "danger",
-          message: t("pleaseSelectCar")
-        })
-        return
-      }
+
+    if (selectedCarId == '') {
+      showMessage({
+        type: "danger",
+        message: t("pleaseSelectCar")
+      })
+      return
+    }
 
     if (selectedPayment == 2 || selectedPayment == 1) {
       openPaymentSheet(processOrder)
@@ -123,10 +123,10 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
 
   const processOrder = async () => {
     setIsOrderLoader(true)
-    
+
     const payMethod = selectedPayment == 1 ? "apple_pay" : selectedPayment == 2 ? 'card' : 'wallet'
     try {
-      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod,selectedCarInfo)
+      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod, selectedCarInfo)
       if (response?.success) {
         navigation.navigate('SuccessfulScreen')
         dispatch(clearCart())
@@ -247,7 +247,11 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
       )}
 
 
-      <AddBrandedCar setSelectedCarId={setSelectedCarId} setSelectedCarInfo={setSelectedCarInfo} selectedCarId={selectedCarId} />
+      <AddBrandedCar
+        setSelectedCarId={setSelectedCarId}
+        setSelectedCarInfo={setSelectedCarInfo}
+        selectedCarId={selectedCarId}
+      />
 
       <AddedCarData
         isBorder={true}
@@ -311,6 +315,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
         style={isAppleSelected && { backgroundColor: colors.black }}
         // onPress={() => navigation.navigate('SuccessfulScreen')}
         onPress={() => handleCheckOutBtn()}
+        loader={isOrderLoader}
       />
 
       <CustomModal

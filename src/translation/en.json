@@ -189,7 +189,8 @@
 "uploadImageField":"Please Upload Image and fill the name Field",
 
 "deletedSuccessfully":"Image Deleted Successfully",
-"notification":"Notification"
+"notification":"Notification",
+"noNotification":"No Notification Found"
 
 
 }

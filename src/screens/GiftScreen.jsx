@@ -53,9 +53,12 @@ const GiftScreen = () => {
     rcvdGift()
   }, []))
 
+
+
   const getSentGifts = async () => {
     try {
       const result = await fetchSendGifts(token);
+      console.log('sss', result?.data?.data?.length)
       if (result?.success) {
         setSendGiftData(result?.data?.data)
       }
@@ -69,7 +72,7 @@ const GiftScreen = () => {
       const result = await giftWalletUpdate(isShowSenderDetail, userId);
       console.log('result-->>>', result)
       if (result?.success) {
-        deleteGift(isShowSenderDetail?.id, true)
+        deleteGift(isShowSenderDetail?.id, 'update')
         showMessage({
           type: "success",
           message: t('Balance added to Wallet')
@@ -84,35 +87,45 @@ const GiftScreen = () => {
   const rcvdGift = async () => {
     try {
       const result = await giftRcvd(token);
-      console.log('rcvdasdas',result?.data?.data?.length)
+      console.log('dasdasssssss', result)
       if (result?.success) {
         setReceivedGiftData(result?.data?.data)
-      }else{
+      } else {
         setReceivedGiftData([])
       }
     } catch (e) {
-      console.log(e);
+      console.log('--', e);
     } finally {
+      console.log('-0-dasd')
       setDeleteLoader(false)
     }
   };
 
   const deleteGift = async (id, value) => {
-    console.log('---',id,value)
     setDeleteLoader(true)
     try {
       const result = await removeGiftData(id, token);
       console.log('asdasd', result)
       if (result?.success) {
-        if (value === true) {
-          rcvdGift()
+        if (value === true || value === 'update') {
+          const updated = await giftRcvd(token);
+          setIsShowSenderDetail('')
+          if (updated?.success) {
+            setReceivedGiftData(updated?.data?.data?.length > 0 ? updated.data.data : []);
+          }
         } else {
+          // setSendGiftData(prev => prev.filter(item => item.id !== id));
           getSentGifts()
+
         }
-        showMessage({
-          type: "success",
-          message: t('GiftDeleted')
-        })
+        {
+          value !== 'update' &&
+            showMessage({
+              type: "success",
+              message: t('GiftDeleted')
+            })
+        }
+
       }
     } catch (e) {
       console.log(e);
@@ -120,8 +133,6 @@ const GiftScreen = () => {
       setDeleteLoader(false)
     }
   };
-
-
 
   const renderGiftSection = ({ item, index }) => {
     return (
@@ -131,9 +142,6 @@ const GiftScreen = () => {
             <CustomText style={styles.productName}>
               {item?.gift_item}  {currency} {item?.products[0]?.price}
             </CustomText>
-            {/* <CustomText style={styles.productPrice}>
-                {currency} {item?.price}
-              </CustomText> */}
           </View>
           <Image
             source={{ uri: item?.product_image }}
@@ -201,6 +209,8 @@ const GiftScreen = () => {
         data={sendGiftData}
         keyExtractor={(item, index) => index?.toString()}
         renderItem={renderGiftSection}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
         ListEmptyComponent={<EmptyData />}
       />
 
@@ -256,12 +266,11 @@ const GiftScreen = () => {
         data={receivedGiftData}
         keyExtractor={(item, index) => index?.toString()}
         renderItem={renderRecivedGifts}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={<EmptyData />}
       />
     )
   };
-
-
 
   const addToCart = () => {
     {
@@ -299,6 +308,7 @@ const GiftScreen = () => {
         </View>
       );
     };
+
 
     return (
       <View>
@@ -369,19 +379,25 @@ const GiftScreen = () => {
             btnTxtStyle={styles.smallBtnText}
           />
 
-          <TouchableOpacity onPress={() => deleteGift(isShowSenderDetail?.id, true)}>
-            <CustomText style={styles.deleteHistoryText}>
-              {t('deleteFromHistory')}
-            </CustomText>
-          </TouchableOpacity>
+
+          {
+            deleteLoader ?
+              <ScreenLoader type={1} /> :
+              <TouchableOpacity onPress={() => deleteGift(isShowSenderDetail?.id, true)}>
+                <CustomText style={styles.deleteHistoryText}>
+                  {t('deleteFromHistory')}
+                </CustomText>
+              </TouchableOpacity>
+          }
+
         </View>
       </View>
     );
   };
 
   return (
-    <ScreenView scrollable={true}>
-      <HeaderBox logo={true} />
+    <ScreenView scrollable={false}>
+      <HeaderBox logo={true} search={false} />
 
       <CustomText style={styles.giftsTitle}>{t('gifts')}</CustomText>
 
@@ -403,12 +419,6 @@ const GiftScreen = () => {
       ) : (
         <RenderReceivedGiftsData />
       )}
-
-
-
-      {/* { (
-        <EmptyData title={t('noGift')} style={styles.emptyData} />
-      )} */}
     </ScreenView>
   );
 };
@@ -419,7 +429,8 @@ const styles = StyleSheet.create({
   giftsTitle: {
     fontSize: 16,
     fontFamily: fonts.semiBold,
-    marginVertical: 30,
+    marginTop: 30,
+    marginBottom: 15,
   },
   sendGiftButton: {
     borderRadius: 50,

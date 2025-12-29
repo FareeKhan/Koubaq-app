@@ -156,6 +156,7 @@ const SelectedReceiver = ({
                             }}
                         />
 
+
                         {/* <Entypo
             name={
               I18nManager.isRTL ? 'chevron-small-left' : 'chevron-small-right'
@@ -165,6 +166,8 @@ const SelectedReceiver = ({
             style={{ marginLeft: 'auto' }}
           /> */}
                     </View>
+                    <CustomText style={{ fontSize: 11, marginTop: 5, color: colors.gray2 }}>{t('EnterNoWithCountryCode')}</CustomText>
+
                 </View>
             </TouchableWithoutFeedback>
         </KeyboardAvoidingView>

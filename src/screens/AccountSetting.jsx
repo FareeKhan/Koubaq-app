@@ -63,6 +63,7 @@ const AccountSetting = () => {
   const [userProfileData, setUserProfileData] = useState('');
   const [selectedCarId, setSelectedCarId] = useState('')
   const [isProfileModal, setIsProfileModal] = useState(false)
+  const [selectedCarInfo, setSelectedCarInfo] = useState('')
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -237,6 +238,8 @@ const AccountSetting = () => {
               style={{ paddingHorizontal: 20, paddingTop: 10 }}
               setSelectedCarId={setSelectedCarId}
               selectedCarId={selectedCarId}
+              setSelectedCarInfo={setSelectedCarInfo}
+
             />
 
             <DividerLine
@@ -316,12 +319,10 @@ const AccountSetting = () => {
         }
 
 
-
-
       </ScreenView>
       <ProfileModal userProfileData={userProfileData} setIsProfileModal={setIsProfileModal} isProfileModal={isProfileModal} getUserProfile={getUserProfile} />
 
-  
+
     </View>
   );
 };

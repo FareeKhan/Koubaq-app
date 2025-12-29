@@ -1,8 +1,8 @@
 // export const mainUrl = 'https://backend.onway.ae/';
-export const mainUrl = 'https://onway.loca.lt/';
+export const mainUrl = 'https://backend.koubak.info/';
 
 // export const ImageBaseUrl = 'https://backend.onway.ae';
-export const ImageBaseUrl = 'https://onway.loca.lt/';
+export const ImageBaseUrl = 'https://backend.koubak.info';
 
 export const baseUrl = `${mainUrl}api/`;
 export const imageUrl = `${mainUrl}uploads/`;

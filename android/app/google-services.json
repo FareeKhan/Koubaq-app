@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "315632526116",
+    "project_id": "koubakapp",
+    "storage_bucket": "koubakapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315632526116:android:a49963b36b080562f189b1",
+        "android_client_info": {
+          "package_name": "com.koubakapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkRZyt-pZntbN4aUTsYeUZKmG8upXDmb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315632526116:android:b6af0efa77e1a06cf189b1",
+        "android_client_info": {
+          "package_name": "com.vendorapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkRZyt-pZntbN4aUTsYeUZKmG8upXDmb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

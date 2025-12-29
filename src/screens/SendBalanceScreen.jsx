@@ -164,6 +164,7 @@ const SendBalanceScreen = () => {
 
     try {
       const result = await sendBalance(data, token)
+      console.log('dasdas', result)
 
       if (result?.success) {
         showMessage({
@@ -210,21 +211,21 @@ const SendBalanceScreen = () => {
     <ScreenView scrollable={true}>
 
       <HeaderBox smallLogo={false} notification={false} search={false} />
-<KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
 
-      <IconLabel label={'sendBalance'} />
+        <IconLabel label={'sendBalance'} />
 
-      {SendingBalance?.map((item, index) => {
-        return (
-          <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
-            <CustomText style={styles.amountText}>
-              {currency} {item?.price}
-            </CustomText>
-            <Image source={require('../assets/cash.png')} style={{ width: 80, height: 65, transform: [{ rotate: "-90deg" }] }} />
-          </TouchableOpacity>
-        );
-      })}
-     
+        {SendingBalance?.map((item, index) => {
+          return (
+            <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
+              <CustomText style={styles.amountText}>
+                {currency} {item?.price}
+              </CustomText>
+              <Image source={require('../assets/cash.png')} style={{ width: 80, height: 65, transform: [{ rotate: "-90deg" }] }} />
+            </TouchableOpacity>
+          );
+        })}
+
         <HeaderWithAll
           title={t('orAmount')}
           titleStyle={styles.orAmountTitle}
@@ -260,26 +261,26 @@ const SendBalanceScreen = () => {
         />
         <CustomText style={{ fontSize: 11, marginTop: -12, marginBottom: 20, color: colors.gray2 }}>{t('EnterNoWithCountryCode')}</CustomText>
 
-      <HeaderWithAll title={t('payWith')} />
-      <PaymentOptions
-        onlywallet={true}
-        selectedPayment={selectedPayment}
-        setSelectedPayment={setSelectedPayment}
-      />
+        <HeaderWithAll title={t('payWith')} />
+        <PaymentOptions
+          onlywallet={true}
+          selectedPayment={selectedPayment}
+          setSelectedPayment={setSelectedPayment}
+        />
 
-      <CustomButton
-        appleIcon={isAppleSelected}
-        title={isAppleSelected ? t('Pay') : t('payment')}
-        btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
-        style={isAppleSelected && styles.appleButton}
-        onPress={() => handleSendBalance()}
+        <CustomButton
+          appleIcon={isAppleSelected}
+          title={isAppleSelected ? t('Pay') : t('payment')}
+          btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
+          style={isAppleSelected && styles.appleButton}
+          onPress={() => handleSendBalance()}
         // onPress={() =>shareBalance()}
 
 
 
-      
-      />
-</KeyboardAwareScrollView>
+
+        />
+      </KeyboardAwareScrollView>
 
     </ScreenView>
   );

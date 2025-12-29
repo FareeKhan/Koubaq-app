@@ -32,7 +32,7 @@ const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
           style={{ width: 70, height: 65, borderWidth: 1, borderRadius: 10, borderColor: colors.gray5 }}
         />
 
-        <View style={{ gap: 2 }}>
+        <View style={{ gap: 2, width: "75%" }}>
           <CustomText style={styles.title}>{item?.name}</CustomText>
           <CustomText style={styles.subTitle}>
             {item?.description}

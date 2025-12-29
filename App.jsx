@@ -15,9 +15,9 @@ import messaging, { firebase } from '@react-native-firebase/messaging';
 
 
 const App = () => {
-  // useEffect(() => {
-  //   // onDisplayNotification()
-  // }, [])
+  useEffect(() => {
+    onDisplayNotification('ssdasdasdsas', 'adadasdsasdasss')
+  }, [])
 
   async function requestUserPermission() {
     const authorizationStatus = await messaging().requestPermission({
@@ -29,30 +29,31 @@ const App = () => {
     if (authorizationStatus) {
       // handle notification here
       const token = await messaging().getToken();
-      console.log('asdas',token)
+      console.log('asdas', token)
     }
   }
 
-
-  async function onDisplayNotification(title,body) {
+  async function onDisplayNotification(title, body) {
     // Request permissions (required for iOS)
     await notifee.requestPermission()
 
     // Create a channel (required for Android)
     const channelId = await notifee.createChannel({
       id: 'koubak',
-      name: 'Default Channel',
+      name: 'Koubak Notifications',
+      importance: notifee.AndroidImportance.HIGH,
     });
-
     // Display a notification
     await notifee.displayNotification({
-      title: title,
-      body: body,
+      title,
+      body,
       android: {
-        channelId,
-        smallIcon: 'name-of-a-small-icon',
+      channelId,
+        smallIcon: 'ic_notification', // ✅ REQUIRED
         pressAction: {
-          id: 'koubak',
+          id: 'default',
+            importance: notifee.AndroidImportance.HIGH,
+
         },
       },
     });

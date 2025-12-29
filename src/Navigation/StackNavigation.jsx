@@ -81,6 +81,8 @@ export const giftStack = () => {
       <Stack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
       <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
       <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+
 
     </Stack.Navigator>
   );
@@ -116,6 +118,8 @@ export const WalletStack = () => {
       <Stack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
       <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
       <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+
 
     </Stack.Navigator>
   );
@@ -146,6 +150,8 @@ export const AccountStack = () => {
       <Stack.Screen name="OrderDetailsScreen" component={OrderDetailsScreen} />
       <Stack.Screen name="FavoriteScreen" component={FavoriteScreen} />
       <Stack.Screen name="SuccessfulScreen" component={SuccessfulScreen} />
+      <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+
 
     </Stack.Navigator>
   );

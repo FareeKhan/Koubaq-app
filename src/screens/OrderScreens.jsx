@@ -56,10 +56,11 @@ const OrderScreens = () => {
 
 
   const addToCart = (reOrderItem) => {
-      dispatch(clearCart());
+    -
+    dispatch(clearCart());
     reOrderItem?.items?.forEach((productData, index) => {
       const data = {
-        id: productData?.id,
+        id: productData?.id || productData?.item_id,
         title: productData?.name,
         description: productData?.description,
         counter: Number(productData?.quantity),
@@ -71,9 +72,10 @@ const OrderScreens = () => {
         msgForReceiver: productData?.msgForReceiver,
         restaurantId: reOrderItem?.restaurant_id,
         categoryId: productData?.categoryId,
-      restData: productData?.restData,
+        restData: productData?.restData || reOrderItem?.restaurant,
 
       }
+      console.log('datadatproductDataa', productData)
       dispatch(addProductToCart(data))
     })
     navigation.navigate('BasketScreen')
@@ -179,7 +181,7 @@ const OrderScreens = () => {
         renderItem={renderItem}
         scrollEnable={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom:100}}
+        contentContainerStyle={{ paddingBottom: 100 }}
         ListEmptyComponent={<EmptyData />}
       />
     </ScreenView>
