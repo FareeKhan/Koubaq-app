@@ -83,7 +83,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   useEffect(() => {
     getFutureTimeSlots();
   }, []);
-
+console.log('selectedCarIdselectedCarId',selectedCarId)
 
   useEffect(() => {
     if (finalPrice > 0) {
@@ -102,13 +102,14 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
       return
     }
 
-    if (selectedCarId == '') {
+    if (selectedCarId == '' && isHeader) {
       showMessage({
         type: "danger",
         message: t("pleaseSelectCar")
       })
       return
     }
+    
 
     if (selectedPayment == 2 || selectedPayment == 1) {
       openPaymentSheet(processOrder)
@@ -247,11 +248,14 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
       )}
 
 
-      <AddBrandedCar
-        setSelectedCarId={setSelectedCarId}
-        setSelectedCarInfo={setSelectedCarInfo}
-        selectedCarId={selectedCarId}
-      />
+      {
+        isHeader &&
+        <AddBrandedCar
+          setSelectedCarId={setSelectedCarId}
+          setSelectedCarInfo={setSelectedCarInfo}
+          selectedCarId={selectedCarId}
+        />
+      }
 
       <AddedCarData
         isBorder={true}

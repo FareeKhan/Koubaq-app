@@ -97,6 +97,7 @@ const HeaderBox = ({
           <Ionicons name={'chevron-down'} color={colors.black} size={20} />
         </TouchableOpacity>
       ) : (
+          isBack && 
         <TouchableOpacity onPress={onPressBack ? onPressBack : () => navigation.goBack()}>
           <Ionicons
             name={I18nManager.isRTL ? 'arrow-forward-sharp' : 'arrow-back-sharp'}
@@ -106,6 +107,7 @@ const HeaderBox = ({
 
 
         </TouchableOpacity>
+
       )}
 
       {logo ? (

@@ -171,7 +171,7 @@
                   "PleaseLoginToEdit": "Please Login your account to Edit address",
   "GiftDeleted" :"Gift Deleted successfully",
 
-  "recptName" :"Receipt Name",
+  "recptName" :"Name",
   "recptAddress" :"Receipt Address",
 
   "reveiver" :"Receiver",
@@ -190,8 +190,19 @@
 
 "deletedSuccessfully":"Image Deleted Successfully",
 "notification":"Notification",
-"noNotification":"No Notification Found"
+"noNotification":"No Notification Found",
 
+
+
+
+"noContact":"No Contacts Found",
+
+"freeCoffe":"Get a free coffe when you purchase 5 Coffes from the same shop",
+"CoffeAmount":"The Free Coffe amount will be added to your Wallet",
+"coffeeNote":"Note: The Free coffe value will be as the minimum purchased value",
+
+
+"flipCard":"Flip the card to see more details",
 
 }
 

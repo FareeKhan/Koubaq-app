@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import HeaderWithAll from '../components/HeaderWithAll';
@@ -24,14 +24,17 @@ import Subtitle from '../components/Subtitle';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CustomInput from '../components/CustomInput';
 import { fetchRestaurentList, NearByRest } from '../userServices/UserService';
 import FastImage from 'react-native-fast-image';
 import ScreenLoader from '../components/ScreenLoader';
-import { getAddressFromCoordinates } from '../constants/helper';
+import { DEFAULT_TAB_BAR_STYLE, getAddressFromCoordinates } from '../constants/helper';
 import Geolocation from '@react-native-community/geolocation';
 import { showMessage } from 'react-native-flash-message';
+import CustomModal from '../components/CustomModal';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import MapViewComp from '../components/MapViewComp';
 
 const { width } = Dimensions.get('screen');
 
@@ -96,8 +99,20 @@ const ListView = ({
     </View>
   );
 };
-
+// export const DEFAULT_TAB_BAR_STYLE = {
+//   position: "absolute",
+//   bottom: 20,
+//   marginHorizontal: 20,
+//   borderRadius: 18,
+//   alignItems: "center",
+//   justifyContent: "center",
+//   height: 60,
+//   borderWidth: 1,
+//   borderColor: colors.black1,
+//   paddingTop: 10,
+// };
 const HomeScreen = () => {
+  const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isListingView, setIsListingView] = useState(true);
@@ -150,7 +165,6 @@ const HomeScreen = () => {
 
   const loadRestaurants = async (address) => {
     console.log('FirstLatitude', address?.latitude)
-    console.log('second', address?.longitude)
 
     if (address?.latitude && address?.longitude) {
       console.log('addressaddress', address)
@@ -206,114 +220,196 @@ const HomeScreen = () => {
     setIsShowOnlyList(!isShowOnlyList)
   }
 
-  const renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShopDetail', {
-          resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
-        })}
-        style={styles.shopCardWrapper}
-      >
-        <FastImage
-          source={{ uri: `${mainUrl}${item?.cover_image}` }}
-          style={styles.shopImage}
-        />
+  // const renderItem = ({ item }) => {
+  //   return (
+  //     <TouchableOpacity
+  //       onPress={() => navigation.navigate('ShopDetail', {
+  //         resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
+  //       })}
+  //       style={styles.shopCardWrapper}
+  //     >
+  //       <FastImage
+  //         source={{ uri: `${mainUrl}${item?.cover_image}` }}
+  //         style={styles.shopImage}
+  //       />
 
 
-        <View style={styles.shopInfoContainer}>
-          <View style={styles.shopLogoWrapper}>
-            <FastImage
-              source={{ uri: `${mainUrl}${item?.logo}` }}
-              style={styles.shopLogo}
+  //       <View style={styles.shopInfoContainer}>
+  //         <View style={styles.shopLogoWrapper}>
+  //           <FastImage
+  //             source={{ uri: `${mainUrl}${item?.logo}` }}
+  //             style={styles.shopLogo}
 
-            />
-          </View>
+  //           />
+  //         </View>
 
-          <CustomText style={styles.shopName}>{item?.name}</CustomText>
-          <Subtitle>{[...new Set(item?.location?.split(/\r?\n/).map(s => s.trim()))].join(", ")}</Subtitle>
+  //         <CustomText style={styles.shopName}>{item?.name}</CustomText>
+  //         <Subtitle>{[...new Set(item?.location?.split(/\r?\n/).map(s => s.trim()))].join(", ")}</Subtitle>
 
-          <View style={styles.servicesRow}>
-            <View style={styles.serviceItem}>
-              <MaterialIcons
-                name={'wheelchair-pickup'}
-                size={16}
-                color={colors.gray}
-              />
-              <Subtitle>Pick up</Subtitle>
-            </View>
-            <View style={styles.serviceItem}>
-              <MaterialIcons name={'handyman'} size={16} color={colors.gray} />
-              <Subtitle>In Store</Subtitle>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+  //         <View style={styles.servicesRow}>
+  //           <View style={styles.serviceItem}>
+  //             <MaterialIcons
+  //               name={'wheelchair-pickup'}
+  //               size={16}
+  //               color={colors.gray}
+  //             />
+  //             <Subtitle>Pick up</Subtitle>
+  //           </View>
+  //           <View style={styles.serviceItem}>
+  //             <MaterialIcons name={'handyman'} size={16} color={colors.gray} />
+  //             <Subtitle>In Store</Subtitle>
+  //           </View>
+  //         </View>
+  //       </View>
+  //     </TouchableOpacity>
+  //   );
+  // };
+
+  // const MapViewComp = () => {
+  //   return (
+  //     <View style={styles.mapViewContainer}>
+  //       <View style={styles.mapHeader}>
+  //         <HeaderBox
+  //           logo={true}
+  //           search={false}
+  //           onPressBack={() => setIsListingView(!isListingView)}
+  //         />
+  //         <HeaderWithAll title={t('shopsNear')} style={{ marginTop: 30 }} />
+  //       </View>
+
+  //       <View style={styles.mapWrapper}>
+  //         <MapView
+  //           initialRegion={{
+  //             latitude: 25.256946,
+  //             longitude: 55.359307,
+  //             latitudeDelta: 0.20,
+  //             longitudeDelta: 0.20,
+  //           }}
+
+  //           style={styles.map}
+  //         >
+  //           {
+  //             allRestaurants?.map((item, index) => {
+  //               return (
+  //                 <Marker
+  //                   key={index}
+  //                   coordinate={{
+  //                     latitude: Number(item.latitude),
+  //                     longitude: Number(item.longitude),
+  //                     latitudeDelta: 0.20,
+  //                     longitudeDelta: 0.20,
+  //                   }}
+  //                   title={item?.name}
+  //                 />
+  //               )
+  //             })
+  //           }
+
+  //         </MapView>
+  //       </View>
+
+  //       <View style={styles.mapListOverlay}>
+  //         <FlatList
+  //           // data={shopsData}
+  //           data={allRestaurants}
+  //           keyExtractor={(_, index) => index?.toString()}
+  //           renderItem={renderItem}
+  //           contentContainerStyle={styles.horizontalList}
+  //           horizontal
+  //           showsHorizontalScrollIndicator={false}
+  //         />
+  //       </View>
+  //     </View>
+  //   );
+  // };
+  // if (isLoader) {
+  //   return (
+  //     <ScreenLoader />
+  //   )
+  // }
+
+
+
+
+  const handleMapList = () => {
+    setIsListingView(prev => {
+      const next = !prev;
+
+      if (next) {
+        navigation.getParent()?.setOptions({
+          tabBarStyle: DEFAULT_TAB_BAR_STYLE,
+        });
+      } else {
+        navigation.getParent()?.setOptions({
+          tabBarStyle: { display: 'none' },
+        });
+      }
+
+      return next;
+    });
   };
 
-  const MapViewComp = () => {
-    return (
-      <View style={styles.mapViewContainer}>
-        <View style={styles.mapHeader}>
-          <HeaderBox
-            logo={true}
-            search={false}
-            onPressBack={() => setIsListingView(!isListingView)}
-          />
-          <HeaderWithAll title={t('shopsNear')} style={{ marginTop: 30 }} />
-        </View>
+  // const MapViewComp = () => {
+  //   return (
+  //     <View style={styles.mapViewContainer}>
+  //       <View style={styles.mapHeader}>
+  //         <HeaderBox
+  //           logo={false}
+  //           search={false}
+  //           notification={false}
+  //           onPressBack={() => setIsListingView(!isListingView)}
+  //           style={{ top: -5 }}
+  //         />
+  //       </View>
 
-        <View style={styles.mapWrapper}>
-          <MapView
-            initialRegion={{
-              latitude: 25.256946,
-              longitude: 55.359307,
-              latitudeDelta: 0.20,
-              longitudeDelta: 0.20,
-            }}
+  //       <View style={styles.mapWrapper}>
+  //         <MapView
+  //           initialRegion={{
+  //             latitude: 25.256946,
+  //             longitude: 55.359307,
+  //             latitudeDelta: 0.20,
+  //             longitudeDelta: 0.20,
+  //           }}
 
-            style={styles.map}
-          >
-            {
-              allRestaurants?.map((item, index) => {
-                return (
-                  <Marker
+  //           style={styles.map}
+  //         >
+  //           {
+  //             allRestaurants?.map((item, index) => {
+  //               return (
+  //                 <Marker
+  //                   key={index}
+  //                   coordinate={{
+  //                     latitude: Number(item.latitude),
+  //                     longitude: Number(item.longitude),
+  //                     latitudeDelta: 0.20,
+  //                     longitudeDelta: 0.20,
+  //                   }}
+  //                   title={item?.name}
+  //                 />
+  //               )
+  //             })
+  //           }
 
-                    key={index}
-                    coordinate={{
-                      latitude: Number(item.latitude),
-                      longitude: Number(item.longitude),
-                      latitudeDelta: 0.20,
-                      longitudeDelta: 0.20,
-                    }}
-                    title={item?.name}
-                  />
-                )
-              })
-            }
+  //         </MapView>
+  //       </View>
 
-          </MapView>
-        </View>
+  //       <View style={styles.mapListOverlay}>
+  //         <View style={{width:50,height:5,backgroundColor:colors.gray4,borderRadius:10,marginVertical:10,margin:"auto"}}  />
+  //         <FlatList
+  //           // data={shopsData}
+  //           data={allRestaurants}
+  //           keyExtractor={(_, index) => index?.toString()}
+  //           renderItem={renderItem}
+  //           contentContainerStyle={styles.horizontalList}
+  //           showsHorizontalScrollIndicator={false}
+  //           showsVerticalScrollIndicator={false}
+  //         />
+  //       </View>
 
-        <View style={styles.mapListOverlay}>
-          <FlatList
-            // data={shopsData}
-            data={allRestaurants}
-            keyExtractor={(_, index) => index?.toString()}
-            renderItem={renderItem}
-            contentContainerStyle={styles.horizontalList}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-      </View>
-    );
-  };
-  if (isLoader) {
-    return (
-      <ScreenLoader />
-    )
-  }
+  //     </View>
+
+  //   );
+  // };
 
   return (
     <View style={styles.container}>
@@ -332,14 +428,26 @@ const HomeScreen = () => {
             />
           </ScreenView>
         ) : (
-          <MapViewComp />
+          <MapViewComp
+          data={allRestaurants}
+          setIsListingView={setIsListingView}
+          />
         )}
 
         <CustomButton
-          onPress={() => setIsListingView(!isListingView)}
+          // onPress={() => setIsListingView(!isListingView)}
+          onPress={() => handleMapList()}
           title={isListingView ? t('mapView') : t('listView')}
           style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
         />
+
+        {/* <CustomModal
+          modalVisible={true}
+        >
+
+        </CustomModal> */}
+
+
       </>
     </View>
   );
@@ -357,25 +465,23 @@ const styles = StyleSheet.create({
     borderColor: colors.gray5
   },
   shopCardWrapper: {
-    // gap: 3,
-
-
+    gap: 10,
+    flexDirection: "row",
+    alignItems: "center",
   },
   shopImage: {
-    width: width / 2,
-    height: 160,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10
-
+    width: 60,
+    height: 60,
+    borderRadius: 50
   },
   shopInfoContainer: {
-    backgroundColor: colors.white,
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: colors.gray5,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
+    // backgroundColor: colors.white,
+    // paddingVertical: 15,
+    // paddingHorizontal: 10,
+    // borderWidth: 1,
+    // borderColor: colors.gray5,
+    // borderBottomLeftRadius: 10,
+    // borderBottomRightRadius: 10,
   },
 
   shopLogoWrapper: {
@@ -409,10 +515,18 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   mapViewContainer: {
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    // paddingTop: Platform.OS === 'ios' ? 60 : 40,
   },
   mapHeader: {
-    paddingHorizontal: 20,
+    position: "absolute",
+    top: 70,
+    backgroundColor: colors.white,
+    borderRadius: 50,
+    height: 45,
+    width: 45,
+    alignItems: "center",
+    justifyContent: "center",
+    left: 20
   },
   mapWrapper: {
     marginHorizontal: -20,
@@ -424,12 +538,21 @@ const styles = StyleSheet.create({
   },
   mapListOverlay: {
     zIndex: 100,
-    bottom: Platform.OS === 'ios' ? 480 : 420,
+    bottom: 0,
+    height:450,
+    // bottom: Platform.OS === 'ios' ?  : 420,
     position: 'absolute',
+    backgroundColor: colors.white,
+    width: "100%",
+    borderTopLeftRadius:20,
+    borderTopRightRadius:20
   },
   horizontalList: {
     gap: 15,
     paddingHorizontal: 20,
+    paddingVertical: 15,
+    flexGrow:1,
+    paddingBottom:150
   },
   bottomBtn: {
     position: 'absolute',

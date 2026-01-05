@@ -6,9 +6,17 @@ import { fonts } from '../constants/fonts';
 import { colors } from '../constants/colors';
 import Entypo from 'react-native-vector-icons/Entypo'
 import CustomButton from './CustomButton';
+import CustomInput from './CustomInput';
+import { useTranslation } from 'react-i18next';
+import EmptyData from './EmptyData';
 
 const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, setSelectedContacts }) => {
+    const { t } = useTranslation()
+
     const [contacts, setContacts] = useState([]);
+    const [searchText, setSearchText] = useState('');
+
+    const searchContact = searchText ? contacts?.filter((item) => item?.givenName?.toLowerCase()?.includes(searchText?.toLowerCase())) : contacts
 
     useEffect(() => {
         requestPermissionAndLoadContacts();
@@ -90,31 +98,50 @@ const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, s
                 title={'Contacts List'}
             >
                 <View style={{ marginBottom: 30 }}>
+                    <CustomInput
+                        placeholder={t('search')}
+                        rs={true}
+                        icon={true}
+                        style={styles.searchInput}
+                        value={searchText}
+                        onChangeText={setSearchText} 
+                    />
                     <FlatList
-                        data={contacts}
+                        // data={contacts}
+                        data={searchContact}
                         keyExtractor={item => item.recordID}
                         renderItem={renderItem}
-                        style={{height:400}}
-                        contentContainerStyle={{paddingBottom:20}}
+                        style={{ height: 400 }}
+                        contentContainerStyle={{ paddingBottom: 20 }}
+                        ListEmptyComponent={<EmptyData title={t('noContact')} />}
                     />
-                         <CustomButton
-                    title={'confirm'}
-                    onPress={()=>setContactModal(false)}
-                />
+                    {
+                        searchContact?.length > 0 &&
+                        <CustomButton
+                            title={'confirm'}
+                            onPress={() => setContactModal(false)}
+                        />
+                    }
+
                 </View>
 
-           
+
             </CustomModal>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: '#fff',marginBottom:100 },
+    container: { flex: 1, padding: 20, backgroundColor: '#fff', marginBottom: 100 },
     title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
     contactItem: { padding: 10, borderBottomWidth: 1, borderColor: '#ccc', flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
     contactName: { fontSize: 18 },
     contactNumber: { fontSize: 14, color: '#555' },
+    searchInput: {
+        flexDirection: "row",
+        alignItems: "center",
+        borderColor: colors.gray5
+    },
 });
 
 export default ContactPickerModal;

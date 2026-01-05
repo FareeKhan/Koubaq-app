@@ -2,6 +2,7 @@ import { initPaymentSheet, presentPaymentSheet } from "@stripe/stripe-react-nati
 import { getPaymentIntentApi } from "../userServices/UserService";
 import { showMessage } from "react-native-flash-message";
 import { GOOGLE_API } from "./data";
+import { colors } from "./colors";
 
 export const initializePaymentSheet = async (price,setLoading) => {
     const paymentIntent = await getPaymentIntentApi(price);
@@ -81,4 +82,18 @@ export const getAddressFromCoordinates = async (latitude,longitude ) => {
     console.log('error', error);
     return null;
   }
+};
+
+
+export const DEFAULT_TAB_BAR_STYLE = {
+  position: "absolute",
+  bottom: 20,
+  marginHorizontal: 20,
+  borderRadius: 18,
+  alignItems: "center",
+  justifyContent: "center",
+  height: 60,
+  borderWidth: 1,
+  borderColor: colors.black1,
+  paddingTop: 10,
 };

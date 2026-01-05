@@ -29,6 +29,7 @@ const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
 
         <FastImage
           source={{ uri: cleanUrl }}
+          resizeMode="contain"
           style={{ width: 70, height: 65, borderWidth: 1, borderRadius: 10, borderColor: colors.gray5 }}
         />
 

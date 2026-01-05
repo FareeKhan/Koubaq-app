@@ -526,7 +526,7 @@ export const makeGiftOrder = async (data, token, selectedCarId, finalPrice, sele
         subtotal: finalPrice,
         total: finalPrice,
         recipient_address: data?.address,
-        vehicle_id: selectedCarId
+        vehicle_id: 20
     };
 
     console.log('payloadpayload===>>', payload)

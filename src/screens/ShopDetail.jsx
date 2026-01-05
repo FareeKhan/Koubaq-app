@@ -89,7 +89,7 @@ const ShopDetail = ({ isHeader = true, title, isGifterPage, route ,selectedShopI
     <ScreenView scrollable={true} mh={true} style={!isHeader && { paddingTop: 0 }}>
       {
         isHeader &&
-        <HeaderBox logo={true} style={{ paddingHorizontal: 20 }} />
+        <HeaderBox logo={true} style={{ paddingHorizontal: 20 }} search={false}/>
       }
       <View style={{ marginVertical: 15 }}>
         <RemoteImage

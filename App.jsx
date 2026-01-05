@@ -48,11 +48,11 @@ const App = () => {
       title,
       body,
       android: {
-      channelId,
+        channelId,
         smallIcon: 'ic_notification', // ✅ REQUIRED
         pressAction: {
           id: 'default',
-            importance: notifee.AndroidImportance.HIGH,
+          importance: notifee.AndroidImportance.HIGH,
 
         },
       },

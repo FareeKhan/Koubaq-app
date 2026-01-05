@@ -395,7 +395,7 @@ const WalletScreen = () => {
 
   return (
     <ScreenView scrollable={true}>
-      <HeaderBox smallLogo={false} notification={false} search={false} />
+      <HeaderBox smallLogo={false} notification={false} search={false}  isBack={false}/>
       <IconLabel label={'yourWallet'} />
 
       {
@@ -441,10 +441,10 @@ const WalletScreen = () => {
             </View>
 
             <Subtitle smallFont={true} style={styles.coffeeSub1}>
-              Get a free coffe when you purchase 5 Coffes from the same shop
+             {t('freeCoffe')}
             </Subtitle>
             <Subtitle smallFont={true} style={styles.coffeeSub2}>
-              The Free Coffe amount will be added to your Wallet
+                     {t('CoffeAmount')}
             </Subtitle>
             <Image
               source={require('../assets/coffeegroup.png')}
@@ -452,7 +452,7 @@ const WalletScreen = () => {
             />
 
             <Subtitle smallFont={true} style={styles.coffeeSub2}>
-              Note: The Free coffe value will be as the minimum purchased value
+                {t('coffeeNote')}
             </Subtitle>
           </>
       }
@@ -491,6 +491,7 @@ const styles = StyleSheet.create({
   walletBalanceText: {
     color: colors.primary,
     top: -5,
+    fontFamily:fonts.bold
   },
   walletAmountContainer: {
     flexDirection: 'row',
@@ -498,12 +499,12 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   walletAmountValue: {
-    fontSize: 19,
+    fontSize: 30,
     color: colors.primary,
     fontFamily: fonts.medium,
   },
   walletCurrency: {
-    fontSize: 13,
+    fontSize: 17,
     color: colors.primary,
   },
   walletRightContainer: {

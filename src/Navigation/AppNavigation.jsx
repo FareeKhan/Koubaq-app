@@ -15,27 +15,28 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useSelector } from 'react-redux';
 import i18next from 'i18next';
 import SplashScreen from '../SplashScreen';
+import { DEFAULT_TAB_BAR_STYLE } from '../constants/helper';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const AppNavigation = () => {
-        const isLanguage = useSelector((state) => state.auth.isLanguage)
+    const isLanguage = useSelector((state) => state.auth.isLanguage)
 
-     useEffect(() => {
+    useEffect(() => {
         i18next.changeLanguage(isLanguage)
     }, [isLanguage]);
 
-  return (
-    <Stack.Navigator
-      initialRouteName="SplashScreen"
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name="SplashScreen" component={SplashScreen} />
-      <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
-      <Stack.Screen name="LoginScreen" component={LoginScreen} />
-      <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
-    </Stack.Navigator>
-  );
+    return (
+        <Stack.Navigator
+            initialRouteName="SplashScreen"
+            screenOptions={{ headerShown: false }}
+        >
+            <Stack.Screen name="SplashScreen" component={SplashScreen} />
+            <Stack.Screen name="BottomNavigation" component={BottomNavigation} />
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
+        </Stack.Navigator>
+    );
 };
 
 export default AppNavigation;
@@ -49,27 +50,18 @@ export const BottomNavigation = () => {
     return (
         <Tab.Navigator screenOptions={{
             headerShown: false,
-            tabBarStyle: {
-                position: "absolute",
-                bottom: 20,
-                marginHorizontal: 20,
-                borderRadius: 18,
-                alignItems: "center",
-                justifyContent: "center",
-                height:60,
-                borderWidth:1,
-                borderColor:colors.black1,
-                paddingTop:10
-            },
+            tabBarStyle:DEFAULT_TAB_BAR_STYLE,
             tabBarItemStyle: {
             },
             tabBarHideOnKeyboard: true,
             tabBarActiveTintColor: colors.black,
             tabBarInactiveTintColor: colors.white,
-              tabBarShowLabel: false, 
-              
-   
-        }}>
+            tabBarShowLabel: false,
+
+
+        }}
+
+        >
             <Tab.Screen
                 name="HomeStack"
                 component={HomeStack}
@@ -80,13 +72,13 @@ export const BottomNavigation = () => {
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <MaterialIcons name={'home'} size={26} color={focused ? colors.primary : colors.gray}  />
+                            <MaterialIcons name={'home'} size={32} color={focused ? colors.primary : colors.gray} />
                         )
                     }
                 }}
 
             />
-       
+
             <Tab.Screen
                 name="giftStack"
                 component={giftStack}
@@ -97,7 +89,7 @@ export const BottomNavigation = () => {
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <Ionicons name={'gift'} size={22} color={focused ? colors.primary : colors.gray} />
+                            <Ionicons name={'gift'} size={32} color={focused ? colors.primary : colors.gray} />
                         )
                     }
                 }}
@@ -113,7 +105,7 @@ export const BottomNavigation = () => {
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <Entypo name={'wallet'} size={22} color={focused ? colors.primary : colors.gray} />
+                            <Entypo name={'wallet'} size={32} color={focused ? colors.primary : colors.gray} />
                         )
                     }
                 }}
@@ -121,7 +113,7 @@ export const BottomNavigation = () => {
 
 
 
-                 <Tab.Screen
+            <Tab.Screen
                 name="AccountStack"
                 component={AccountStack}
                 options={{
@@ -131,7 +123,7 @@ export const BottomNavigation = () => {
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
-                                                <FontAwesome6 name={'user-large'} size={22} color={focused ? colors.primary : colors.gray} />
+                            <FontAwesome6 name={'user-large'} size={28} color={focused ? colors.primary : colors.gray} />
 
                         )
                     }

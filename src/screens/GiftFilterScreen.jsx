@@ -348,7 +348,7 @@ const GiftFilterScreen = ({ route }) => {
 
   return (
     <ScreenView scrollable={true} >
-      <HeaderBox logo={true}
+      <HeaderBox logo={true} search={false}
         {...(isSelectedShop && { onPressBack: () => setIsSelectedShop(false) })}
         {...(selectThemeCard && { onPressBack: () => setSelectThemeCard(false) })}
       />
@@ -394,6 +394,7 @@ const GiftFilterScreen = ({ route }) => {
           <HeaderWithAll
             title={t('selectedReceiver')}
             style={{ marginTop: 30 }}
+            search
           />
 
           <SelectedReceiver
@@ -486,7 +487,7 @@ const GiftFilterScreen = ({ route }) => {
                     name={cardName}
                     onChangeText={setCardName}
                   />
-                  <HeaderWithAll
+                  {/* <HeaderWithAll
                     title={t('recptAddress')}
                     style={{ marginBottom: 5 }}
                   />
@@ -498,7 +499,7 @@ const GiftFilterScreen = ({ route }) => {
                     }}
                     name={address}
                     onChangeText={setAddress}
-                  />
+                  /> */}
 
                   <HeaderWithAll title={t('addAMessage')} style={{ marginBottom: 6 }} />
                   <CustomInput

@@ -29,6 +29,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ScreenLoader from '../components/ScreenLoader';
 import { showMessage } from 'react-native-flash-message';
 import { addProductToCart } from '../redux/ProductAddToCart';
+import RenderReceivedGiftsData from '../components/RenderReceivedGiftsData';
 
 const { height } = Dimensions.get('screen');
 
@@ -38,7 +39,6 @@ const GiftScreen = () => {
   const dispatch = useDispatch()
   const token = useSelector((state) => state.auth.loginData?.token)
   const userId = useSelector((state) => state.auth.loginData?.id)
-
   const [selectedFilter, setSelectedFilter] = useState('sendGift');
   const [isShowDetails, setIsShowDetails] = useState(null);
 
@@ -52,6 +52,28 @@ const GiftScreen = () => {
     getSentGifts()
     rcvdGift()
   }, []))
+
+
+
+  // const flipImage = () => {
+  //   rotateY.value = withSpring(rotateY.value === 0 ? 180 : 0, { damping: 15, stiffness: 150 });
+  // };
+
+  //   const flipImage = (item) => {
+  //   rotateY.value = withSpring(
+  //   rotateY.value === 0 ? 180 : 0,
+  //   {
+  //     damping: 100,   // higher = slower, less bouncy
+  //     stiffness: 80, // lower = slower
+  //     mass:0.5,     // increase = slower
+  //   },
+  //     () => {
+  //       // runs AFTER the animation finishes
+  //       runOnJS(setIsShowSenderDetail)(item);
+  //     }
+  //   );
+  // };
+
 
 
 
@@ -87,7 +109,6 @@ const GiftScreen = () => {
   const rcvdGift = async () => {
     try {
       const result = await giftRcvd(token);
-      console.log('dasdasssssss', result)
       if (result?.success) {
         setReceivedGiftData(result?.data?.data)
       } else {
@@ -217,60 +238,19 @@ const GiftScreen = () => {
     )
   };
 
-  const renderRecivedGifts = ({ item, index }) => {
-    return (
-      <View key={item}>
-        {isReceiverSender == index ? (
-          <GiftImage
-            handleHidePress={() => setIsReceiverSender(null)}
-            onPress={() => setIsReceiverSender(null)}
-            imagePath={item?.gift_theme}
-            label={item?.gift_message}
-            style={styles.receivedGiftImage}
-            senderName={item?.sender?.phone_number}
-          />
-        ) : (
-          <GiftImage
-            style={{ width: "100%" }}
-            imagePath={item?.gift_theme}
-          />
-        )}
 
-        <View style={styles.receivedButtonsRow}>
-          {isReceiverSender !== index && (
-            <CustomButton
-              onPress={() => setIsReceiverSender(index)}
-              title={t('showSender')}
-              style={styles.receiverSenderButton}
-              btnTxtStyle={styles.receiverSenderBtnText}
-            />
-          )}
 
-          <CustomButton
-            title={t('showAllDetails')}
-            onPress={() => setIsShowSenderDetail(item)}
-            style={[
-              styles.receiverSenderButton,
-              isReceiverSender == index && styles.receiverSenderShift,
-            ]}
-            btnTxtStyle={styles.receiverSenderBtnText}
-          />
-        </View>
-      </View>
-    );
-  }
-
-  const RenderReceivedGiftsData = () => {
-    return (
-      <FlatList
-        data={receivedGiftData}
-        keyExtractor={(item, index) => index?.toString()}
-        renderItem={renderRecivedGifts}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<EmptyData />}
-      />
-    )
-  };
+  // const RenderReceivedGiftsData = () => {
+  //   return (
+  //     <FlatList
+  //       data={receivedGiftData}
+  //       keyExtractor={(item, index) => index?.toString()}
+  //       renderItem={renderRecivedGifts}
+  //       showsVerticalScrollIndicator={false}
+  //       ListEmptyComponent={<EmptyData />}
+  //     />
+  //   )
+  // };
 
   const addToCart = () => {
     {
@@ -312,6 +292,28 @@ const GiftScreen = () => {
 
     return (
       <View>
+
+
+        {/* <GiftImage /> */}
+        <View style={styles.secondGiftWrapper}>
+          <GiftImage
+            imagePath={isShowSenderDetail?.gift_theme}
+            label={isShowSenderDetail?.gift_message}
+            style={styles.secondGiftImage}
+            senderName={isShowSenderDetail?.sender?.phone_number}
+            setIsShowDetails={setIsShowDetails}
+
+          />
+
+          <TouchableOpacity style={styles.shareGiftBtn}>
+            <EvilIcons name={'share-google'} size={25} color={colors.black} />
+            <CustomText style={styles.shareGiftText}>
+              {t('shareGift')}
+            </CustomText>
+          </TouchableOpacity>
+        </View>
+
+
         <View style={styles.rcvrOuterBox}>
           <View style={styles.rcvrDetail}>
             <View style={styles.productInfo}>
@@ -347,24 +349,7 @@ const GiftScreen = () => {
           </View>
         </View>
 
-        {/* <GiftImage /> */}
-        <View style={styles.secondGiftWrapper}>
-          <GiftImage
-            imagePath={isShowSenderDetail?.gift_theme}
-            label={isShowSenderDetail?.gift_message}
-            style={styles.secondGiftImage}
-            senderName={isShowSenderDetail?.sender?.phone_number}
-            setIsShowDetails={setIsShowDetails}
 
-          />
-
-          <TouchableOpacity style={styles.shareGiftBtn}>
-            <EvilIcons name={'share-google'} size={25} color={colors.black} />
-            <CustomText style={styles.shareGiftText}>
-              {t('shareGift')}
-            </CustomText>
-          </TouchableOpacity>
-        </View>
 
         {/* <View style={styles.infoList}>
           <InfoData label={t('sentData')} value={'1-8-2025 | 08:00AM'} />
@@ -397,7 +382,7 @@ const GiftScreen = () => {
 
   return (
     <ScreenView scrollable={false}>
-      <HeaderBox logo={true} search={false} />
+      <HeaderBox logo={true} search={false} isBack={false} />
 
       <CustomText style={styles.giftsTitle}>{t('gifts')}</CustomText>
 
@@ -417,7 +402,12 @@ const GiftScreen = () => {
       ) : isShowSenderDetail ? (
         <ShowAllDetails />
       ) : (
-        <RenderReceivedGiftsData />
+        <RenderReceivedGiftsData
+          setIsReceiverSender={setIsReceiverSender}
+          data={receivedGiftData}
+          isReceiverSender={isReceiverSender}
+          setIsShowSenderDetail={setIsShowSenderDetail}
+        />
       )}
     </ScreenView>
   );
@@ -477,7 +467,7 @@ const styles = StyleSheet.create({
   addItemCartBtn: { height: 27, borderRadius: 50, width: '47%' },
   addAmountWalletBtn: { height: 27, borderRadius: 50, width: '48%' },
   smallBtnText: { fontSize: 12 },
-  secondGiftWrapper: { marginTop: 10 },
+  secondGiftWrapper: { marginBottom: 15 },
   secondGiftImage: { marginHorizontal: 5, marginTop: 10 },
   shareGiftBtn: {
     position: 'absolute',
