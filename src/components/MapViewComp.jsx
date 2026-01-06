@@ -9,7 +9,7 @@ import { colors } from '../constants/colors';
 import HeaderBox from './HeaderBox';
 import MapView, { Marker } from 'react-native-maps';
 import { fonts } from '../constants/fonts';
-import { mainUrl } from '../constants/data';
+import { carNamesArray, mainUrl } from '../constants/data';
 import { DEFAULT_TAB_BAR_STYLE } from '../constants/helper';
 import Animated, {
     useSharedValue,
@@ -32,6 +32,9 @@ const MapViewComp = ({ data, setIsListingView }) => {
     const EXPANDED_HEIGHT = 400;  // ~3–4 items
     const sheetHeight = useSharedValue(COLLAPSED_HEIGHT);
     const scrollY = useSharedValue(0);
+
+    const panRef = useRef();
+    const scrollRef = useRef();
     const prevScrollY = useSharedValue(0);
     const [currentPosition, getCurrentPosition] = useState('')
     const mapRef = useRef(null);
@@ -46,6 +49,7 @@ const MapViewComp = ({ data, setIsListingView }) => {
 
         return { height };
     });
+    
 
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
@@ -90,6 +94,7 @@ const MapViewComp = ({ data, setIsListingView }) => {
     }
 
     const renderItem = ({ item }) => {
+
         return (
             <TouchableOpacity
                 onPress={() => navigation.navigate('ShopDetail', {
@@ -151,8 +156,12 @@ const MapViewComp = ({ data, setIsListingView }) => {
             }
         );
     };
-
-
+const locationBtnStyle = useAnimatedStyle(() => {
+    return {
+        top: sheetHeight.value === EXPANDED_HEIGHT ? 40 : height / 1.2
+    };
+});
+console.log('sheetHeightsheetHeightshsseetHeight',sheetHeight?.value)
     return (
         <View style={styles.mapViewContainer}>
             <View style={styles.mapHeader}>
@@ -165,7 +174,7 @@ const MapViewComp = ({ data, setIsListingView }) => {
                 />
             </View>
 
-            <TouchableOpacity onPress={currentLocation} style={styles.locationbtn}>
+            <TouchableOpacity onPress={currentLocation} style={[styles.locationbtn,locationBtnStyle]}>
                 <FontAwesome6 name={'location-crosshairs'} color={colors.red} size={20} />
             </TouchableOpacity>
 
@@ -214,22 +223,25 @@ const MapViewComp = ({ data, setIsListingView }) => {
             </View>
 
             <PanGestureHandler
+                ref={panRef}
+                simultaneousHandlers={scrollRef}
                 onGestureEvent={panGesture}
                 onEnded={panEnd}
+                activeOffsetY={[-10, 10]}
             >
                 <Animated.View style={[styles.mapListOverlay, animatedStyle]}>
                     <View style={{ width: 50, height: 5, backgroundColor: colors.gray4, borderRadius: 10, marginVertical: 10, margin: "auto" }} />
                     <AnimatedFlatList
                         data={data}
+                        // data={carNamesArray}
                         keyExtractor={(_, index) => index?.toString()}
                         renderItem={renderItem}
                         contentContainerStyle={styles.horizontalList}
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
-
-                        scrollEnabled={true}
                         onScroll={scrollHandler}
                         scrollEventThrottle={16}
+                        nestedScrollEnabled={true}   // ✅ MUST for Android
 
                     />
                 </Animated.View>

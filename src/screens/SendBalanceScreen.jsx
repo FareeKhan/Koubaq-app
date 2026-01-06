@@ -236,12 +236,20 @@ const SendBalanceScreen = () => {
           rs={true}
           style={styles.customInput}
           value={otherAmount}
-          onChangeText={(text) => {
+          // onChangeText={(text) => {
+          //   const numericValue = text.replace(/[^0-9.]/g, '');
+          //   if (numericValue.length > 0) {
+          //     setOtherAmount(numericValue);
+          //     setSelectedBalance(null);
+          //   }
+
+          // }}
+
+             onChangeText={(text) => {
             const numericValue = text.replace(/[^0-9.]/g, '');
-            if (numericValue.length > 0) {
-              setOtherAmount(numericValue);
-              setSelectedBalance(null);
-            }
+            setOtherAmount(numericValue);
+            setSelectedBalance(null);
+
 
           }}
         />

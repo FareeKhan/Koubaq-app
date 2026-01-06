@@ -20,7 +20,9 @@ const GiftImage = ({
   setIsShowDetails,
   onPress,
   handleHidePress,
-  receiver
+  receiver,
+  rcptName,
+  item
 }) => {
   const { t } = useTranslation();
   return (
@@ -36,7 +38,29 @@ const GiftImage = ({
 
       />
 
-      {label && (
+     {true && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 30,
+            paddingHorizontal:10
+          }}
+        >
+          <CustomText
+            style={{ fontFamily: fonts.black, color: colors.primary }}
+          >
+           {t('yourGift')}
+          </CustomText>
+              <CustomText
+            style={{  color: colors.primary,fontFamily:fonts.bold }}
+          >
+          {t('productFrom')} <CustomText style={{fontFamily:fonts.regular,color:colors.primary}}> {item?.order?.restaurant?.name}</CustomText>
+          </CustomText>
+        </View>
+      )}
+
+
+       {rcptName && (
         <View
           style={{
             position: 'absolute',
@@ -46,12 +70,31 @@ const GiftImage = ({
           }}
         >
           <CustomText
-            style={{ fontFamily: fonts.semiBold, color: colors.primary }}
+            style={{ fontFamily: fonts.black, color: colors.white }}
           >
-            {label}
+            {rcptName}
           </CustomText>
         </View>
       )}
+      {label && (
+        <View
+          style={{
+            position: 'absolute',
+            top: 80,
+            left: I18nManager.isRTL ? null : 15,
+            right: I18nManager.isRTL ? 15 : null,
+            width:"80%" 
+          }}
+        >
+          <CustomText
+            style={{ fontFamily: fonts.black, color: colors.white,}}
+            numberOfLines={3} 
+          >
+            {label} 
+          </CustomText>
+        </View>
+      )}
+   
 
       {senderName && (
         <TouchableOpacity

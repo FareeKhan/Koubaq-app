@@ -99,18 +99,7 @@ const ListView = ({
     </View>
   );
 };
-// export const DEFAULT_TAB_BAR_STYLE = {
-//   position: "absolute",
-//   bottom: 20,
-//   marginHorizontal: 20,
-//   borderRadius: 18,
-//   alignItems: "center",
-//   justifyContent: "center",
-//   height: 60,
-//   borderWidth: 1,
-//   borderColor: colors.black1,
-//   paddingTop: 10,
-// };
+
 const HomeScreen = () => {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation();
@@ -124,18 +113,20 @@ const HomeScreen = () => {
 
   useEffect(() => {
     fetchUserCurrentLocation()
+    loadRestaurants()
   }, [])
 
   const fetchUserCurrentLocation = async () => {
     setIsLoader(true)
     try {
+
       if (Platform.OS === 'android') {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
         );
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Location permission denied');
+          alert('Location permission denied');
           return;
         }
       }
@@ -164,7 +155,6 @@ const HomeScreen = () => {
   };
 
   const loadRestaurants = async (address) => {
-    console.log('FirstLatitude', address?.latitude)
 
     if (address?.latitude && address?.longitude) {
       console.log('addressaddress', address)
@@ -178,6 +168,7 @@ const HomeScreen = () => {
     setIsLoader(true)
     try {
       const result = await fetchRestaurentList()
+      console.log('resultresssult',result)
       if (result?.success) {
         const uniqueRestaurants = Array.from(
           new Set(result?.data?.data.map(p => JSON.stringify(p.restaurant)))
@@ -220,113 +211,6 @@ const HomeScreen = () => {
     setIsShowOnlyList(!isShowOnlyList)
   }
 
-  // const renderItem = ({ item }) => {
-  //   return (
-  //     <TouchableOpacity
-  //       onPress={() => navigation.navigate('ShopDetail', {
-  //         resId: item?.restaurant_id ? item?.restaurant_id : item?.id,
-  //       })}
-  //       style={styles.shopCardWrapper}
-  //     >
-  //       <FastImage
-  //         source={{ uri: `${mainUrl}${item?.cover_image}` }}
-  //         style={styles.shopImage}
-  //       />
-
-
-  //       <View style={styles.shopInfoContainer}>
-  //         <View style={styles.shopLogoWrapper}>
-  //           <FastImage
-  //             source={{ uri: `${mainUrl}${item?.logo}` }}
-  //             style={styles.shopLogo}
-
-  //           />
-  //         </View>
-
-  //         <CustomText style={styles.shopName}>{item?.name}</CustomText>
-  //         <Subtitle>{[...new Set(item?.location?.split(/\r?\n/).map(s => s.trim()))].join(", ")}</Subtitle>
-
-  //         <View style={styles.servicesRow}>
-  //           <View style={styles.serviceItem}>
-  //             <MaterialIcons
-  //               name={'wheelchair-pickup'}
-  //               size={16}
-  //               color={colors.gray}
-  //             />
-  //             <Subtitle>Pick up</Subtitle>
-  //           </View>
-  //           <View style={styles.serviceItem}>
-  //             <MaterialIcons name={'handyman'} size={16} color={colors.gray} />
-  //             <Subtitle>In Store</Subtitle>
-  //           </View>
-  //         </View>
-  //       </View>
-  //     </TouchableOpacity>
-  //   );
-  // };
-
-  // const MapViewComp = () => {
-  //   return (
-  //     <View style={styles.mapViewContainer}>
-  //       <View style={styles.mapHeader}>
-  //         <HeaderBox
-  //           logo={true}
-  //           search={false}
-  //           onPressBack={() => setIsListingView(!isListingView)}
-  //         />
-  //         <HeaderWithAll title={t('shopsNear')} style={{ marginTop: 30 }} />
-  //       </View>
-
-  //       <View style={styles.mapWrapper}>
-  //         <MapView
-  //           initialRegion={{
-  //             latitude: 25.256946,
-  //             longitude: 55.359307,
-  //             latitudeDelta: 0.20,
-  //             longitudeDelta: 0.20,
-  //           }}
-
-  //           style={styles.map}
-  //         >
-  //           {
-  //             allRestaurants?.map((item, index) => {
-  //               return (
-  //                 <Marker
-  //                   key={index}
-  //                   coordinate={{
-  //                     latitude: Number(item.latitude),
-  //                     longitude: Number(item.longitude),
-  //                     latitudeDelta: 0.20,
-  //                     longitudeDelta: 0.20,
-  //                   }}
-  //                   title={item?.name}
-  //                 />
-  //               )
-  //             })
-  //           }
-
-  //         </MapView>
-  //       </View>
-
-  //       <View style={styles.mapListOverlay}>
-  //         <FlatList
-  //           // data={shopsData}
-  //           data={allRestaurants}
-  //           keyExtractor={(_, index) => index?.toString()}
-  //           renderItem={renderItem}
-  //           contentContainerStyle={styles.horizontalList}
-  //           horizontal
-  //           showsHorizontalScrollIndicator={false}
-  //         />
-  //       </View>
-  //     </View>
-  //   );
-  // };
-  // if (isLoader) {
-  //   return (
-  //     <ScreenLoader />
-  //   )
-  // }
 
 
 
@@ -349,68 +233,11 @@ const HomeScreen = () => {
     });
   };
 
-  // const MapViewComp = () => {
-  //   return (
-  //     <View style={styles.mapViewContainer}>
-  //       <View style={styles.mapHeader}>
-  //         <HeaderBox
-  //           logo={false}
-  //           search={false}
-  //           notification={false}
-  //           onPressBack={() => setIsListingView(!isListingView)}
-  //           style={{ top: -5 }}
-  //         />
-  //       </View>
-
-  //       <View style={styles.mapWrapper}>
-  //         <MapView
-  //           initialRegion={{
-  //             latitude: 25.256946,
-  //             longitude: 55.359307,
-  //             latitudeDelta: 0.20,
-  //             longitudeDelta: 0.20,
-  //           }}
-
-  //           style={styles.map}
-  //         >
-  //           {
-  //             allRestaurants?.map((item, index) => {
-  //               return (
-  //                 <Marker
-  //                   key={index}
-  //                   coordinate={{
-  //                     latitude: Number(item.latitude),
-  //                     longitude: Number(item.longitude),
-  //                     latitudeDelta: 0.20,
-  //                     longitudeDelta: 0.20,
-  //                   }}
-  //                   title={item?.name}
-  //                 />
-  //               )
-  //             })
-  //           }
-
-  //         </MapView>
-  //       </View>
-
-  //       <View style={styles.mapListOverlay}>
-  //         <View style={{width:50,height:5,backgroundColor:colors.gray4,borderRadius:10,marginVertical:10,margin:"auto"}}  />
-  //         <FlatList
-  //           // data={shopsData}
-  //           data={allRestaurants}
-  //           keyExtractor={(_, index) => index?.toString()}
-  //           renderItem={renderItem}
-  //           contentContainerStyle={styles.horizontalList}
-  //           showsHorizontalScrollIndicator={false}
-  //           showsVerticalScrollIndicator={false}
-  //         />
-  //       </View>
-
-  //     </View>
-
-  //   );
-  // };
-
+ if (isLoader) {
+    return (
+      <ScreenLoader />
+    )
+  }
   return (
     <View style={styles.container}>
       <>
@@ -441,11 +268,7 @@ const HomeScreen = () => {
           style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
         />
 
-        {/* <CustomModal
-          modalVisible={true}
-        >
-
-        </CustomModal> */}
+    
 
 
       </>

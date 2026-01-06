@@ -203,6 +203,14 @@
 
 
 "flipCard":"Flip the card to see more details",
+"backflip":"Flip Card",
+"Message":"Message",
+"productFrom":"Product from",
+
+
+
+"delete":"Delete",
+"notDeleted":"Notification Deleted Successfully",
 
 }
 

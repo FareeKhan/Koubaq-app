@@ -14,7 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { colors } from '../constants/colors';
 import { Countries } from '../constants/data';
@@ -23,6 +23,7 @@ import DividerLine from './DividerLine';
 import RNRestart from 'react-native-restart';
 import { language } from '../redux/Auth';
 import { productFavorite, removeFavorite } from '../redux/AddFavorite';
+import { unReadMsgs } from '../userServices/UserService';
 
 const HeaderBox = ({
   logo,
@@ -36,18 +37,20 @@ const HeaderBox = ({
   heart,
   onPressBack,
   productData,
-  onPressSearch
+  onPressSearch,
+  isShowNotNmbr
 
 }) => {
   const { t } = useTranslation();
   const isLanguage = useSelector(state => state.auth?.isLanguage);
   const favoriteData = useSelector((state) => state?.favorite?.AddInFavorite)
-
+  const token = useSelector((state) => state?.auth?.loginData?.token)
   const dispatch = useDispatch()
 
   const productInCart = [];
   const navigation = useNavigation()
   const [modalVisible, setModalVisible] = useState(false);
+  const [notificationCounter, setNotificationCounter] = useState('');
   const [selectedCountry, setSelectCountry] = useState(Countries?.find((item) => item?.code == isLanguage));
 
 
@@ -63,6 +66,21 @@ const HeaderBox = ({
       RNRestart.Restart();
     }, 1500);
   };
+
+  useFocusEffect(useCallback(() => {
+    fetchNotification()
+  }, []))
+
+  const fetchNotification = async (value) => {
+    try {
+      const response = await unReadMsgs(token)
+      if (response?.success && response?.unread_count !== notificationCounter) {
+        setNotificationCounter(response?.unread_count)
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
 
 
   const handleFavorite = useCallback(() => {
@@ -97,7 +115,7 @@ const HeaderBox = ({
           <Ionicons name={'chevron-down'} color={colors.black} size={20} />
         </TouchableOpacity>
       ) : (
-          isBack && 
+        isBack &&
         <TouchableOpacity onPress={onPressBack ? onPressBack : () => navigation.goBack()}>
           <Ionicons
             name={I18nManager.isRTL ? 'arrow-forward-sharp' : 'arrow-back-sharp'}
@@ -142,10 +160,10 @@ const HeaderBox = ({
             onPress={() => navigation.navigate('NotificationScreen')}
           >
             <Fontisto name={'bell-alt'} size={18} color={colors.primary} />
-            {productInCart?.length > 0 && (
-              <View style={style.counterNumber}>
+            {notificationCounter > 0 && (
+              <View style={styles.counterNumber}>
                 <CustomText style={{ color: colors.primary, fontSize: 10 }}>
-                  {productInCart?.length}
+                  {notificationCounter}
                 </CustomText>
               </View>
             )}
@@ -211,7 +229,7 @@ const HeaderBox = ({
   );
 };
 
-export default HeaderBox
+export default memo(HeaderBox)
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -234,12 +252,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -10,
     borderColor: colors.primary,
-    left: -10,
+    left: -7,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 50,
-    width: 20,
-    height: 20,
+    width: 15,
+    height: 15,
     alignItems: 'center',
     justifyContent: 'center',
   },

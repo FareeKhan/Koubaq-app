@@ -17,7 +17,7 @@ import { fonts } from '../constants/fonts';
 import CustomButton from '../components/CustomButton';
 import FilterButton from '../components/FilterButton';
 import EmptyData from '../components/EmptyData';
-import { currency, SentGiftsData } from '../constants/data';
+import { currency, mainUrl, SentGiftsData } from '../constants/data';
 import { colors } from '../constants/colors';
 import DividerLine from '../components/DividerLine';
 import GiftImage from '../components/GiftImage';
@@ -30,7 +30,8 @@ import ScreenLoader from '../components/ScreenLoader';
 import { showMessage } from 'react-native-flash-message';
 import { addProductToCart } from '../redux/ProductAddToCart';
 import RenderReceivedGiftsData from '../components/RenderReceivedGiftsData';
-
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import RemoteImage from '../components/RemoteImage';
 const { height } = Dimensions.get('screen');
 
 const GiftScreen = () => {
@@ -52,30 +53,6 @@ const GiftScreen = () => {
     getSentGifts()
     rcvdGift()
   }, []))
-
-
-
-  // const flipImage = () => {
-  //   rotateY.value = withSpring(rotateY.value === 0 ? 180 : 0, { damping: 15, stiffness: 150 });
-  // };
-
-  //   const flipImage = (item) => {
-  //   rotateY.value = withSpring(
-  //   rotateY.value === 0 ? 180 : 0,
-  //   {
-  //     damping: 100,   // higher = slower, less bouncy
-  //     stiffness: 80, // lower = slower
-  //     mass:0.5,     // increase = slower
-  //   },
-  //     () => {
-  //       // runs AFTER the animation finishes
-  //       runOnJS(setIsShowSenderDetail)(item);
-  //     }
-  //   );
-  // };
-
-
-
 
   const getSentGifts = async () => {
     try {
@@ -106,6 +83,7 @@ const GiftScreen = () => {
       setDeleteLoader(false)
     }
   };
+  
   const rcvdGift = async () => {
     try {
       const result = await giftRcvd(token);
@@ -289,28 +267,77 @@ const GiftScreen = () => {
       );
     };
 
-
     return (
       <View>
 
-
         {/* <GiftImage /> */}
         <View style={styles.secondGiftWrapper}>
+          <View style={{ position: "absolute", zIndex: 999, bottom: 50 }}>
+            <View style={{ marginTop: 30, marginLeft: 20, flexDirection: "row", gap: 10, alignItems: "center" }}>
+              <MaterialIcons name={'flip'} size={18} color={colors.white} />
+              <CustomText style={{ color: colors.white, fontFamily: fonts.bold, fontSize: 10 }}>{t('backflip')}</CustomText>
+            </View>
+          </View>
+
+
+
           <GiftImage
             imagePath={isShowSenderDetail?.gift_theme}
-            label={isShowSenderDetail?.gift_message}
+            // label={isShowSenderDetail?.gift_message}
             style={styles.secondGiftImage}
-            senderName={isShowSenderDetail?.sender?.phone_number}
+            item={isShowSenderDetail}
+            // senderName={true}
             setIsShowDetails={setIsShowDetails}
+            // rcptName={isShowSenderDetail?.recipient_name}
+            handleHidePress={() => setIsShowSenderDetail('')}
 
           />
-
+          {/* <TouchableOpacity
+          onPress={onPress ? onPress : () => setIsShowDetails(null)}
+          activeOpacity={1}
+          style={{
+            shadowColor: '#00000090',
+            shadowOffset: {
+              width: 0,
+              height: 3,
+            },
+            shadowOpacity: 0.15,
+            shadowRadius: 1.5,
+            elevation: 7,
+            backgroundColor: '#fff',
+            paddingLeft: 10,
+            borderBottomLeftRadius: 10,
+            borderBottomRightRadius: 10,
+            paddingTop: 20,
+            paddingBottom: 10,
+            zIndex: -100,
+          }}
+        >
+          <CustomText style={{ fontSize: 15, color: colors.primary }}>
+            {receiver ? t('receiver') : t('sender')}  : {senderName}{' '}
+          </CustomText>
+        </TouchableOpacity> */}
           <TouchableOpacity style={styles.shareGiftBtn}>
             <EvilIcons name={'share-google'} size={25} color={colors.black} />
             <CustomText style={styles.shareGiftText}>
               {t('shareGift')}
             </CustomText>
           </TouchableOpacity>
+        </View>
+
+
+        <View style={{ flexDirection: "row",  borderWidth: 1, borderColor: colors.gray, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, marginBottom: 10 }}>
+          <CustomText style={{ color: colors.primary, fontFamily: fonts.bold, }}>{t("Message")+": "}</CustomText>
+          <CustomText style={{ color: colors.primary,width:"80%", }}>{isShowSenderDetail?.gift_message} Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque quos, pariatur obcaecati doloribus ab veritatis libero velit? Quam, nihil voluptates!</CustomText>
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 5, alignItems: "center", borderWidth: 1, borderColor: colors.gray, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, marginBottom: 10 }}>
+
+          <RemoteImage
+            uri={`${mainUrl}${isShowSenderDetail?.order?.restaurant?.logo}`}
+            style={{ width: 40, height: 40, }}
+          />
+          <CustomText style={{ color: colors.primary, }}>{isShowSenderDetail?.order?.restaurant?.name}</CustomText>
         </View>
 
 
@@ -357,12 +384,12 @@ const GiftScreen = () => {
         </View> */}
 
         <View style={styles.bottomRow}>
-          <CustomButton
+          {/* <CustomButton
             title={t('back')}
             onPress={() => setIsShowSenderDetail('')}
             style={[styles.addItemCartBtn, { width: "22%" }]}
             btnTxtStyle={styles.smallBtnText}
-          />
+          /> */}
 
 
           {
@@ -381,7 +408,7 @@ const GiftScreen = () => {
   };
 
   return (
-    <ScreenView scrollable={false}>
+    <ScreenView scrollable={true}>
       <HeaderBox logo={true} search={false} isBack={false} />
 
       <CustomText style={styles.giftsTitle}>{t('gifts')}</CustomText>
@@ -407,6 +434,7 @@ const GiftScreen = () => {
           data={receivedGiftData}
           isReceiverSender={isReceiverSender}
           setIsShowSenderDetail={setIsShowSenderDetail}
+          isShowSenderDetail={isShowSenderDetail}
         />
       )}
     </ScreenView>
@@ -470,12 +498,26 @@ const styles = StyleSheet.create({
   secondGiftWrapper: { marginBottom: 15 },
   secondGiftImage: { marginHorizontal: 5, marginTop: 10 },
   shareGiftBtn: {
-    position: 'absolute',
-    gap: 5,
-    bottom: 10,
+    // position: 'absolute',
+    // gap: 5,
+    // bottom: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    right: 20,
+    justifyContent: "center",
+    // right: 20,
+    shadowColor: '#00000090',
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 1.5,
+    elevation: 7,
+    backgroundColor: '#fff',
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   shareGiftText: { color: colors.primary },
   infoList: { marginVertical: 15 },

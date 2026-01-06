@@ -250,8 +250,8 @@ export const fetchTheme = async (id) => {
 // ***************** ORDER APIS
 
 export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod, selectedCarInfo) => {
-   
-   
+
+
     console.log('selectedCarInfoselectedCarInfoselectedCarInfo', data)
     const array = data?.map((item, index) => ({
         ...item,
@@ -802,6 +802,71 @@ export const getNotification = async (token) => {
         console.log(e?.response?.data || e.message);
     }
 }
+
+
+export const readNotification = async (id,token) => {
+    console.log('tokentoken',   `${baseUrl}notifications/${id}/read`)
+    console.log('token',token)
+    try {
+        const response = await axios.patch(
+            `${baseUrl}notifications/${id}/read`,
+                  null, // 👈 body
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
+
+
+export const deleteNotification = async (token, id) => {
+    try {
+        const response = await axios.delete(
+            `${baseUrl}notifications/${id}`,
+
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
+export const unReadMsgs = async (token) => {
+    try {
+        const response = await axios.get(
+            `${baseUrl}notifications/unread-count`,
+
+            {
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+}
+
 
 
 
