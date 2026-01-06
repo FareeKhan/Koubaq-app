@@ -38,7 +38,7 @@ const HeaderBox = ({
   onPressBack,
   productData,
   onPressSearch,
-  isShowNotNmbr
+  isShowNotNmbr =true
 
 }) => {
   const { t } = useTranslation();
@@ -160,7 +160,7 @@ const HeaderBox = ({
             onPress={() => navigation.navigate('NotificationScreen')}
           >
             <Fontisto name={'bell-alt'} size={18} color={colors.primary} />
-            {notificationCounter > 0 && (
+            {notificationCounter > 0 && isShowNotNmbr && (
               <View style={styles.counterNumber}>
                 <CustomText style={{ color: colors.primary, fontSize: 10 }}>
                   {notificationCounter}
