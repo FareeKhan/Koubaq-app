@@ -19,7 +19,7 @@ import AddedCarData from '../components/AddedCarData';
 import { useDispatch, useSelector } from 'react-redux';
 import RemoteImage from '../components/RemoteImage';
 import AddBrandedCar from '../components/AddBrandedCar';
-import { makeGiftOrder, makeOrder } from '../userServices/UserService';
+import { giftStatusUpdate, makeGiftOrder, makeOrder } from '../userServices/UserService';
 import { clearCart } from '../redux/ProductAddToCart';
 import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
 import { showMessage } from 'react-native-flash-message';
@@ -34,7 +34,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   const userId = useSelector((state) => state?.auth?.loginData?.id)
   const restId = useSelector((state) => state?.cart?.restaurentID)
   const cartData = baseketData?.filter((item) => (item?.restaurantId) === Number(restId))
-
+  const isCheckGift = baseketData?.find((item) => (item?.isGift) == true)
   const restaurentData = cartData[0]?.restData
 
   const resID = useSelector((state) => state?.cart?.restaurentID)
@@ -52,8 +52,7 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   const [isOrderLoader, setIsOrderLoader] = useState(false);
 
   const paymentData = paymentCards(t);
-
-  const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) - discount
+  const subTotalPrice = cartData?.reduce((sum, item) => sum + (item?.price * item?.counter || 0), 0) - discount ?? 0
   const finalPrice = subTotalPrice || giftCartData?.price * giftCartData?.counter
 
   const PickUpTimeBox = () => {
@@ -83,7 +82,6 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
   useEffect(() => {
     getFutureTimeSlots();
   }, []);
-console.log('selectedCarIdselectedCarId',selectedCarId)
 
   useEffect(() => {
     if (finalPrice > 0) {
@@ -109,7 +107,7 @@ console.log('selectedCarIdselectedCarId',selectedCarId)
       })
       return
     }
-    
+
 
     if (selectedPayment == 2 || selectedPayment == 1) {
       openPaymentSheet(processOrder)
@@ -121,13 +119,14 @@ console.log('selectedCarIdselectedCarId',selectedCarId)
       }
     }
   }
+  console.log('-----', isCheckGift?.id)
 
   const processOrder = async () => {
     setIsOrderLoader(true)
 
     const payMethod = selectedPayment == 1 ? "apple_pay" : selectedPayment == 2 ? 'card' : 'wallet'
     try {
-      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod, selectedCarInfo)
+      const response = await makeOrder(cartData, resID, token, driverNote, selectedCarId, finalPrice, userData?.phoneNo, payMethod, selectedCarInfo, isCheckGift?.isGift)
       if (response?.success) {
         navigation.navigate('SuccessfulScreen')
         dispatch(clearCart())
@@ -206,7 +205,7 @@ console.log('selectedCarIdselectedCarId',selectedCarId)
     setSelectedTime(item);
     setIsScheduleModal(false);
   };
-
+  console.log('isCheckGift?.isGiftisCheckGift?.isGift444', isCheckGift?.isGift)
   const isAppleSelected = selectedPayment == 1;
 
   return (
@@ -260,36 +259,41 @@ console.log('selectedCarIdselectedCarId',selectedCarId)
       <AddedCarData
         isBorder={true}
       />
+      {
+        !isCheckGift?.isGift &&
+        <>
+          <HeaderWithAll title={t('payWith')} />
+          <View style={styles.paymentList}>
+            {paymentData?.map((item, index) => {
+              return (
+                <TouchableOpacity
+                  onPress={() => setSelectedPayment(item?.id)}
+                  key={index}
+                  style={styles.paymentItem}
+                >
+                  <View
+                    style={[
+                      styles.paymentCircle,
+                      selectedPayment == item?.id && styles.paymentCircleSelected,
+                    ]}
+                  >
+                    {selectedPayment == item?.id && (
+                      <Ionicons
+                        name={'checkmark-sharp'}
+                        size={15}
+                        color={colors.white}
+                      />
+                    )}
+                  </View>
+                  {item?.card}
+                  <CustomText style={styles.paymentTitle}>{item?.title}</CustomText>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </>
+      }
 
-      <HeaderWithAll title={t('payWith')} />
-      <View style={styles.paymentList}>
-        {paymentData?.map((item, index) => {
-          return (
-            <TouchableOpacity
-              onPress={() => setSelectedPayment(item?.id)}
-              key={index}
-              style={styles.paymentItem}
-            >
-              <View
-                style={[
-                  styles.paymentCircle,
-                  selectedPayment == item?.id && styles.paymentCircleSelected,
-                ]}
-              >
-                {selectedPayment == item?.id && (
-                  <Ionicons
-                    name={'checkmark-sharp'}
-                    size={15}
-                    color={colors.white}
-                  />
-                )}
-              </View>
-              {item?.card}
-              <CustomText style={styles.paymentTitle}>{item?.title}</CustomText>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
 
       <HeaderWithAll title={t('paymentSummary')} />
       <KeyValue leftValue={t('Subtotal')} rightValue={finalPrice} />
@@ -299,7 +303,7 @@ console.log('selectedCarIdselectedCarId',selectedCarId)
         style={{ marginTop: -5 }}
       />
       {
-        discount &&
+        discount != 0 &&
         <KeyValue leftValue={t('discount')} rightValue={'-SAR ' + discount || 0} />
       }
       <KeyValue

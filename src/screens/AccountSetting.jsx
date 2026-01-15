@@ -110,7 +110,6 @@ const AccountSetting = () => {
   const getUserProfile = useCallback(async () => {
     try {
       const response = await fetchProfile(token);
-      console.log('-->>s>', response)
       if (response?.success) {
         setUserProfileData(response.data);
       }

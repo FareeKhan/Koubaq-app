@@ -36,7 +36,6 @@ const BasketScreen = () => {
   const userId = useSelector((state) => state?.auth?.loginData?.id)
   const cartData = baseketData?.filter((item) => (item?.restaurantId) === (restId))
 
-
   const [driverNote, setDriverNote] = useState('')
   const [promoCode, setPromoCode] = useState('')
   const [discountAmount, setDiscountAmount] = useState(0)
@@ -153,7 +152,7 @@ const BasketScreen = () => {
         <KeyValue leftValue={t('ServiceFee')} rightValue={'Free'} />
         {
           discountAmount?.discount_amount &&
-        <KeyValue leftValue={t('discount')} rightValue={ '-SAR ' +discountAmount?.discount_amount || 0} />
+          <KeyValue leftValue={t('discount')} rightValue={'-SAR ' + discountAmount?.discount_amount || 0} />
         }
 
         <KeyValue

@@ -17,6 +17,8 @@ export const productAddToCart = createSlice({
             console.log('000dasdas123', (action.payload));
 
             const existId = state.cartProducts?.find((item) => item?.id == action.payload?.id)
+            console.log('existId',existId)
+
             if (!existId) {
                 state.cartProducts.push(action.payload)
             } else {

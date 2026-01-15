@@ -117,17 +117,17 @@ const SelectedReceiver = ({
                             paddingHorizontal: 12,
                             gap: 15,
                             borderColor: colors.black1,
-                            paddingVertical: 12,
                             borderRadius: 10,
                             backgroundColor: colors.white,
-                            borderWidth: 1,
+                            borderWidth: 1
+                            
                         }}
                     >
                         <FontAwesome5 name={'mobile'} size={20} color={colors.primary} />
 
                         <TextInput
                             placeholder={t('addNewNumber')}
-                            style={{ width: "90%",color:colors.black }}
+                            style={{ width: "90%",color:colors.black,height:40 }}
                             placeholderTextColor={colors.gray}
                             value={manualNumber}
                             onChangeText={setManualNumber}

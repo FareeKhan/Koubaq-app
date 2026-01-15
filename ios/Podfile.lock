@@ -1810,67 +1810,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-maps (1.26.20):
-    - react-native-maps/Maps (= 1.26.20)
-  - react-native-maps/Generated (1.26.20):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
+  - react-native-maps (1.20.1):
     - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
-  - react-native-maps/Maps (1.26.20):
-    - boost
-    - DoubleConversion
-    - fast_float
-    - fmt
-    - glog
-    - hermes-engine
-    - RCT-Folly
-    - RCT-Folly/Fabric
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-hermes
-    - React-ImageManager
-    - React-jsi
-    - react-native-maps/Generated
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - SocketRocket
-    - Yoga
   - react-native-restart (0.0.27):
     - React-Core
   - react-native-safe-area-context (5.6.2):
@@ -3375,7 +3316,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 29d62f132e4aba34ebb7f2b936dde754eb08971b
   react-native-contacts: 9c63bbfe2bd61a35b9a7fd70717be6134e49ce8b
   react-native-geolocation: eb39c815c9b58ddc3efb552cafdd4b035e4cf682
-  react-native-maps: 707b321b48cdb77d15942f2a549ad38d91eba21f
+  react-native-maps: ee1e65647460c3d41e778071be5eda10e3da6225
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: 7fd5a52f4d8d07ae5898ae9a9426d1da97c987f2
   React-NativeModulesApple: d061f458c3febdf0ac99b1b0faf23b7305974b25

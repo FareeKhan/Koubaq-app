@@ -172,17 +172,17 @@ import { fonts } from '../constants/fonts';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 
-const ReceivedGiftCard = ({ item, setIsShowSenderDetail,isFlipped }) => {
+const ReceivedGiftCard = ({ item, setIsShowSenderDetail, isFlipped }) => {
     const rotateY = useSharedValue(0);
     const { t } = useTranslation()
     const [cardHeight, setCardHeight] = useState(null);
 
-      useEffect(() => {
-    rotateY.value = withTiming(isFlipped ? 180 : 0, {
-      duration: 500,
-      easing: Easing.inOut(Easing.cubic),
-    });
-  }, [isFlipped]);
+    useEffect(() => {
+        rotateY.value = withTiming(isFlipped ? 180 : 0, {
+            duration: 500,
+            easing: Easing.inOut(Easing.cubic),
+        });
+    }, [isFlipped]);
 
     const frontStyle = useAnimatedStyle(() => ({
         transform: [
@@ -231,7 +231,7 @@ const ReceivedGiftCard = ({ item, setIsShowSenderDetail,isFlipped }) => {
                             </View>
                         </View>
                         <View style={{ marginTop: "auto", bottom: -40, borderWidth: 1, paddingVertical: 10, borderTopWidth: 0, borderBottomLeftRadius: 10, borderBottomRightRadius: 10, paddingHorizontal: 10, borderColor: colors.gray4 }}>
-                            <CustomText>{t('sender')}: {item?.sender?.name|| item?.sender?.phone_number}</CustomText>
+                            <CustomText>{t('sender')}: {item?.sender?.name || item?.sender?.phone_number}</CustomText>
                         </View>
                     </Pressable>
 
@@ -260,8 +260,8 @@ const ReceivedGiftCard = ({ item, setIsShowSenderDetail,isFlipped }) => {
 };
 
 
-const RenderReceivedGiftsData = ({ data, setIsShowSenderDetail,isShowSenderDetail }) => {
-    console.log('isShowSenderDetailisShowSenderDetail',isShowSenderDetail)
+const RenderReceivedGiftsData = ({ data, setIsShowSenderDetail, isShowSenderDetail }) => {
+
     return (
         <FlatList
             data={data}
@@ -269,7 +269,7 @@ const RenderReceivedGiftsData = ({ data, setIsShowSenderDetail,isShowSenderDetai
             renderItem={({ item }) => (
                 <ReceivedGiftCard
                     item={item}
-                        isFlipped={isShowSenderDetail === item?.id}
+                    isFlipped={isShowSenderDetail === item?.id}
                     setIsShowSenderDetail={setIsShowSenderDetail}
                 />
             )}

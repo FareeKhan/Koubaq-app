@@ -58,31 +58,31 @@ const OrderDetailsScreen = ({ route }) => {
   // }
 
   const addToCart = () => {
-  dispatch(clearCart());
+    dispatch(clearCart());
 
-  setTimeout(() => {
-    item?.items?.forEach(productData => {
-      dispatch(addProductToCart({
-        id: productData?.id || productData?.item_id,
-        title: productData?.name,
-        description: productData?.description,
-        counter: Number(productData?.quantity),
-        price: Number(productData?.price),
-        image: `${productData?.image}`,
-        extraItem: productData?.selectedExtras || [],
-        productNotes: productData?.productNotes,
-        nameOnSticker: productData?.nameOnSticker,
-        msgForReceiver: productData?.msgForReceiver,
-        restaurantId: item?.restaurant_id,
-        categoryId: productData?.categoryId,
-        restData: productData?.restData || item?.restaurant,
+    setTimeout(() => {
+      item?.items?.forEach(productData => {
+        dispatch(addProductToCart({
+          id: productData?.id || productData?.item_id,
+          title: productData?.name,
+          description: productData?.description,
+          counter: Number(productData?.quantity),
+          price: Number(productData?.price),
+          image: `${productData?.image}`,
+          extraItem: productData?.selectedExtras || [],
+          productNotes: productData?.productNotes,
+          nameOnSticker: productData?.nameOnSticker,
+          msgForReceiver: productData?.msgForReceiver,
+          restaurantId: item?.restaurant_id,
+          categoryId: productData?.categoryId,
+          restData: productData?.restData || item?.restaurant,
 
-      }));
-    });
+        }));
+      });
 
-    navigation.navigate('BasketScreen');
-  }, 0);
-};
+      navigation.navigate('BasketScreen');
+    }, 0);
+  };
 
 
 

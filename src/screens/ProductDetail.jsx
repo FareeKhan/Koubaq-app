@@ -30,8 +30,8 @@ import ProductDataCard from '../components/ProductDataCard';
 import SuggestedMsgsModal from '../components/SuggestedMsgsModal';
 import { useNavigation } from '@react-navigation/native';
 import { fetchProductDetails, fetchSuggestedMsgs } from '../userServices/UserService';
-import { addProductToCart } from '../redux/ProductAddToCart';
-import { useDispatch } from 'react-redux';
+import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
+import { useDispatch, useSelector } from 'react-redux';
 import { addGiftProductToCart } from '../redux/GiftData';
 import { showMessage } from 'react-native-flash-message';
 
@@ -40,6 +40,9 @@ const ProductDetail = ({ route }) => {
   const dispatch = useDispatch()
   const { isGifterPage, id, restaurant_id, data } = route?.params || '';
   const relatedData = data?.filter((item) => item?.id !== id)
+  const baseketData = useSelector((state) => state?.cart?.cartProducts)
+  const isCheckGift = baseketData?.find((item) => (item?.isGift) == true)
+
   const navigation = useNavigation();
 
 
@@ -88,11 +91,10 @@ const ProductDetail = ({ route }) => {
   }
 
 
-
-
-
-
   const addToCart = () => {
+    if (isCheckGift?.isGift) {
+      dispatch(clearCart())
+    }
     if (rcvrNameOnSticker == '') {
       setSelectedFilter('customizeSticker')
       showMessage({
@@ -121,7 +123,6 @@ const ProductDetail = ({ route }) => {
     dispatch(addProductToCart(data))
     navigation.navigate('BasketScreen')
   }
-
 
 
   const giftFun = () => {

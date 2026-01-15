@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   keyStyle: {
     fontSize: 13,
     fontFamily: fonts.regular,
+    color:colors.black
   },
   boldKeyStyle: {
     fontSize: 14,

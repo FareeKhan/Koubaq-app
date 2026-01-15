@@ -9,6 +9,7 @@ import CustomButton from './CustomButton';
 import CustomInput from './CustomInput';
 import { useTranslation } from 'react-i18next';
 import EmptyData from './EmptyData';
+import CustomText from './CustomText';
 
 const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, setSelectedContacts }) => {
     const { t } = useTranslation()
@@ -72,8 +73,8 @@ const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, s
         return (
             <TouchableOpacity onPress={() => toggleContactSelection(item)} style={[styles.contactItem,]}>
                 <View>
-                    <Text style={styles.contactName}>{item.givenName} {item.familyName}</Text>
-                    <Text style={styles.contactNumber}>{phoneNumber}</Text>
+                    <CustomText style={styles.contactName}>{item.givenName} {item.familyName}</CustomText>
+                    <CustomText style={styles.contactNumber}>{phoneNumber}</CustomText>
                 </View>
                 {
                     isSelected &&
@@ -104,7 +105,7 @@ const ContactPickerModal = ({ setContactModal, contactModal, selectedContacts, s
                         icon={true}
                         style={styles.searchInput}
                         value={searchText}
-                        onChangeText={setSearchText} 
+                        onChangeText={setSearchText}
                     />
                     <FlatList
                         // data={contacts}

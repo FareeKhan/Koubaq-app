@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, I18nManager, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, FlatList, I18nManager, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import FastImage from 'react-native-fast-image';
@@ -16,6 +16,7 @@ import Animated, {
     useAnimatedStyle,
     withSpring,
     useAnimatedScrollHandler,
+    interpolate,
 } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo'
@@ -25,11 +26,12 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 
 const { height } = Dimensions.get('screen')
 
-const MapViewComp = ({ data, setIsListingView }) => {
+const MapViewComp = ({ data, setIsListingView, currentAddress }) => {
     const navigation = useNavigation()
+    console.log('currentAddresscurrentAsddress', currentAddress)
 
-    const COLLAPSED_HEIGHT = 320; // ~2 items
-    const EXPANDED_HEIGHT = 400;  // ~3–4 items
+    const COLLAPSED_HEIGHT = Platform.OS == 'ios' ? 320 : 275;
+    const EXPANDED_HEIGHT = 400;
     const sheetHeight = useSharedValue(COLLAPSED_HEIGHT);
     const scrollY = useSharedValue(0);
 
@@ -40,6 +42,8 @@ const MapViewComp = ({ data, setIsListingView }) => {
     const mapRef = useRef(null);
     scrollY.value = Math.max(0, scrollY.value);
     const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+    const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
     const animatedStyle = useAnimatedStyle(() => {
         let height = sheetHeight.value;
 
@@ -49,7 +53,7 @@ const MapViewComp = ({ data, setIsListingView }) => {
 
         return { height };
     });
-    
+
 
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
@@ -131,6 +135,7 @@ const MapViewComp = ({ data, setIsListingView }) => {
         );
     };
 
+
     const currentLocation = () => {
         Geolocation.getCurrentPosition(
             (position) => {
@@ -156,12 +161,16 @@ const MapViewComp = ({ data, setIsListingView }) => {
             }
         );
     };
-const locationBtnStyle = useAnimatedStyle(() => {
-    return {
-        top: sheetHeight.value === EXPANDED_HEIGHT ? 40 : height / 1.2
-    };
-});
-console.log('sheetHeightsheetHeightshsseetHeight',sheetHeight?.value)
+    const locationBtnStyle = useAnimatedStyle(() => {
+        const top = interpolate(
+            sheetHeight.value,
+            [COLLAPSED_HEIGHT, EXPANDED_HEIGHT],
+            [height / 1.4, Platform.OS == 'ios' ? height / 1.6 : height / 1.7],
+            // Animated.Extrapolate.CLAMP
+        );
+
+        return { top };
+    });
     return (
         <View style={styles.mapViewContainer}>
             <View style={styles.mapHeader}>
@@ -174,25 +183,41 @@ console.log('sheetHeightsheetHeightshsseetHeight',sheetHeight?.value)
                 />
             </View>
 
-            <TouchableOpacity onPress={currentLocation} style={[styles.locationbtn,locationBtnStyle]}>
+            <AnimatedTouchable onPress={currentLocation} style={[styles.locationbtn, locationBtnStyle]}>
                 <FontAwesome6 name={'location-crosshairs'} color={colors.red} size={20} />
-            </TouchableOpacity>
-
+            </AnimatedTouchable>
             <View style={styles.mapWrapper}>
                 <MapView
                     ref={mapRef}
-                    initialRegion={{
-                        latitude: 25.256946,
-                        longitude: 55.359307,
+                    // initialRegion={{
+                    //     latitude: currentAddress?.latitude || 25.256946,
+                    //     longitude: currentAddress?.longitude || 55.359307,
+                    //     latitudeDelta: 0.1,
+                    //     longitudeDelta: 0.1,
+                    // }}
+                        region={{
+                              latitude: currentAddress?.latitude || 25.256946,
+                        longitude: currentAddress?.longitude || 55.359307,
                         latitudeDelta: 0.1,
                         longitudeDelta: 0.1,
-                    }}
+                        }}
                     style={styles.map}
                     mapPadding={{ top: 0, right: 0, bottom: 300, left: 220 }}
                     showsUserLocation={true}
                     followsUserLocation={false}
                     showsMyLocationButton={true}
                     userLocationPriority="high"
+                    onMapReady={() => {
+                        mapRef.current?.animateToRegion(
+                            {
+                                latitude: currentAddress?.latitude || 25.256946,
+                                longitude: currentAddress?.longitude || 55.359307,
+                                latitudeDelta: 0.1,
+                                longitudeDelta: 0.1,
+                            },
+                            500
+                        );
+                    }}
                 >
                     {
                         data?.map((item, index) => {
@@ -206,6 +231,7 @@ console.log('sheetHeightsheetHeightshsseetHeight',sheetHeight?.value)
                                         longitudeDelta: 0.20,
                                     }}
                                     title={item?.name}
+                                      tracksViewChanges={false}
                                 >
                                     <FastImage
                                         source={{ uri: `${mainUrl}${item.logo}` }}
@@ -330,7 +356,7 @@ const styles = StyleSheet.create({
     },
     locationbtn: {
         position: "absolute",
-        top: height / 1.6,
+        // top: height / 1.6,
         backgroundColor: colors.white,
         borderRadius: 50,
         height: 45,
@@ -339,7 +365,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         right: 20,
         borderWidth: 1,
-        borderColor: colors.gray
+        borderColor: colors.gray,
+        zIndex: 999
     },
     mapWrapper: {
         zIndex: -100,

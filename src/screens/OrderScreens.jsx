@@ -33,6 +33,7 @@ const OrderScreens = () => {
   const { t } = useTranslation();
   const navigation = useNavigation()
   const token = useSelector((state) => state?.auth?.loginData?.token)
+
   const dispatch = useDispatch()
   const [data, setData] = useState([])
 
@@ -56,7 +57,7 @@ const OrderScreens = () => {
 
 
   const addToCart = (reOrderItem) => {
-    -
+
     dispatch(clearCart());
     reOrderItem?.items?.forEach((productData, index) => {
       const data = {

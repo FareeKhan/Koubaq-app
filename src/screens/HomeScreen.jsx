@@ -41,7 +41,7 @@ const { width } = Dimensions.get('screen');
 const SearchBoxComp = ({
   search,
   setIsSearch,
-  t
+  t,
 }) => {
   return (
     <CustomInput
@@ -64,7 +64,8 @@ const ListView = ({
   filterSearch,
   t,
   currentAddress,
-  setIsShowOnlyList
+  setIsShowOnlyList,
+  isLoader
 }) => {
   return (
     <View>
@@ -94,7 +95,21 @@ const ListView = ({
         </>
 
       )}
-      <ShopsDataCard data={filterSearch} />
+
+
+
+      {/* if (isLoader) {
+    return (
+      <ScreenLoader />
+    )
+  } */}
+      {
+        isLoader ?
+          <ScreenLoader />
+          :
+          <ShopsDataCard data={filterSearch} />
+
+      }
 
     </View>
   );
@@ -113,7 +128,7 @@ const HomeScreen = () => {
 
   useEffect(() => {
     fetchUserCurrentLocation()
-    loadRestaurants()
+    // loadRestaurants()
   }, [])
 
   const fetchUserCurrentLocation = async () => {
@@ -124,12 +139,14 @@ const HomeScreen = () => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
         );
+        console.log('---->>>>>s>>', granted)
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
           alert('Location permission denied');
           return;
         }
       }
+        console.log('---->>>>>s>sss>', )
 
       Geolocation.getCurrentPosition(
         async position => {
@@ -143,11 +160,7 @@ const HomeScreen = () => {
         error => {
           console.log('Geolocation error:', error);
         },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 10000,
-        }
+ 
       );
     } catch (error) {
       console.log('error', error);
@@ -157,10 +170,10 @@ const HomeScreen = () => {
   const loadRestaurants = async (address) => {
 
     if (address?.latitude && address?.longitude) {
-      console.log('addressaddress', address)
       await fetchNearRestautents(address);
     } else {
       await restaurentData();
+
     }
   }
 
@@ -168,7 +181,7 @@ const HomeScreen = () => {
     setIsLoader(true)
     try {
       const result = await fetchRestaurentList()
-      console.log('resultresssult',result)
+      console.log('resultresssult-----', result)
       if (result?.success) {
         const uniqueRestaurants = Array.from(
           new Set(result?.data?.data.map(p => JSON.stringify(p.restaurant)))
@@ -188,6 +201,7 @@ const HomeScreen = () => {
       //   lat: 25.18408708860248,
       //   lng: 55.26428819573816,
       // }
+
       const data = {
         lat: Number(currentAddress?.latitude),
         lng: Number(currentAddress?.longitude),
@@ -210,11 +224,6 @@ const HomeScreen = () => {
   const handleSearch = () => {
     setIsShowOnlyList(!isShowOnlyList)
   }
-
-
-
-
-
   const handleMapList = () => {
     setIsListingView(prev => {
       const next = !prev;
@@ -233,11 +242,6 @@ const HomeScreen = () => {
     });
   };
 
- if (isLoader) {
-    return (
-      <ScreenLoader />
-    )
-  }
   return (
     <View style={styles.container}>
       <>
@@ -252,23 +256,28 @@ const HomeScreen = () => {
               t={t}
               currentAddress={currentAddress}
               setIsShowOnlyList={setIsShowOnlyList}
+              isLoader={isLoader}
             />
           </ScreenView>
         ) : (
           <MapViewComp
-          data={allRestaurants}
-          setIsListingView={setIsListingView}
+            data={allRestaurants}
+            setIsListingView={setIsListingView}
+            currentAddress={currentAddress}
           />
         )}
+        {
+          !isLoader &&
+          <CustomButton
+            // onPress={() => setIsListingView(!isListingView)}
+            onPress={() => handleMapList()}
+            title={isListingView ? t('mapView') : t('listView')}
+            style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
+          />
+        }
 
-        <CustomButton
-          // onPress={() => setIsListingView(!isListingView)}
-          onPress={() => handleMapList()}
-          title={isListingView ? t('mapView') : t('listView')}
-          style={[styles.bottomBtn, !isListingView && styles.broadBottomBtn]}
-        />
 
-    
+
 
 
       </>
@@ -362,20 +371,20 @@ const styles = StyleSheet.create({
   mapListOverlay: {
     zIndex: 100,
     bottom: 0,
-    height:450,
+    height: 450,
     // bottom: Platform.OS === 'ios' ?  : 420,
     position: 'absolute',
     backgroundColor: colors.white,
     width: "100%",
-    borderTopLeftRadius:20,
-    borderTopRightRadius:20
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20
   },
   horizontalList: {
     gap: 15,
     paddingHorizontal: 20,
     paddingVertical: 15,
-    flexGrow:1,
-    paddingBottom:150
+    flexGrow: 1,
+    paddingBottom: 150
   },
   bottomBtn: {
     position: 'absolute',

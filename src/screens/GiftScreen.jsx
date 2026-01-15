@@ -28,7 +28,7 @@ import { fetchSendGifts, giftRcvd, giftWalletUpdate, removeGiftData } from '../u
 import { useDispatch, useSelector } from 'react-redux';
 import ScreenLoader from '../components/ScreenLoader';
 import { showMessage } from 'react-native-flash-message';
-import { addProductToCart } from '../redux/ProductAddToCart';
+import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
 import RenderReceivedGiftsData from '../components/RenderReceivedGiftsData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import RemoteImage from '../components/RemoteImage';
@@ -53,6 +53,10 @@ const GiftScreen = () => {
     getSentGifts()
     rcvdGift()
   }, []))
+  useEffect(() => {
+    setIsShowDetails(null)
+    setIsShowSenderDetail(false)
+  }, [selectedFilter])
 
   const getSentGifts = async () => {
     try {
@@ -83,7 +87,7 @@ const GiftScreen = () => {
       setDeleteLoader(false)
     }
   };
-  
+
   const rcvdGift = async () => {
     try {
       const result = await giftRcvd(token);
@@ -160,6 +164,8 @@ const GiftScreen = () => {
               style={styles.giftImageMargin}
               senderName={item?.recipient_name}
               receiver={true}
+              item={isShowSenderDetail}
+
             />
           ) : (
             <>
@@ -201,7 +207,6 @@ const GiftScreen = () => {
       </View>
     );
   }
-
   const RenderSendGiftsData = () => {
     return (
       <FlatList
@@ -216,21 +221,8 @@ const GiftScreen = () => {
     )
   };
 
-
-
-  // const RenderReceivedGiftsData = () => {
-  //   return (
-  //     <FlatList
-  //       data={receivedGiftData}
-  //       keyExtractor={(item, index) => index?.toString()}
-  //       renderItem={renderRecivedGifts}
-  //       showsVerticalScrollIndicator={false}
-  //       ListEmptyComponent={<EmptyData />}
-  //     />
-  //   )
-  // };
-
   const addToCart = () => {
+    dispatch(clearCart());
     {
       const data = {
         id: isShowSenderDetail?.products[0]?.item_id,
@@ -243,10 +235,13 @@ const GiftScreen = () => {
         productNotes: isShowSenderDetail?.productNotes || 'productNotes',
         nameOnSticker: receivedGiftData?.recipient_name,
         msgForReceiver: receivedGiftData?.gift_message,
-        restaurantId: receivedGiftData?.order?.restaurant_id,
+        restaurantId: isShowSenderDetail?.order?.restaurant_id,
         categoryId: isShowSenderDetail?.categoryId,
-        restData: isShowSenderDetail?.restData,
+        restData: isShowSenderDetail?.order?.restaurant,
+        isGift: true
       }
+      console.log('data===', data)
+
       dispatch(addProductToCart(data))
     }
     navigation.navigate('BasketScreen')
@@ -325,11 +320,14 @@ const GiftScreen = () => {
           </TouchableOpacity>
         </View>
 
+{
 
-        <View style={{ flexDirection: "row",  borderWidth: 1, borderColor: colors.gray, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, marginBottom: 10 }}>
-          <CustomText style={{ color: colors.primary, fontFamily: fonts.bold, }}>{t("Message")+": "}</CustomText>
-          <CustomText style={{ color: colors.primary,width:"80%", }}>{isShowSenderDetail?.gift_message} Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque quos, pariatur obcaecati doloribus ab veritatis libero velit? Quam, nihil voluptates!</CustomText>
+      <View style={{ flexDirection: "row", borderWidth: 1, borderColor: colors.gray, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, marginBottom: 10 }}>
+          <CustomText style={{ color: colors.primary, fontFamily: fonts.bold, }}>{t("Message") + ": "}</CustomText>
+          <CustomText style={{ color: colors.primary, width: "80%", }}>  {isShowSenderDetail?.gift_message ?? t('noMsg')}</CustomText>
         </View>
+}
+  
 
         <View style={{ flexDirection: "row", gap: 5, alignItems: "center", borderWidth: 1, borderColor: colors.gray, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, marginBottom: 10 }}>
 
@@ -406,6 +404,8 @@ const GiftScreen = () => {
       </View>
     );
   };
+
+  console.log('isShowSenderDetail--',isShowSenderDetail)
 
   return (
     <ScreenView scrollable={true}>

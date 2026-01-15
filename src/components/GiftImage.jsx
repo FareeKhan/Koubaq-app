@@ -22,7 +22,7 @@ const GiftImage = ({
   handleHidePress,
   receiver,
   rcptName,
-  item
+  item,
 }) => {
   const { t } = useTranslation();
   return (
@@ -38,7 +38,7 @@ const GiftImage = ({
 
       />
 
-     {true && (
+     {item && (
         <View
           style={{
             position: 'absolute',

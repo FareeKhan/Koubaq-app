@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import AppNavigation from './src/Navigation/AppNavigation';
 import { store } from './src/redux/store';
 import { Provider } from 'react-redux';
-import SplashScreen from './src/SplashScreen';
 import FlashMessage from 'react-native-flash-message';
 import { colors } from './src/constants/colors';
 import { fonts } from './src/constants/fonts';
@@ -15,9 +14,6 @@ import messaging, { firebase } from '@react-native-firebase/messaging';
 
 
 const App = () => {
-  useEffect(() => {
-    onDisplayNotification('ssdasdasdsas', 'adadasdsasdasss')
-  }, [])
 
   async function requestUserPermission() {
     const authorizationStatus = await messaging().requestPermission({
@@ -29,11 +25,12 @@ const App = () => {
     if (authorizationStatus) {
       // handle notification here
       const token = await messaging().getToken();
-      console.log('asdas', token)
+      console.log('adasdasdasd', token)
     }
   }
 
   async function onDisplayNotification(title, body) {
+    console.log('---->>ss', title)
     // Request permissions (required for iOS)
     await notifee.requestPermission()
 
@@ -49,16 +46,22 @@ const App = () => {
       body,
       android: {
         channelId,
-        smallIcon: 'ic_notification', // ✅ REQUIRED
+        // smallIcon: 'ic_notification', // ✅ REQUIRED
         pressAction: {
           id: 'default',
           importance: notifee.AndroidImportance.HIGH,
 
         },
       },
+      ios: {
+        foregroundPresentationOptions: {
+          alert: true,   // 👈 REQUIRED
+          sound: true,
+          badge: true,
+        },
+      },
     });
   }
-
 
   const checkApplicationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -101,7 +104,6 @@ const App = () => {
 
   }
 
-
   useEffect(() => {
     checkApplicationPermission();
     async function showNotification(remoteMessage) {
@@ -135,7 +137,6 @@ const App = () => {
 
     return unsubscribe;
   }, []);
-
 
   const linking = {
     prefix: ["https://koubak-deeplinking.vercel.app"],

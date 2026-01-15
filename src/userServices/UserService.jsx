@@ -249,7 +249,7 @@ export const fetchTheme = async (id) => {
 
 // ***************** ORDER APIS
 
-export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod, selectedCarInfo) => {
+export const makeOrder = async (data, resID, token, driverNote, selectedCarId, subTotal, phoneNo, payMethod, selectedCarInfo, isGift) => {
 
 
     console.log('selectedCarInfoselectedCarInfoselectedCarInfo', data)
@@ -266,7 +266,7 @@ export const makeOrder = async (data, resID, token, driverNote, selectedCarId, s
         vehicle_id: selectedCarId,
         order_type: "standard",
         items: array,
-        payment_type: payMethod || "card",
+        payment_type: isGift ? 'card' : payMethod || "card",
         subtotal: subTotal || 0,
         delivery_fee: 0,
         service_fee: 2,
@@ -551,6 +551,30 @@ export const makeGiftOrder = async (data, token, selectedCarId, finalPrice, sele
     }
 };
 
+
+export const giftStatusUpdate = async (id,token) => {
+    const dataFormate = {
+        "status": "delivered",
+    }
+    try {
+        const response = await axios.put(
+            `${baseUrl}gifts/${id}`,
+            dataFormate,
+            {
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
+
+                },
+            }
+        );
+   
+        return response.data;
+    } catch (e) {
+        console.log(e?.response?.data || e.message);
+    }
+};
+
 export const giftWalletUpdate = async (data, userId) => {
     const dataFormate = {
         "customer_id": userId,
@@ -804,13 +828,13 @@ export const getNotification = async (token) => {
 }
 
 
-export const readNotification = async (id,token) => {
-    console.log('tokentoken',   `${baseUrl}notifications/${id}/read`)
-    console.log('token',token)
+export const readNotification = async (id, token) => {
+    console.log('tokentoken', `${baseUrl}notifications/${id}/read`)
+    console.log('token', token)
     try {
         const response = await axios.patch(
             `${baseUrl}notifications/${id}/read`,
-                  null, // 👈 body
+            null, // 👈 body
             {
                 headers: {
                     Accept: 'application/json',
