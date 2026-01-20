@@ -143,7 +143,7 @@ const GiftScreen = () => {
         <View style={styles.cardHeader}>
           <View>
             <CustomText style={styles.productName}>
-              {item?.gift_item}  {currency} {item?.products[0]?.price}
+              {item?.gift_item}  {currency} {item?.products[0]?.price}  x {item?.products[0]?.quantity}
             </CustomText>
           </View>
           <Image

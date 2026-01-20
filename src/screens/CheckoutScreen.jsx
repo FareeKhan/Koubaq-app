@@ -205,7 +205,6 @@ const CheckoutScreen = ({ isHeader = true, route }) => {
     setSelectedTime(item);
     setIsScheduleModal(false);
   };
-  console.log('isCheckGift?.isGiftisCheckGift?.isGift444', isCheckGift?.isGift)
   const isAppleSelected = selectedPayment == 1;
 
   return (
