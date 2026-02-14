@@ -78,10 +78,12 @@ import React from 'react'
 import DividerLine from './DividerLine';
 import CustomText from './CustomText';
 import IncrementDecrement from './IncrementDecrement';
-import { currency } from '../constants/data';
+
 import { fonts } from '../constants/fonts';
 import { useSelector } from 'react-redux';
 import RemoteImage from './RemoteImage';
+import CurrencyImage from './CurrencyImage';
+import { colors } from '../constants/colors';
 
 const CartProducts = ({ data ,}) => {
 
@@ -102,7 +104,7 @@ const CartProducts = ({ data ,}) => {
             <View style={styles.itemInfo}>
               <CustomText style={{ fontFamily: fonts.semiBold }}>{item?.title}</CustomText>
               <View style={styles.priceRow}>
-                <CustomText>{currency} {item?.price}</CustomText>
+                <CustomText>   <CurrencyImage width={9}  height={9} />{item?.price}</CustomText>
                 <IncrementDecrement item={item} style={styles.incrementer} />
               </View>
             </View>

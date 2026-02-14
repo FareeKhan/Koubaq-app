@@ -14,11 +14,13 @@ import { fetchBanners } from '../userServices/UserService';
 const { width } = Dimensions.get('screen');
 import FastImage from 'react-native-fast-image';
 import { imageUrl } from '../constants/data';
+import CustomText from './CustomText';
 
 
 const CustomCarousel = ({
   data,
   autoPlay = true,
+  children
 }) => {
   const scrollOffsetValue = useSharedValue(isRtl ? -0 : 0);
   const isRtl = I18nManager.isRTL;
@@ -48,14 +50,29 @@ const CustomCarousel = ({
     const remotePath = `${imageUrl}${item?.image}`;
     const fallbackImage = require('../assets/image1.png');
     return (
+      // <View style={styles.slideContainer}>
+      //   <FastImage
+      //     style={styles.imgBg}
+      //     borderRadius={10}
+      //     source={error ? fallbackImage : { uri: remotePath, priority: FastImage.priority.normal }}
+      //     resizeMode={FastImage.resizeMode.cover}
+      //     onError={() => setError(true)}
+      //   />
+      // </View>
+
+
+
       <View style={styles.slideContainer}>
         <FastImage
           style={styles.imgBg}
-          borderRadius={10}
+          // borderRadius={10}
           source={error ? fallbackImage : { uri: remotePath, priority: FastImage.priority.normal }}
-          resizeMode={FastImage.resizeMode.cover}
+          // resizeMode={FastImage.resizeMode.cover}
           onError={() => setError(true)}
-        />
+        >
+          {children}
+
+        </FastImage>
       </View>
     );
   };
@@ -66,7 +83,7 @@ const CustomCarousel = ({
         testID={'xxx'}
         loop={true}
         width={width}
-        height={200}
+        height={500}
         snapEnabled={true}
         pagingEnabled={true}
         autoPlayInterval={2000}
@@ -74,7 +91,7 @@ const CustomCarousel = ({
         style={{ width: width }}
         defaultScrollOffsetValue={scrollOffsetValue}
         autoPlay={autoPlay}
-        containerStyle={{ marginTop: 25, marginBottom: 10 }}
+        // containerStyle={{ marginTop: 25, marginBottom: 10 }}
         onScrollStart={() => {
           // console.log("Scroll start");
         }}
@@ -84,7 +101,7 @@ const CustomCarousel = ({
         renderItem={renderSlides}
         onSnapToItem={index => setCurrentIndex(index)}
       />
-      <View style={styles.dotsBox}>
+      {/* <View style={styles.dotsBox}>
         {bannerArray?.map((item, index) => (
           <View
             key={index}
@@ -97,7 +114,7 @@ const CustomCarousel = ({
             ]}
           />
         ))}
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -106,13 +123,15 @@ export default CustomCarousel;
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    marginHorizontal: -20,
+    // marginHorizontal: -20,
   },
   imgBg: {
-    height: 190,
+    height: 500,
+    paddingTop: 50,
+    paddingHorizontal: 20
   },
   slideContainer: {
-    marginHorizontal: 20,
+    // marginHorizontal: 20,
   },
   dot: {
     width: 8,

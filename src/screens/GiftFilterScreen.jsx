@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
-import { differentTheme, giftFilters, ImageBaseUrl, mainUrl, namesData } from '../constants/data';
+import { giftFilters, ImageBaseUrl, mainUrl, namesData } from '../constants/data';
 import HeaderBox from '../components/HeaderBox';
 import { useTranslation } from 'react-i18next';
 import CustomText from '../components/CustomText';
@@ -20,7 +20,7 @@ import HeaderWithAll from '../components/HeaderWithAll';
 import ShopsDataCard from '../components/ShopsDataCard';
 import ShopDetail from './ShopDetail';
 import { fonts } from '../constants/fonts';
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -38,6 +38,8 @@ import SelectedReceiver from '../components/SelectedReceiver';
 import { showMessage } from 'react-native-flash-message';
 import FastImage from 'react-native-fast-image';
 import ScreenLoader from '../components/ScreenLoader';
+
+
 
 const GiftFilterScreen = ({ route }) => {
   const { t } = useTranslation();
@@ -291,27 +293,46 @@ const GiftFilterScreen = ({ route }) => {
       <TouchableOpacity
         onPress={() => setSelectedTheme(item)}
         key={index}
-        style={{
+        style={[{
           backgroundColor: colors.white,
           width: '48%',
-          borderRadius: 20,
-          borderWidth: 2,
-          height: 200,
+          borderRadius: 10,
+          // borderWidth: 2,
+          // height: 200,
           borderColor: colors.primary,
-        }}
+          paddingHorizontal: 10,
+          paddingTop: 10,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.2,
+          shadowRadius: 4.65,
+          backgroundColor: colors.white,
+          elevation: 6,
+          marginHorizontal:5,
+          marginTop:5,
+          paddingBottom:30
+        },selectedTheme?.id == item?.id && {borderWidth: 2,}]}
       >
 
         <FastImage
           source={{ uri: cleanUrl }}
           style={{
-            width: '100%',
-            height: 155,
+            width: "100%",
+            height: height / 7,
+
+            //  width,height
             // backgroundColor: colors.primary2,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            // borderTopLeftRadius: 20,
+            // borderTopRightRadius: 20,
+            borderRadius: 10
+
           }}
+        // resizeMode='contain'
         />
-        <CustomText
+        {/* <CustomText
           style={{
             textAlign: 'center',
             marginTop: 12,
@@ -321,9 +342,9 @@ const GiftFilterScreen = ({ route }) => {
           }}
         >
           {item?.name}
-        </CustomText>
+        </CustomText> */}
 
-        {selectedTheme?.id == item?.id && (
+        {/* {selectedTheme?.id == item?.id && (
           <View style={{ position: 'absolute', right: 10, top: 10 }}>
             <MaterialIcons
               name={'check-box'}
@@ -331,7 +352,7 @@ const GiftFilterScreen = ({ route }) => {
               color={colors.primary}
             />
           </View>
-        )}
+        )} */}
       </TouchableOpacity>
     );
   };
@@ -379,6 +400,7 @@ const GiftFilterScreen = ({ route }) => {
                       <ShopsDataCard
                         data={allRestaurants}
                         onPress={(item) => handleRestaurent(item)}
+                        isRadius={true}
                       />
                     </>
 
@@ -618,6 +640,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 50
   },
   filterBoxSelected: {
     backgroundColor: colors.primary,
@@ -629,7 +652,7 @@ const styles = StyleSheet.create({
   },
   filterSeparator: {
     width: width / 6.6,
-    height: 1,
+    height: 2,
     backgroundColor: colors.primary1,
     top: -10,
   },

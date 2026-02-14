@@ -7,7 +7,7 @@ import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../constants/colors';
-import { currency, topUpBalance } from '../constants/data';
+import {  topUpBalance } from '../constants/data';
 import CustomText from '../components/CustomText';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
@@ -18,6 +18,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useNavigation } from '@react-navigation/native';
 import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import CurrencyImage from '../components/CurrencyImage';
 
 const TopUpWalletScreen = () => {
   const { t } = useTranslation();
@@ -94,7 +95,7 @@ const TopUpWalletScreen = () => {
           return (
             <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
               <CustomText style={styles.amountText}>
-                {item?.price} {currency}
+                {item?.price} <CurrencyImage width={9} height={9}/>
               </CustomText>
               <CustomText style={styles.pointsText}>
                 {item?.points} {t('points')}

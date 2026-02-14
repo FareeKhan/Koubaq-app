@@ -2,7 +2,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { fonts } from '../constants/fonts';
 import { colors } from '../constants/colors';
-import { currency } from '../constants/data';
+
+import CurrencyImage from './CurrencyImage';
 
 const KeyValue = ({ leftValue, rightValue, changeColor, boldData,style }) => {
   return (
@@ -33,7 +34,7 @@ const KeyValue = ({ leftValue, rightValue, changeColor, boldData,style }) => {
           changeColor && styles.greenValue,
         ]}
       >
-        {rightValue > 0 &&currency} {rightValue}
+        {rightValue > 0 &&<CurrencyImage width={9} height={9}/>}{rightValue}
       </Text>
     </View>
   );

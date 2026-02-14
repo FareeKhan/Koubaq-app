@@ -8,7 +8,6 @@ import ScreenView from '../components/ScreenView';
 import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import { colors } from '../constants/colors';
-import { currency, mainUrl, OrderData } from '../constants/data';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { fonts } from '../constants/fonts';
 import { useTranslation } from 'react-i18next';
@@ -20,10 +19,10 @@ import { useNavigation } from '@react-navigation/native';
 import RemoteImage from '../components/RemoteImage';
 import { useDispatch } from 'react-redux';
 import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
+import CurrencyImage from '../components/CurrencyImage';
 
 const OrderDetailsScreen = ({ route }) => {
   const { t } = useTranslation();
-  const data = OrderData(t);
   const dispatch = useDispatch()
   const navigation = useNavigation()
   const { item } = route?.params
@@ -145,7 +144,7 @@ const OrderDetailsScreen = ({ route }) => {
       <View style={styles.totalAmountContainer}>
         <CustomText>{t('TotalAmount')}</CustomText>
         <CustomText style={styles.amountText}>
-          {currency} {item?.total}
+          <CurrencyImage width={9} height={9} />{item?.total}
         </CustomText>
       </View>
       <DividerLine verticalGap={true} />
@@ -165,7 +164,7 @@ const OrderDetailsScreen = ({ route }) => {
               />
               <View style={[styles.itemDetails,]}>
                 <CustomText numberOfLines={2}>{item?.name}</CustomText>
-                <CustomText>{currency} {item?.price}</CustomText>
+                <CustomText><CurrencyImage width={9} height={9}/>{item?.price}</CustomText>
               </View>
             </View>
           )

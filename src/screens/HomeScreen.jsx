@@ -26,7 +26,7 @@ import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import CustomInput from '../components/CustomInput';
-import { fetchRestaurentList, NearByRest } from '../userServices/UserService';
+import { fetchProfile, fetchRestaurentList, NearByRest } from '../userServices/UserService';
 import FastImage from 'react-native-fast-image';
 import ScreenLoader from '../components/ScreenLoader';
 import { DEFAULT_TAB_BAR_STYLE, getAddressFromCoordinates } from '../constants/helper';
@@ -35,6 +35,7 @@ import { showMessage } from 'react-native-flash-message';
 import CustomModal from '../components/CustomModal';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import MapViewComp from '../components/MapViewComp';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('screen');
 
@@ -65,49 +66,70 @@ const ListView = ({
   t,
   currentAddress,
   setIsShowOnlyList,
-  isLoader
+  isLoader,handleGreeting,userProfileData
 }) => {
   return (
     <View>
 
-      <HeaderBox
-        onPressBack={() => { setIsShowOnlyList(false), setIsSearch('') }}
-        logo={true}
-        replaceBack={!isShowOnlyList}
-        onPressSearch={handleSearch}
-      />
-      <CustomText style={{ marginTop: 20 }}>Location: {currentAddress?.formattedAddress}</CustomText>
+      {
+        isShowOnlyList &&
+        <>
+
+        </>
+      }
+
 
       {isShowOnlyList ? (
-        <SearchBoxComp
-          search={search}
-          setIsSearch={setIsSearch}
-          t={t}
-        />
+
+        <View style={{ paddingHorizontal: 20, paddingTop: 60 }}>
+          <HeaderBox
+            onPressBack={() => { setIsShowOnlyList(false), setIsSearch('') }}
+            logo={true}
+            replaceBack={!isShowOnlyList}
+            onPressSearch={handleSearch}
+          />
+          <CustomText style={{ marginTop: 20, marginBottom: -20 }}>Location: {currentAddress?.formattedAddress}</CustomText>
+
+
+          <SearchBoxComp
+            search={search}
+            setIsSearch={setIsSearch}
+            t={t}
+          />
+        </View>
+
       ) : (
         <>
-          <CustomCarousel />
+          <CustomCarousel >
+            <HeaderBox
+              onPressBack={() => { setIsShowOnlyList(false), setIsSearch('') }}
+              logo={true}
+              // replaceBack={!isShowOnlyList}
+              isBack={false}
+              onPressSearch={handleSearch}
+            />
+            <CustomText style={{ marginTop: 20, color: colors.white }}>Location: {currentAddress?.formattedAddress}</CustomText>
+            <CustomText style={{ marginTop: 10, fontFamily:fonts.semiBold,color: colors.white }}>{ `${userProfileData?.name} ` + t(handleGreeting())}</CustomText>
+
+          </CustomCarousel>
           <HeaderWithAll
             handlePress={() => setIsShowOnlyList(!isShowOnlyList)}
             title={t('shopsNear')}
             viewAll={true}
+            style={{ paddingHorizontal: 20, marginTop: 30 }}
           />
         </>
 
       )}
 
-
-
-      {/* if (isLoader) {
-    return (
-      <ScreenLoader />
-    )
-  } */}
       {
         isLoader ?
           <ScreenLoader />
           :
-          <ShopsDataCard data={filterSearch} />
+          <View style={{ paddingHorizontal: 20 }}>
+            <ShopsDataCard data={filterSearch} />
+          </View>
+
 
       }
 
@@ -117,6 +139,8 @@ const ListView = ({
 
 const HomeScreen = () => {
   const tabBarHeight = useBottomTabBarHeight();
+  const token = useSelector((state) => state?.auth?.loginData?.token)
+
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isListingView, setIsListingView] = useState(true);
@@ -125,9 +149,13 @@ const HomeScreen = () => {
   const [isLoader, setIsLoader] = useState(false);
   const [search, setIsSearch] = useState('');
   const [currentAddress, setCurrentAddress] = useState('');
+  const [userProfileData, setUserProfileData] = useState('');
 
   useEffect(() => {
     fetchUserCurrentLocation()
+    handleGreeting()
+    getUserProfile()
+
     // loadRestaurants()
   }, [])
 
@@ -146,7 +174,7 @@ const HomeScreen = () => {
           return;
         }
       }
-        console.log('---->>>>>s>sss>', )
+      console.log('---->>>>>s>sss>',)
 
       Geolocation.getCurrentPosition(
         async position => {
@@ -160,12 +188,25 @@ const HomeScreen = () => {
         error => {
           console.log('Geolocation error:', error);
         },
- 
+
       );
     } catch (error) {
       console.log('error', error);
     }
   };
+
+
+    const getUserProfile = useCallback(async () => {
+      try {
+        const response = await fetchProfile(token);
+        if (response?.success) {
+          setUserProfileData(response.data);
+        }
+      } catch (error) {
+        console.log('Vehicle Error', error);
+      }
+    }, []);
+
 
   const loadRestaurants = async (address) => {
 
@@ -242,11 +283,26 @@ const HomeScreen = () => {
     });
   };
 
+
+  const handleGreeting = ()=>{
+  const hr = new Date().getHours()
+   if(hr >= 5 && hr <12){
+    return 'goodMorning'
+   }else if(hr >=12 && hr<17){
+    return 'goodafternoon'
+   }else if(hr >=17 && hr<21){
+    return 'goodEvening'
+   }else{
+    return 'goodNight'
+   }
+  }
+   
+
   return (
     <View style={styles.container}>
       <>
         {isListingView ? (
-          <ScreenView scrollable={true}>
+          <ScreenView scrollable={true} mh style={{ paddingTop: -20 }}>
             <ListView
               isShowOnlyList={isShowOnlyList}
               handleSearch={handleSearch}
@@ -257,6 +313,8 @@ const HomeScreen = () => {
               currentAddress={currentAddress}
               setIsShowOnlyList={setIsShowOnlyList}
               isLoader={isLoader}
+              handleGreeting={handleGreeting}
+              userProfileData={userProfileData}
             />
           </ScreenView>
         ) : (

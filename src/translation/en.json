@@ -211,7 +211,25 @@
 
 "delete":"Delete",
 "notDeleted":"Notification Deleted Successfully",
-"noMsg":"No Message"
+"noMsg":"No Message",
+
+
+
+
+"home":"Home",
+"profile":"Profile",
+"language":"Change Language",
+
+"next":"Next",
+
+
+
+"goodMorning":"Good Morning",
+"goodafternoon":"Good Afternoon",
+"goodEvening":"Good Evening",
+"goodNight":"Good Night",
+"enterAmount":"Enter Amount here ...",
+
 
 }
 

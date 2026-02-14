@@ -20,39 +20,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export const currency = 'SAR';
 
-// export const gccCountries = [
-//   {
-//     name: 'United Arab Emirates',
-//     code: 'AE',
-//     flag: 'https://flagcdn.com/w320/ae.png',
-//   },
-//   {
-//     name: 'Saudi Arabia',
-//     code: 'SA',
-//     flag: 'https://flagcdn.com/w320/sa.png',
-//   },
-//   {
-//     name: 'Kuwait',
-//     code: 'KW',
-//     flag: 'https://flagcdn.com/w320/kw.png',
-//   },
-//   {
-//     name: 'Qatar',
-//     code: 'QA',
-//     flag: 'https://flagcdn.com/w320/qa.png',
-//   },
-//   {
-//     name: 'Oman',
-//     code: 'OM',
-//     flag: 'https://flagcdn.com/w320/om.png',
-//   },
-//   {
-//     name: 'Bahrain',
-//     code: 'BH',
-//     flag: 'https://flagcdn.com/w320/bh.png',
-//   },
-// ];
-
 export const Countries = [
   {
     name: 'EN',
@@ -66,48 +33,6 @@ export const Countries = [
   },
 ];
 
-export const drinks = [
-  { id: 1, name: 'Cappuccino' },
-  { id: 2, name: 'Espresso' },
-  { id: 3, name: 'Latte' },
-  { id: 4, name: 'Americano' },
-  { id: 5, name: 'Green Tea' },
-  { id: 6, name: 'Masala Chai' },
-  { id: 7, name: 'Black Tea' },
-  { id: 8, name: 'Matcha' },
-];
-
-export const extraData = [
-  { id: 1, name: 'Foam' },
-  { id: 2, name: 'Sugar' },
-  { id: 3, name: 'Cookies' },
-  { id: 4, name: 'Foam' },
-  { id: 5, name: 'Cookies' },
-  { id: 6, name: 'Sugar' },
-];
-
-export const birthdayWishes = [
-  {
-    id: 1,
-    message: 'Happy Birthday! Wishing you a day filled with love and laughter.',
-  },
-  { id: 2, message: 'Hope your birthday is as amazing as you are!' },
-  {
-    id: 3,
-    message: 'Wishing you endless happiness and success on your special day.',
-  },
-  { id: 4, message: 'Have a fantastic birthday and a year full of blessings!' },
-  {
-    id: 5,
-    message: 'May all your dreams come true this year. Happy Birthday!',
-  },
-  { id: 6, message: 'Cheers to another year of making great memories!' },
-  {
-    id: 7,
-    message: 'Sending you lots of love and good vibes on your birthday.',
-  },
-  { id: 8, message: 'Enjoy your special day to the fullest — you deserve it!' },
-];
 
 export const paymentCards = t => [
   {
@@ -175,42 +100,8 @@ export const namesData = [
   },
 ];
 
-export const differentTheme = [
-  {
-    id: 1,
-    name: 'Theme 1',
-  },
-  {
-    id: 2,
-    name: 'Theme 2',
-  },
-  {
-    id: 3,
-    name: 'Theme 3',
-  },
-  {
-    id: 4,
-    name: 'Theme 4',
-  },
-  {
-    id: 5,
-    name: 'Theme 5',
-  },
-  {
-    id: 6,
-    name: 'Theme 6',
-  },
-];
 
-export const SentGiftsData = [
-  {
-    id: 1,
-    ProductName: 'Espresso single shot ethiopian beans',
-    price: '66.00',
-    image: require('../assets/giftCard.png'),
-    productImage: require('../assets/cup.png'),
-  },
-];
+
 
 export const carNamesArray = [
   { id: 1, name: 'Acura' },
@@ -278,23 +169,23 @@ export const topUpBalance = [
   {
     id: 4,
     price: '500',
-    points: '150',
+    points: '+150',
   },
   {
     id: 5,
     price: '1000',
-    points: '250',
+    points: '+250',
   },
 ];
 
 export const SendingBalance = [
   {
     id: 1,
-    price: '500',
+    price: '100',
   },
   {
     id: 2,
-    price: '750',
+    price: '500',
   },
   {
     id: 3,
@@ -302,70 +193,11 @@ export const SendingBalance = [
   },
 ];
 
-export const transactionData = [
-  {
-    ref: '568635ZDA',
-    msg: '350 SAR was Transferred to 966-50445845',
-    dateTime: '7th Feb 2025 at 05:15 PM',
-  },
-  {
-    ref: '568635ZDD',
-    msg: '200 SAR was Transferred to 966-50445845',
-    dateTime: '9th Feb 2025 at 05:15 PM',
-  },
-  {
-    ref: '568635ZDN',
-    msg: '105 SAR was Transferred to 966-50445845',
-    dateTime: '14th Feb 2025 at 05:15 PM',
-  },
-];
 
-export const OrderData = () => [
-  {
-    orderID: 'CNDFH4215635ZDA',
-    status: 1,
-    orderDate: '02, Oct, 2024',
-    price: '250 AED',
-    id: 1,
-  },
-  {
-    orderID: 'CNDFH4215635ZDA',
-    status: 2,
-    orderDate: '03, Oct, 2024',
-    price: '300 AED',
-    id: 2,
-  },
 
-  {
-    orderID: 'CNDFH4215635ZDA',
-    status: 1,
-    orderDate: '04, Oct, 2024',
-    price: '310 AED',
-    id: 3,
-  },
-];
 
-export const shopsData = [
-  {
-    id: 1,
-    name: 'FORMA - Dubai',
-    address: '20 KM - Jumeira 3 - Dubai',
-    imgPath: require('../assets/shop.png'),
-  },
-  {
-    id: 2,
-    name: 'Dips',
-    address: '20 KM - Alathar Street - Dubai',
-    imgPath: require('../assets/shopImage1.png'),
-  },
 
-  {
-    id: 3,
-    name: 'FORMA - Dubai',
-    address: '20 KM - Jumeira 3 - Dubai',
-    imgPath: require('../assets/shop.png'),
-  },
-];
+
 
 
 

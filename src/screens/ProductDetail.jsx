@@ -21,7 +21,7 @@ import CustomText from '../components/CustomText';
 import { fonts } from '../constants/fonts';
 import Feather from 'react-native-vector-icons/Feather';
 import Subtitle from '../components/Subtitle';
-import { birthdayWishes, currency, extraData, mainUrl } from '../constants/data';
+import { mainUrl } from '../constants/data';
 import DividerLine from '../components/DividerLine';
 import CustomButton from '../components/CustomButton';
 import CustomInput from '../components/CustomInput';
@@ -34,6 +34,8 @@ import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
 import { useDispatch, useSelector } from 'react-redux';
 import { addGiftProductToCart } from '../redux/GiftData';
 import { showMessage } from 'react-native-flash-message';
+import { currencyImage } from '../constants/helper';
+import CurrencyImage from '../components/CurrencyImage';
 
 const ProductDetail = ({ route }) => {
   const { t } = useTranslation();
@@ -262,7 +264,9 @@ const ProductDetail = ({ route }) => {
 
                   <View style={styles.priceRow}>
                     <CustomText style={styles.aedText}>
-                      {currency}{' '}
+                      {/* {currency}{' '} */}
+                      {/* {currencyImage()} */}
+                      <CurrencyImage  />
                       <CustomText style={styles.priceText}>{productData?.price}</CustomText>
                     </CustomText>
                     {/* 

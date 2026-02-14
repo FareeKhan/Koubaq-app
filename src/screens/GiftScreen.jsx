@@ -17,7 +17,7 @@ import { fonts } from '../constants/fonts';
 import CustomButton from '../components/CustomButton';
 import FilterButton from '../components/FilterButton';
 import EmptyData from '../components/EmptyData';
-import { currency, mainUrl, SentGiftsData } from '../constants/data';
+import {  mainUrl,  } from '../constants/data';
 import { colors } from '../constants/colors';
 import DividerLine from '../components/DividerLine';
 import GiftImage from '../components/GiftImage';
@@ -32,6 +32,7 @@ import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
 import RenderReceivedGiftsData from '../components/RenderReceivedGiftsData';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import RemoteImage from '../components/RemoteImage';
+import CurrencyImage from '../components/CurrencyImage';
 const { height } = Dimensions.get('screen');
 
 const GiftScreen = () => {
@@ -143,7 +144,7 @@ const GiftScreen = () => {
         <View style={styles.cardHeader}>
           <View>
             <CustomText style={styles.productName}>
-              {item?.gift_item}  {currency} {item?.products[0]?.price}  x {item?.products[0]?.quantity}
+              {item?.gift_item} <CurrencyImage width={8} height={8}/>{item?.products[0]?.price}  x {item?.products[0]?.quantity}
             </CustomText>
           </View>
           <Image
@@ -216,6 +217,7 @@ const GiftScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
         ListEmptyComponent={<EmptyData />}
+        scrollEnabled={false}
       />
 
     )
@@ -346,7 +348,7 @@ const GiftScreen = () => {
                 {isShowSenderDetail?.gift_item}
               </CustomText>
               <CustomText style={styles.productPrice}>
-                {currency}  {isShowSenderDetail?.products[0]?.price} X {isShowSenderDetail?.products[0]?.quantity}
+                <CurrencyImage width={8} height={8}/>{isShowSenderDetail?.products[0]?.price} X {isShowSenderDetail?.products[0]?.quantity}
 
               </CustomText>
             </View>

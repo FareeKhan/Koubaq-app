@@ -2,7 +2,6 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import CustomModal from './CustomModal';
 import { colors } from '../constants/colors';
-import { birthdayWishes } from '../constants/data';
 import { fonts } from '../constants/fonts';
 import CustomText from './CustomText';
 

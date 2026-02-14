@@ -13,7 +13,7 @@ import CustomText from '../components/CustomText';
 import { colors } from '../constants/colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Subtitle from '../components/Subtitle';
-import { drinks, mainUrl } from '../constants/data';
+import {  mainUrl } from '../constants/data';
 import ProductListing from '../components/ProductListing';
 import { fetchResaurentsItems } from '../userServices/UserService';
 import RemoteImage from '../components/RemoteImage';

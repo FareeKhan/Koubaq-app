@@ -1,11 +1,12 @@
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import CustomText from './CustomText'
-import { currency, ImageBaseUrl, mainUrl } from '../constants/data'
+import {  mainUrl } from '../constants/data'
 import { fonts } from '../constants/fonts'
 import Subtitle from './Subtitle'
 import RemoteImage from './RemoteImage'
 import { useNavigation } from '@react-navigation/native'
+import CurrencyImage from './CurrencyImage'
 
 const ProductDataCard = ({ data ,relatedData}) => {
   const navigation = useNavigation()
@@ -25,7 +26,7 @@ const ProductDataCard = ({ data ,relatedData}) => {
         <RemoteImage uri={`${mainUrl}${item?.image}`} style={{ width: 120, height: 110 }} />
         <CustomText style={{ fontFamily: fonts.medium, marginTop: 10 }}>{item?.name}</CustomText>
 
-        <Subtitle>{currency} <CustomText style={{ fontSize: 18, fontFamily: fonts.semiBold }}>{item?.price}</CustomText>   </Subtitle>
+        <Subtitle><CurrencyImage width={10} height={10} /><CustomText style={{ fontSize: 18, fontFamily: fonts.semiBold }}>{item?.price}</CustomText>   </Subtitle>
       </TouchableOpacity>
     )
   }

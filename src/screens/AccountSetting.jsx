@@ -5,10 +5,6 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-  TextInput,
-  Image,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import ScreenView from '../components/ScreenView';
@@ -17,33 +13,29 @@ import Subtitle from '../components/Subtitle';
 import { colors } from '../constants/colors';
 import { fonts } from '../constants/fonts';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Feather from 'react-native-vector-icons/Feather';
 import DividerLine from '../components/DividerLine';
 import { useTranslation } from 'react-i18next';
-import CustomButton from '../components/CustomButton';
-import CustomInput from '../components/CustomInput';
-import CustomModal from '../components/CustomModal';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+
+import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { language, logout } from '../redux/Auth';
 import RNRestart from 'react-native-restart';
 import { carLogoJson } from '../constants/carData';
-import { carImages } from '../constants/ExportCarsLogo';
-import { deleteCar, removeStoreCarData, storeCarData } from '../redux/storeAddedCar';
-import AddedCarData from '../components/AddedCarData';
+import { storeCarData } from '../redux/storeAddedCar';
 import { showMessage } from 'react-native-flash-message';
-import { addVehicle, deleteProfile, fetchProfile, fetchVehicles, updateProfile } from '../userServices/UserService';
+import { addVehicle, deleteProfile, fetchProfile, } from '../userServices/UserService';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AddBrandedCar from '../components/AddBrandedCar';
 import ProfileModal from '../components/ProfileModal';
 import RemoteImage from '../components/RemoteImage';
 import { mainUrl } from '../constants/data';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import LanguageChangeModal from '../components/LanguageChangeModal';
 
-const { height, width } = Dimensions.get('screen');
+const { height, } = Dimensions.get('screen');
 
 const AccountSetting = () => {
   const isLanguage = useSelector(state => state.auth?.isLanguage);
@@ -54,8 +46,7 @@ const AccountSetting = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const [isAddNewCar, setIsAddNewCar] = useState(false);
-  const [isCarModal, setIsCarModal] = useState(false);
+
   const [carCategory, setCarCategory] = useState('');
   const [selectedCar, setSelectedCar] = useState('');
   const [plateNo, setPlateNo] = useState('');
@@ -64,6 +55,7 @@ const AccountSetting = () => {
   const [selectedCarId, setSelectedCarId] = useState('')
   const [isProfileModal, setIsProfileModal] = useState(false)
   const [selectedCarInfo, setSelectedCarInfo] = useState('')
+  const [modalVisible, setModalVisible] = useState(false);
 
   // useFocusEffect(
   //   useCallback(() => {
@@ -74,38 +66,6 @@ const AccountSetting = () => {
     getUserProfile()
   }, [])
 
-  const handleAddCar = async () => {
-    const data = {
-      carCategory,
-      carName: selectedCar?.name,
-      plateNo,
-    };
-    try {
-      const response = await addVehicle(data, token)
-      console.log('Show me Veichle Response', response)
-      if (response?.success) {
-        showMessage({
-          type: "success",
-          message: t('vehicleAdded')
-        })
-
-        setCarCategory('')
-        setPlateNo('')
-        setSelectedCar('')
-        setIsAddNewCar(false);
-        loadAddedVechicle()
-      } else {
-        showMessage({
-          type: "danger",
-          message: t('vehicleNotAdded')
-        })
-      }
-      dispatch(storeCarData(data));
-    } catch (error) {
-      console.log('Vehicle Error', error)
-
-    }
-  }
 
   const getUserProfile = useCallback(async () => {
     try {
@@ -123,7 +83,7 @@ const AccountSetting = () => {
     return (
       <TouchableOpacity style={styles.iconMenu} onPress={onpress}>
         {icon}
-        <CustomText style={red && styles.redText}>{t(label)}</CustomText>
+        <CustomText style={[{fontSize:16,fontFamily:fonts.medium},red && styles.redText]}>{t(label)}</CustomText>
       </TouchableOpacity>
     );
   };
@@ -251,12 +211,12 @@ const AccountSetting = () => {
             <IconMenu
               onpress={() => navigation.navigate('OrderScreens')}
               label={'yourOrders'}
-              icon={<EvilIcons name={'calendar'} size={25} color={colors.black} />}
+              icon={<Feather name={'calendar'} size={22} color={colors.black} />}
             />
             <IconMenu
               onpress={() => navigation.navigate('FavoriteScreen')}
               label={'favorite'}
-              icon={<EvilIcons name={'heart'} size={25} color={colors.black} />}
+              icon={<Feather name={'heart'} size={22} color={colors.black} />}
             />
 
           </>
@@ -299,6 +259,17 @@ const AccountSetting = () => {
           <Ionicons name={'logo-instagram'} size={22} color={colors.black} />
         }
       /> */}
+      <View style={{flexDirection:"row",alignItems:"center",justifyContent:"space-between",marginRight:20}}>
+          <IconMenu
+          label={"language"}
+          icon={<Ionicons name={"language-outline"} size={22} color={colors.black} />}
+          onpress={() => setModalVisible(true)}
+        />
+
+        <CustomText>{isLanguage}</CustomText>
+      </View>
+
+
         <IconMenu
           label={userId ? 'logout' : "login"}
           icon={<AntDesign name={userId ? 'logout' : "login"} size={22} color={colors.red} />}
@@ -321,6 +292,11 @@ const AccountSetting = () => {
       </ScreenView>
       <ProfileModal userProfileData={userProfileData} setIsProfileModal={setIsProfileModal} isProfileModal={isProfileModal} getUserProfile={getUserProfile} />
 
+
+      <LanguageChangeModal
+        setModalVisible={setModalVisible}
+        modalVisible={modalVisible}
+      />
 
     </View>
   );

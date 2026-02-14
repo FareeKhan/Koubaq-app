@@ -3,6 +3,7 @@ import { getPaymentIntentApi } from "../userServices/UserService";
 import { showMessage } from "react-native-flash-message";
 import { GOOGLE_API } from "./data";
 import { colors } from "./colors";
+import { Image } from "react-native";
 
 export const initializePaymentSheet = async (price,setLoading) => {
     const paymentIntent = await getPaymentIntentApi(price);
@@ -45,9 +46,6 @@ export const initializePaymentSheet = async (price,setLoading) => {
       }
     };
 
-
-
-
 export const getAddressFromCoordinates = async (latitude,longitude ) => {
   try {
     const apiKey = GOOGLE_API;
@@ -85,15 +83,17 @@ export const getAddressFromCoordinates = async (latitude,longitude ) => {
 };
 
 
+
+
 export const DEFAULT_TAB_BAR_STYLE = {
   position: "absolute",
   bottom: 20,
   marginHorizontal: 20,
-  borderRadius: 18,
+  borderRadius: 10,
   alignItems: "center",
   justifyContent: "center",
-  height: 60,
+  height: 55,
   borderWidth: 1,
   borderColor: colors.black1,
-  paddingTop: 10,
+  // paddingTop: 10,
 };

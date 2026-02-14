@@ -16,7 +16,7 @@ import FastImage from 'react-native-fast-image';
 import { mainUrl } from '../constants/data';
 import EmptyData from './EmptyData';
 
-const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
+const ShopsDataCard = ({ data, scrollEnabled,isRadius, onPress }) => {
   const navigation = useNavigation()
   const renderItem = ({ item, index }) => {
     const cleanUrl = `${mainUrl}${item?.logo}`
@@ -30,7 +30,7 @@ const ShopsDataCard = ({ data, scrollEnabled, onPress }) => {
         <FastImage
           source={{ uri: cleanUrl }}
           resizeMode="contain"
-          style={{ width: 70, height: 65, borderWidth: 1, borderRadius: 10, borderColor: colors.gray5 }}
+          style={[{ width: 70, height: 65, borderWidth: 1, borderRadius: 10, borderColor: colors.gray5, },isRadius && {borderRadius:50,height:70}]}
         />
 
         <View style={{ gap: 2, width: "75%" }}>

@@ -115,7 +115,7 @@ import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../constants/colors';
-import { currency, SendingBalance, topUpBalance } from '../constants/data';
+import {SendingBalance, topUpBalance } from '../constants/data';
 import CustomText from '../components/CustomText';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
@@ -126,6 +126,7 @@ import { showMessage } from 'react-native-flash-message';
 import { useNavigation } from '@react-navigation/native';
 import { initializePaymentSheet, openPaymentSheet } from '../constants/helper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import CurrencyImage from '../components/CurrencyImage';
 
 const SendBalanceScreen = () => {
   const { t } = useTranslation();
@@ -219,7 +220,7 @@ const SendBalanceScreen = () => {
           return (
             <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
               <CustomText style={styles.amountText}>
-                {currency} {item?.price}
+               <CurrencyImage width={9} height={9}/>{item?.price}
               </CustomText>
               <Image source={require('../assets/cash.png')} style={{ width: 80, height: 65, transform: [{ rotate: "-90deg" }] }} />
             </TouchableOpacity>
@@ -232,7 +233,7 @@ const SendBalanceScreen = () => {
         />
 
         <CustomInput
-          placeholder={t('50 AED')}
+          placeholder={t('enterAmount')}
           rs={true}
           style={styles.customInput}
           value={otherAmount}
@@ -278,7 +279,7 @@ const SendBalanceScreen = () => {
 
         <CustomButton
           appleIcon={isAppleSelected}
-          title={isAppleSelected ? t('Pay') : t('payment')}
+          title={isAppleSelected ? t('Pay') : t('next')}
           btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
           style={isAppleSelected && styles.appleButton}
           onPress={() => handleSendBalance()}

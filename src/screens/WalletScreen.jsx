@@ -238,7 +238,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useTranslation } from 'react-i18next';
 import IconLabel from '../components/IconLabel';
-import { currency, topUpBalance } from '../constants/data';
+import { topUpBalance } from '../constants/data';
 import { fonts } from '../constants/fonts';
 import DividerLine from '../components/DividerLine';
 import Subtitle from '../components/Subtitle';
@@ -247,6 +247,8 @@ import { useSelector } from 'react-redux';
 import { getWalletBalance } from '../userServices/UserService';
 import ScreenLoader from '../components/ScreenLoader';
 import EmptyData from '../components/EmptyData';
+import CurrencyImage from '../components/CurrencyImage';
+import LinearGradient from 'react-native-linear-gradient';
 
 const WalletScreen = () => {
   const { t } = useTranslation();
@@ -342,44 +344,60 @@ const WalletScreen = () => {
     };
 
     return (
-      <View style={styles.walletCard}>
-        <View style={styles.walletHeader}>
-          <View>
-            <CustomText style={styles.walletBalanceText}>
-              {t('walletBalance')}
-            </CustomText>
-            <View style={styles.walletAmountContainer}>
-              <CustomText style={styles.walletAmountValue}>
-                {walletData?.balance}
-              </CustomText>
-              <CustomText style={styles.walletCurrency}>
-                {currency}
-              </CustomText>
-            </View>
-          </View>
+      <LinearGradient
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        locations={[0, 0.3, 0.6, 1]}
+        colors={[colors.gray, colors.white, colors.gray, colors.white,]}
+        style={[styles.walletCard]}
+      >
+        <View style={{ paddingHorizontal: 15,
+          paddingVertical:10
+         }}>
 
-          <View style={styles.walletRightContainer}>
-            <View style={styles.walletLogoRow}>
-              <Image
-                source={require('../assets/logo.png')}
-                style={styles.walletLogo}
-              />
-              <View style={styles.walletWifiIcon}>
-                <Ionicons name={'wifi'} color={colors.primary} size={25} />
+          <View style={styles.walletHeader}>
+            <View>
+              <CustomText style={styles.walletBalanceText}>
+                {t('walletBalance')}
+              </CustomText>
+              <View style={styles.walletAmountContainer}>
+                <CustomText style={styles.walletAmountValue}>
+                  {walletData?.balance}
+                </CustomText>
+                <CustomText style={styles.walletCurrency}>
+                  <CurrencyImage color={colors.primary} width={19} height={19} />
+                </CustomText>
               </View>
             </View>
 
-            <CustomText style={styles.walletTierText}>
-              SILVER
-            </CustomText>
+
+
+            <View style={styles.walletRightContainer}>
+              <View style={styles.walletLogoRow}>
+                <Image
+                  source={require('../assets/logo.png')}
+                  style={styles.walletLogo}
+                />
+                <View style={styles.walletWifiIcon}>
+                  <Ionicons name={'wifi'} color={colors.primary} size={25} />
+                </View>
+              </View>
+
+              <CustomText style={styles.walletTierText}>
+                SILVER
+              </CustomText>
+            </View>
+          </View>
+
+          <View >
+            <PackagesName title={'eachOnePoint'} />
+            <PackagesName title={'silver'} />
+            <PackagesName title={'gold'} />
+            <PackagesName title={'daimond'} />
           </View>
         </View>
 
-        <PackagesName title={'eachOnePoint'} />
-        <PackagesName title={'silver'} />
-        <PackagesName title={'gold'} />
-        <PackagesName title={'daimond'} />
-      </View>
+      </LinearGradient>
     );
   };
 
@@ -395,9 +413,20 @@ const WalletScreen = () => {
 
   return (
     <ScreenView scrollable={true}>
-      <HeaderBox smallLogo={false} notification={false} search={false}  isBack={false}/>
+      <HeaderBox smallLogo={false} notification={false} search={false} isBack={false} />
       <IconLabel label={'yourWallet'} />
-
+      {/* <LinearGradient 
+    start={{ x: 0, y: 0 }}      // top-left
+  end={{ x: 1, y: 1 }}        // bottom-right
+  locations={[0, 0.3, 0.6, 1]}
+      
+      colors={[colors.gray, colors.white, colors.gray7, colors.white, ]} style={styles.linearGradient}
+      
+      >
+        <Text style={styles.buttonText}>
+          Sign in with Facebook
+        </Text>
+      </LinearGradient> */}
       {
 
         !userId ?
@@ -406,54 +435,71 @@ const WalletScreen = () => {
           :
           <>
             <WalletBalanceCard />
-            <IconLabel
-              label={'topUpWallet'}
-              isButton={true}
-              onPress={() => navigation.navigate('TopUpWalletScreen')}
-              icon={
-                <Ionicons
-                  name={'phone-portrait-sharp'}
-                  size={20}
-                  color={colors.black}
-                />
-              }
-            />
-            <IconLabel
-              label={'sendBalance'}
-              isButton={true}
-              icon={<Ionicons name={'cash-outline'} size={20} color={colors.black} />}
-              onPress={() => navigation.navigate('SendBalanceScreen')}
-            />
-            <IconLabel
-              isButton={true}
-              label={'TransactionHistory'}
-              mb={true}
-              onPress={() => navigation.navigate('TransactionHistoryScreen')}
-            />
+            <View style={{
 
-            <DividerLine borderStyle={{ height: 5 }} verticalGap={true} />
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 3,
+              },
+              shadowOpacity: 0.27,
+              shadowRadius: 4.65,
+              backgroundColor: colors.white,
+              elevation: 6,
+              marginHorizontal: 5,
+              padding: 10, borderRadius: 10,
+              paddingHorizontal: 15,
+              marginTop: 15
+            }}>
+              <IconLabel
+                label={'topUpWallet'}
+                isButton={true}
+                onPress={() => navigation.navigate('TopUpWalletScreen')}
+                icon={
+                  <Ionicons
+                    name={'phone-portrait-sharp'}
+                    size={20}
+                    color={colors.black}
+                  />
+                }
+              />
+              <IconLabel
+                label={'sendBalance'}
+                isButton={true}
+                icon={<Ionicons name={'cash-outline'} size={20} color={colors.black} />}
+                onPress={() => navigation.navigate('SendBalanceScreen')}
+              />
+              <IconLabel
+                isButton={true}
+                label={'TransactionHistory'}
+                mb={true}
+                onPress={() => navigation.navigate('TransactionHistoryScreen')}
+              />
 
-            <View style={styles.coffeeHeader}>
-              <Image source={require('../assets/coffee.png')} />
-              <CustomText style={styles.coffeeHeaderText}>
-                {t('yourCoffee')}
-              </CustomText>
-            </View>
+              <DividerLine borderStyle={{ height: 5, width: "98%", margin: "auto" }} verticalGap={true} />
 
-            <Subtitle smallFont={true} style={styles.coffeeSub1}>
-             {t('freeCoffe')}
-            </Subtitle>
-            <Subtitle smallFont={true} style={styles.coffeeSub2}>
-                     {t('CoffeAmount')}
-            </Subtitle>
-            <Image
-              source={require('../assets/coffeegroup.png')}
-              style={styles.coffeeGroupImage}
-            />
+              <View style={styles.coffeeHeader}>
+                <Image source={require('../assets/coffee.png')} />
+                <CustomText style={styles.coffeeHeaderText}>
+                  {t('yourCoffee')}
+                </CustomText>
+              </View>
 
-            <Subtitle smallFont={true} style={styles.coffeeSub2}>
+              <Subtitle smallFont={true} style={styles.coffeeSub1}>
+                {t('freeCoffe')}
+              </Subtitle>
+              <Subtitle smallFont={true} style={styles.coffeeSub2}>
+                {t('CoffeAmount')}
+              </Subtitle>
+              <Image
+                source={require('../assets/coffeegroup.png')}
+                style={styles.coffeeGroupImage}
+              />
+
+              <Subtitle smallFont={true} style={styles.coffeeSub2}>
                 {t('coffeeNote')}
-            </Subtitle>
+              </Subtitle>
+            </View>
           </>
       }
     </ScreenView>
@@ -474,24 +520,24 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   walletCard: {
-    borderWidth: 1,
-    padding: 10,
-    paddingTop: 20,
-    borderRadius: 10,
-    backgroundColor: colors.secondary,
+    borderWidth: 0.5,
+    borderRadius: 20,
     borderColor: colors.gray,
     marginBottom: 10,
+
+
   },
   walletHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 15,
+    paddingTop: 20,
   },
   walletBalanceText: {
     color: colors.primary,
     top: -5,
-    fontFamily:fonts.bold
+    fontFamily: fonts.bold
   },
   walletAmountContainer: {
     flexDirection: 'row',
@@ -549,5 +595,14 @@ const styles = StyleSheet.create({
   },
   coffeeGroupImage: {
     marginVertical: 18,
+  },
+
+  buttonText: {
+    fontSize: 18,
+    fontFamily: 'Gill Sans',
+    textAlign: 'center',
+    margin: 10,
+    color: '#ffffff',
+    backgroundColor: 'transparent',
   },
 });

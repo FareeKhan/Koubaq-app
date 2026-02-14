@@ -13,7 +13,6 @@ import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { colors } from '../constants/colors';
-import { currency, mainUrl, OrderData } from '../constants/data';
 import EmptyData from '../components/EmptyData';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -28,6 +27,7 @@ import { fetchOrder } from '../userServices/UserService';
 import { useDispatch, useSelector } from 'react-redux';
 import RemoteImage from '../components/RemoteImage';
 import { addProductToCart, clearCart } from '../redux/ProductAddToCart';
+import CurrencyImage from '../components/CurrencyImage';
 
 const OrderScreens = () => {
   const { t } = useTranslation();
@@ -150,7 +150,7 @@ const OrderScreens = () => {
 
 
 
-            <CustomText>{currency} {item?.total}</CustomText>
+            <CustomText><CurrencyImage width={9} height={9}/>{item?.total}</CustomText>
           </View>
 
 

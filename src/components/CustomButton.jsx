@@ -12,7 +12,7 @@ import { colors } from '../constants/colors';
 import { useTranslation } from 'react-i18next';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CustomText from './CustomText';
-import { currency } from '../constants/data';
+import CurrencyImage from './CurrencyImage';
 
 const CustomButton = ({
   arrow,
@@ -59,7 +59,7 @@ const CustomButton = ({
 
       {totalPrice && (
         <Text style={[styles.buttonText, btnTxtStyle]}>
-          {currency} {totalPrice}
+          <CurrencyImage width={10}  height={10} color={colors.white}/> {totalPrice}
         </Text>
       )}
 

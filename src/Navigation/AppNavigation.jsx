@@ -50,25 +50,29 @@ export const BottomNavigation = () => {
     return (
         <Tab.Navigator screenOptions={{
             headerShown: false,
-            tabBarStyle:DEFAULT_TAB_BAR_STYLE,
+            tabBarStyle: DEFAULT_TAB_BAR_STYLE,
             tabBarItemStyle: {
+                height: 40,
+
             },
             tabBarHideOnKeyboard: true,
             tabBarActiveTintColor: colors.black,
-            tabBarInactiveTintColor: colors.white,
-            tabBarShowLabel: false,
+            // tabBarShowLabel: false,
 
 
         }}
+
+
 
         >
             <Tab.Screen
                 name="HomeStack"
                 component={HomeStack}
                 options={{
-                    tabBarLabel: t('ss'),
+                    tabBarLabel: t('home'),
                     tabBarLabelStyle: {
                         fontFamily: fonts.semiBold,
+                        marginTop: 2
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -83,9 +87,11 @@ export const BottomNavigation = () => {
                 name="giftStack"
                 component={giftStack}
                 options={{
-                    tabBarLabel: t(''),
+                    tabBarLabel: t('gift'),
                     tabBarLabelStyle: {
                         fontFamily: fonts.semiBold,
+                        marginTop: 2
+
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -99,9 +105,10 @@ export const BottomNavigation = () => {
                 component={WalletStack}
 
                 options={{
-                    tabBarLabel: t(''),
+                    tabBarLabel: t('wallet'),
                     tabBarLabelStyle: {
                         fontFamily: fonts.semiBold,
+                        marginTop:2
                     },
                     tabBarIcon: ({ focused }) => {
                         return (
@@ -117,9 +124,11 @@ export const BottomNavigation = () => {
                 name="AccountStack"
                 component={AccountStack}
                 options={{
-                    tabBarLabel: t(''),
+                    tabBarLabel: t('profile'),
                     tabBarLabelStyle: {
                         fontFamily: fonts.semiBold,
+                        marginTop:2
+
                     },
                     tabBarIcon: ({ focused }) => {
                         return (

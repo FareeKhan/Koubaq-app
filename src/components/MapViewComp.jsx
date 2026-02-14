@@ -22,6 +22,7 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo'
 import Geolocation from '@react-native-community/geolocation';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
+import DividerLine from './DividerLine';
 
 
 const { height } = Dimensions.get('screen')
@@ -195,12 +196,12 @@ const MapViewComp = ({ data, setIsListingView, currentAddress }) => {
                     //     latitudeDelta: 0.1,
                     //     longitudeDelta: 0.1,
                     // }}
-                        region={{
-                              latitude: currentAddress?.latitude || 25.256946,
+                    region={{
+                        latitude: currentAddress?.latitude || 25.256946,
                         longitude: currentAddress?.longitude || 55.359307,
                         latitudeDelta: 0.1,
                         longitudeDelta: 0.1,
-                        }}
+                    }}
                     style={styles.map}
                     mapPadding={{ top: 0, right: 0, bottom: 300, left: 220 }}
                     showsUserLocation={true}
@@ -231,7 +232,7 @@ const MapViewComp = ({ data, setIsListingView, currentAddress }) => {
                                         longitudeDelta: 0.20,
                                     }}
                                     title={item?.name}
-                                      tracksViewChanges={false}
+                                    tracksViewChanges={false}
                                 >
                                     <FastImage
                                         source={{ uri: `${mainUrl}${item.logo}` }}
@@ -267,6 +268,7 @@ const MapViewComp = ({ data, setIsListingView, currentAddress }) => {
                         showsVerticalScrollIndicator={false}
                         onScroll={scrollHandler}
                         scrollEventThrottle={16}
+                        ItemSeparatorComponent={<DividerLine style={{marginTop:10}}/>}
                         nestedScrollEnabled={true}   // ✅ MUST for Android
 
                     />
