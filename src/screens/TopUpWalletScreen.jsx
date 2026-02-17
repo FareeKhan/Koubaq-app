@@ -110,7 +110,7 @@ const TopUpWalletScreen = () => {
         />
 
         <CustomInput
-          placeholder={t('50 AED')}
+          placeholder={t('50')}
           rs={true}
           style={styles.customInput}
           // filter={false}
@@ -132,12 +132,11 @@ const TopUpWalletScreen = () => {
 
         <CustomButton
           appleIcon={isAppleSelected}
-          title={isAppleSelected ? t('Pay') : t('payment')}
+          title={isAppleSelected ? t('Pay') : t('next')}
           btnTxtStyle={[styles.buttonText, isAppleSelected && styles.appleButtonText]}
           style={isAppleSelected && styles.appleButton}
           // onPress={() => AddBalance()}
           onPress={() => openPaymentSheet(AddBalance)}
-
           loader={isLoader}
         />
       </KeyboardAwareScrollView>

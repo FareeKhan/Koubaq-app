@@ -115,7 +115,7 @@ import HeaderBox from '../components/HeaderBox';
 import IconLabel from '../components/IconLabel';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../constants/colors';
-import {SendingBalance, topUpBalance } from '../constants/data';
+import { SendingBalance, topUpBalance } from '../constants/data';
 import CustomText from '../components/CustomText';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
@@ -220,9 +220,9 @@ const SendBalanceScreen = () => {
           return (
             <TouchableOpacity onPress={() => handleSelection(item)} key={index} style={[styles.amountBox, selectedBalace?.id == item?.id && { borderColor: colors.cream }]}>
               <CustomText style={styles.amountText}>
-               <CurrencyImage width={9} height={9}/>{item?.price}
+                <CurrencyImage width={9} height={9} />{item?.price}
               </CustomText>
-              <Image source={require('../assets/cash.png')} style={{ width: 80, height: 65, transform: [{ rotate: "-90deg" }] }} />
+              <Image source={require('../assets/cash.png')} resizeMode='contain' style={{ width: 70, height: 70, transform: [{ rotate: "-90deg" }] }} />
             </TouchableOpacity>
           );
         })}
@@ -246,7 +246,7 @@ const SendBalanceScreen = () => {
 
           // }}
 
-             onChangeText={(text) => {
+          onChangeText={(text) => {
             const numericValue = text.replace(/[^0-9.]/g, '');
             setOtherAmount(numericValue);
             setSelectedBalance(null);
